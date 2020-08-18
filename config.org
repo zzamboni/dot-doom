@@ -29,10 +29,19 @@ Change the Mac keybindings to my liking
 Set base and variable-pitch fonts.
 
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Fira Code Retina" :height 160)
-      doom-variable-pitch-font (font-spec :family "ETBembo" :height 180 :weight 'thin))
+(setq doom-font (font-spec :family "Fira Code Retina" :size 16)
+      doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
 #+end_src
 
+Allow mixed fonts in a buffer.
+
+#+begin_src emacs-lisp
+(use-package! mixed-pitch
+  :config
+  (setq mixed-pitch-variable-pitch-cursor nil)
+  :hook
+  (text-mode . mixed-pitch-mode))
+#+end_src
 Set the theme to use.
 
 #+begin_src emacs-lisp
@@ -63,6 +72,119 @@ Disable exit confirmation.
 
 #+begin_src emacs-lisp
 (setq confirm-kill-emacs nil)
+#+end_src
+
+#+begin_src emacs-lisp
+(add-hook! org-mode :append
+           #'visual-line-mode
+           #'variable-pitch-mode
+           (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
+#+end_src
+
+Export to Leanpub.
+
+#+begin_src emacs-lisp
+(use-package! ox-leanpub
+  :config
+  (require 'ox-leanpub-markdown)
+  (org-leanpub-book-setup-menu-markdown))
+#+end_src
+
+Use =counsel-recentf= for ~C-x b~:
+
+#+begin_src emacs-lisp
+(map! "C-x b" #'counsel-recentf)
+#+end_src
+
+** Reformatting an Org buffer
+
+I picked up this little gem in the org mailing list. A function that reformats the current buffer by regenerating the text from its internal parsed representation. Quite amazing.
+
+#+begin_src emacs-lisp
+  (defun zz/org-reformat-buffer ()
+    (interactive)
+    (when (y-or-n-p "Really format current buffer? ")
+      (let ((document (org-element-interpret-data (org-element-parse-buffer))))
+        (erase-buffer)
+        (insert document)
+        (goto-char (point-min)))))
+#+end_src
+
+Remove a link. For some reason this is not part of org-mode. From https://emacs.stackexchange.com/a/10714/11843, I bind it to ~C-c~ ~C-M-u~.
+
+#+begin_src emacs-lisp
+  (defun afs/org-remove-link ()
+      "Replace an org link by its description or if empty its address"
+    (interactive)
+    (if (org-in-regexp org-bracket-link-regexp 1)
+        (let ((remove (list (match-beginning 0) (match-end 0)))
+          (description (if (match-end 3)
+                   (org-match-string-no-properties 3)
+                   (org-match-string-no-properties 1))))
+      (apply 'delete-region remove)
+      (insert description))))
+  (bind-key "C-c C-M-u" 'afs/org-remove-link)
+#+end_src
+
+** Code for org-mode macros
+
+Here I define functions which get used in some of my org-mode macros
+
+The first is a support function which gets used in some of the following, to return a string (or an optional custom  string) only if  it  is a non-zero, non-whitespace string,  and =nil= otherwise.
+
+#+begin_src emacs-lisp
+  (defun zz/org-if-str (str &optional desc)
+    (when (org-string-nw-p str)
+      (or (org-string-nw-p desc) str)))
+#+end_src
+
+This function receives three arguments, and returns the org-mode code for a link to the Hammerspoon API documentation for the =link= module, optionally to a specific =function=. If =desc= is passed, it is used as the display text, otherwise =section.function= is used.
+
+#+begin_src emacs-lisp
+  (defun zz/org-macro-hsapi-code (module &optional func desc)
+    (org-link-make-string
+     (concat "https://www.hammerspoon.org/docs/"
+             (concat module (zz/org-if-str func (concat "#" func))))
+     (or (org-string-nw-p desc)
+         (format "=%s="
+                 (concat module
+                         (zz/org-if-str func (concat "." func)))))))
+#+end_src
+
+Split STR at spaces and wrap each element with the =~= char, separated by =+=. Zero-width spaces are inserted around the plus signs so that they get formatted correctly. Envisioned use is for formatting keybinding descriptions. There are two versions of this function: "outer" wraps each element in  =~=, the "inner" wraps the whole sequence in them.
+
+#+begin_src emacs-lisp
+  (defun zz/org-macro-keys-code-outer (str)
+    (mapconcat (lambda (s)
+                 (concat "~" s "~"))
+               (split-string str)
+               (concat (string ?\u200B) "+" (string ?\u200B))))
+  (defun zz/org-macro-keys-code-inner (str)
+    (concat "~" (mapconcat (lambda (s)
+                             (concat s))
+                           (split-string str)
+                           (concat (string ?\u200B) "-" (string ?\u200B)))
+            "~"))
+  (defun zz/org-macro-keys-code (str)
+    (zz/org-macro-keys-code-inner str))
+#+end_src
+
+Links to a specific section/function of the Lua manual.
+
+#+begin_src emacs-lisp
+  (defun zz/org-macro-luadoc-code (func &optional section desc)
+    (org-link-make-string
+     (concat "https://www.lua.org/manual/5.3/manual.html#"
+             (zz/org-if-str func section))
+     (zz/org-if-str func desc)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun zz/org-macro-luafun-code (func &optional desc)
+    (org-link-make-string
+     (concat "https://www.lua.org/manual/5.3/manual.html#"
+             (concat "pdf-" func))
+     (zz/org-if-str (concat "=" func "()=") desc)))
 #+end_src
 
 ** Original config.el
