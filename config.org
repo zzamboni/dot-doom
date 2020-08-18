@@ -19,7 +19,7 @@ My user information.
       user-mail-address "diego@zzamboni.org")
 #+end_src
 
-Change the Mac keybindings to my liking
+Change the Mac modifiers to my liking
 
 #+begin_src emacs-lisp
 (cond (IS-MAC
@@ -27,6 +27,12 @@ Change the Mac keybindings to my liking
              mac-option-modifier       'alt
              mac-right-option-modifier 'super)))
 #+end_src
+
+When at the beginning of the line, make =Ctrl-K= remove the whole line, instead of just emptying it.
+
+  #+begin_src emacs-lisp
+(setq kill-whole-line t)
+  #+end_src
 
 Set base and variable-pitch fonts.
 

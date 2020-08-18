@@ -6,6 +6,8 @@
              mac-option-modifier       'alt
              mac-right-option-modifier 'super)))
 
+(setq kill-whole-line t)
+
 (setq doom-font (font-spec :family "Fira Code Retina" :size 16)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
 
