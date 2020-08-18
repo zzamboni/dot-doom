@@ -1,67 +1,74 @@
-;; [[file:config.org::*config.el][config.el:1]]
+;; [[file:config.org::*General configuration][General configuration:1]]
 (setq user-full-name "Diego Zamboni"
       user-mail-address "diego@zzamboni.org")
-;; config.el:1 ends here
+;; General configuration:1 ends here
 
-;; [[file:config.org::*config.el][config.el:2]]
+;; [[file:config.org::*General configuration][General configuration:2]]
 (cond (IS-MAC
        (setq mac-command-modifier      'meta
              mac-option-modifier       'alt
              mac-right-option-modifier 'super)))
-;; config.el:2 ends here
+;; General configuration:2 ends here
 
-;; [[file:config.org::*config.el][config.el:3]]
+;; [[file:config.org::*General configuration][General configuration:3]]
 (setq doom-font (font-spec :family "Fira Code Retina" :size 16)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
-;; config.el:3 ends here
+;; General configuration:3 ends here
 
-;; [[file:config.org::*config.el][config.el:4]]
+;; [[file:config.org::*General configuration][General configuration:4]]
 (use-package! mixed-pitch
   :config
   (setq mixed-pitch-variable-pitch-cursor nil)
   :hook
   (text-mode . mixed-pitch-mode))
-;; config.el:4 ends here
+;; General configuration:4 ends here
 
-;; [[file:config.org::*config.el][config.el:5]]
+;; [[file:config.org::*General configuration][General configuration:5]]
 (setq doom-theme 'spacemacs-light)
-;; config.el:5 ends here
+;; General configuration:5 ends here
 
-;; [[file:config.org::*config.el][config.el:6]]
-(setq org-directory "~/org/")
-;; config.el:6 ends here
-
-;; [[file:config.org::*config.el][config.el:7]]
-(setq org-hide-emphasis-markers t)
-;; config.el:7 ends here
-
-;; [[file:config.org::*config.el][config.el:8]]
+;; [[file:config.org::*General configuration][General configuration:6]]
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type nil)
-;; config.el:8 ends here
+;; General configuration:6 ends here
 
-;; [[file:config.org::*config.el][config.el:9]]
+;; [[file:config.org::*General configuration][General configuration:7]]
 (setq confirm-kill-emacs nil)
-;; config.el:9 ends here
+;; General configuration:7 ends here
 
-;; [[file:config.org::*config.el][config.el:10]]
+;; [[file:config.org::*General configuration][General configuration:8]]
+(map! "C-x b" #'counsel-recentf)
+;; General configuration:8 ends here
+
+;; [[file:config.org::*General configuration][General configuration:9]]
+(set (if EMACS27+
+         'epg-pinentry-mode
+       'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
+     nil)
+;; General configuration:9 ends here
+
+;; [[file:config.org::*Org mode][Org mode:1]]
+(setq org-directory "~/org/")
+;; Org mode:1 ends here
+
+;; [[file:config.org::*Org mode][Org mode:2]]
+(setq org-hide-emphasis-markers t)
+;; Org mode:2 ends here
+
+;; [[file:config.org::*Org mode][Org mode:3]]
 (add-hook! org-mode :append
            #'visual-line-mode
            #'variable-pitch-mode
            (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
-;; config.el:10 ends here
+;; Org mode:3 ends here
 
-;; [[file:config.org::*config.el][config.el:11]]
+;; [[file:config.org::*Org mode][Org mode:4]]
 (use-package! ox-leanpub
   :config
   (require 'ox-leanpub-markdown)
   (org-leanpub-book-setup-menu-markdown))
-;; config.el:11 ends here
-
-;; [[file:config.org::*config.el][config.el:12]]
-(map! "C-x b" #'counsel-recentf)
-;; config.el:12 ends here
+;; Org mode:4 ends here
 
 ;; [[file:config.org::*Reformatting an Org buffer][Reformatting an Org buffer:1]]
   (defun zz/org-reformat-buffer ()

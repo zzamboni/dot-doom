@@ -10,6 +10,8 @@ This is my Doom Emacs configuration. From this org file, all the necessary Doom 
 :header-args: :mkdirp yes :comments yes
 :END:
 
+** General configuration
+
 My user information.
 
 #+begin_src emacs-lisp
@@ -42,22 +44,11 @@ Allow mixed fonts in a buffer.
   :hook
   (text-mode . mixed-pitch-mode))
 #+end_src
+
 Set the theme to use.
 
 #+begin_src emacs-lisp
 (setq doom-theme 'spacemacs-light)
-#+end_src
-
-Default directory for Org files.
-
-#+begin_src emacs-lisp
-(setq org-directory "~/org/")
-#+end_src
-
-Hide Org markup indicators.
-
-#+begin_src emacs-lisp
-(setq org-hide-emphasis-markers t)
 #+end_src
 
 Disable line numbers.
@@ -73,6 +64,37 @@ Disable exit confirmation.
 #+begin_src emacs-lisp
 (setq confirm-kill-emacs nil)
 #+end_src
+
+Use =counsel-recentf= for ~C-x b~:
+
+#+begin_src emacs-lisp
+(map! "C-x b" #'counsel-recentf)
+#+end_src
+
+Use the GPG graphical PIN entry utility.
+
+#+begin_src emacs-lisp
+(set (if EMACS27+
+         'epg-pinentry-mode
+       'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
+     nil)
+#+end_src
+
+** Org mode
+
+Default directory for Org files.
+
+#+begin_src emacs-lisp
+(setq org-directory "~/org/")
+#+end_src
+
+Hide Org markup indicators.
+
+#+begin_src emacs-lisp
+(setq org-hide-emphasis-markers t)
+#+end_src
+
+Enable variable and visual line mode in Org mode, also enable tangle-on-save.
 
 #+begin_src emacs-lisp
 (add-hook! org-mode :append
@@ -90,13 +112,7 @@ Export to Leanpub.
   (org-leanpub-book-setup-menu-markdown))
 #+end_src
 
-Use =counsel-recentf= for ~C-x b~:
-
-#+begin_src emacs-lisp
-(map! "C-x b" #'counsel-recentf)
-#+end_src
-
-** Reformatting an Org buffer
+*** Reformatting an Org buffer
 
 I picked up this little gem in the org mailing list. A function that reformats the current buffer by regenerating the text from its internal parsed representation. Quite amazing.
 
@@ -126,7 +142,7 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
   (bind-key "C-c C-M-u" 'afs/org-remove-link)
 #+end_src
 
-** Code for org-mode macros
+*** Code for org-mode macros
 
 Here I define functions which get used in some of my org-mode macros
 
