@@ -7,7 +7,7 @@ This is my Doom Emacs configuration. From this org file, all the necessary Doom 
 * config.el
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle config.el
-:header-args: :mkdirp yes :comments yes
+:header-args: :mkdirp yes :comments no
 :END:
 
 ** General configuration

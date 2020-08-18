@@ -1,76 +1,49 @@
-;; [[file:config.org::*General configuration][General configuration:1]]
 (setq user-full-name "Diego Zamboni"
       user-mail-address "diego@zzamboni.org")
-;; General configuration:1 ends here
 
-;; [[file:config.org::*General configuration][General configuration:2]]
 (cond (IS-MAC
        (setq mac-command-modifier      'meta
              mac-option-modifier       'alt
              mac-right-option-modifier 'super)))
-;; General configuration:2 ends here
 
-;; [[file:config.org::*General configuration][General configuration:3]]
 (setq doom-font (font-spec :family "Fira Code Retina" :size 16)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
-;; General configuration:3 ends here
 
-;; [[file:config.org::*General configuration][General configuration:4]]
 (use-package! mixed-pitch
   :config
   (setq mixed-pitch-variable-pitch-cursor nil)
   :hook
   (text-mode . mixed-pitch-mode))
-;; General configuration:4 ends here
 
-;; [[file:config.org::*General configuration][General configuration:5]]
 (setq doom-theme 'spacemacs-light)
-;; General configuration:5 ends here
 
-;; [[file:config.org::*General configuration][General configuration:6]]
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type nil)
-;; General configuration:6 ends here
 
-;; [[file:config.org::*General configuration][General configuration:7]]
 (setq confirm-kill-emacs nil)
-;; General configuration:7 ends here
 
-;; [[file:config.org::*General configuration][General configuration:8]]
 (map! "C-x b" #'counsel-recentf)
-;; General configuration:8 ends here
 
-;; [[file:config.org::*General configuration][General configuration:9]]
 (set (if EMACS27+
          'epg-pinentry-mode
        'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
      nil)
-;; General configuration:9 ends here
 
-;; [[file:config.org::*Org mode][Org mode:1]]
 (setq org-directory "~/org/")
-;; Org mode:1 ends here
 
-;; [[file:config.org::*Org mode][Org mode:2]]
 (setq org-hide-emphasis-markers t)
-;; Org mode:2 ends here
 
-;; [[file:config.org::*Org mode][Org mode:3]]
 (add-hook! org-mode :append
            #'visual-line-mode
            #'variable-pitch-mode
            (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
-;; Org mode:3 ends here
 
-;; [[file:config.org::*Org mode][Org mode:4]]
 (use-package! ox-leanpub
   :config
   (require 'ox-leanpub-markdown)
   (org-leanpub-book-setup-menu-markdown))
-;; Org mode:4 ends here
 
-;; [[file:config.org::*Reformatting an Org buffer][Reformatting an Org buffer:1]]
   (defun zz/org-reformat-buffer ()
     (interactive)
     (when (y-or-n-p "Really format current buffer? ")
@@ -78,9 +51,7 @@
         (erase-buffer)
         (insert document)
         (goto-char (point-min)))))
-;; Reformatting an Org buffer:1 ends here
 
-;; [[file:config.org::*Reformatting an Org buffer][Reformatting an Org buffer:2]]
   (defun afs/org-remove-link ()
       "Replace an org link by its description or if empty its address"
     (interactive)
@@ -92,15 +63,11 @@
       (apply 'delete-region remove)
       (insert description))))
   (bind-key "C-c C-M-u" 'afs/org-remove-link)
-;; Reformatting an Org buffer:2 ends here
 
-;; [[file:config.org::*Code for org-mode macros][Code for org-mode macros:1]]
   (defun zz/org-if-str (str &optional desc)
     (when (org-string-nw-p str)
       (or (org-string-nw-p desc) str)))
-;; Code for org-mode macros:1 ends here
 
-;; [[file:config.org::*Code for org-mode macros][Code for org-mode macros:2]]
   (defun zz/org-macro-hsapi-code (module &optional func desc)
     (org-link-make-string
      (concat "https://www.hammerspoon.org/docs/"
@@ -109,9 +76,7 @@
          (format "=%s="
                  (concat module
                          (zz/org-if-str func (concat "." func)))))))
-;; Code for org-mode macros:2 ends here
 
-;; [[file:config.org::*Code for org-mode macros][Code for org-mode macros:3]]
   (defun zz/org-macro-keys-code-outer (str)
     (mapconcat (lambda (s)
                  (concat "~" s "~"))
@@ -125,20 +90,15 @@
             "~"))
   (defun zz/org-macro-keys-code (str)
     (zz/org-macro-keys-code-inner str))
-;; Code for org-mode macros:3 ends here
 
-;; [[file:config.org::*Code for org-mode macros][Code for org-mode macros:4]]
   (defun zz/org-macro-luadoc-code (func &optional section desc)
     (org-link-make-string
      (concat "https://www.lua.org/manual/5.3/manual.html#"
              (zz/org-if-str func section))
      (zz/org-if-str func desc)))
-;; Code for org-mode macros:4 ends here
 
-;; [[file:config.org::*Code for org-mode macros][Code for org-mode macros:5]]
   (defun zz/org-macro-luafun-code (func &optional desc)
     (org-link-make-string
      (concat "https://www.lua.org/manual/5.3/manual.html#"
              (concat "pdf-" func))
      (zz/org-if-str (concat "=" func "()=") desc)))
-;; Code for org-mode macros:5 ends here
