@@ -2,7 +2,7 @@
 #+author: Diego Zamboni
 #+email: diego@zzamboni.org
 
-This is my Doom Emacs configuration. From this org file, all (where "all" means "only =config.el= for now) the necessary Doom Emacs config files are generated.
+This is my Doom Emacs configuration. From this org file, all (where "all" means "only =config.el= for now") the necessary Doom Emacs config files are generated.
 
 * config.el
 :PROPERTIES:
