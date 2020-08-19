@@ -262,6 +262,16 @@ Now I define keybindings to access my commonly-used org files, and add them to =
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
 #+end_src
 
+*** Exporting a Curriculum Vitae
+
+I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].
+
+#+begin_src emacs-lisp
+(use-package! ox-awesomecv
+  ;;  :init
+  ;;  (require 'ox-awesomecv)
+  )
+#+end_src
 
 ** Original config.el
 

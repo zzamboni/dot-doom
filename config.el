@@ -131,3 +131,8 @@
 (zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
 (zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
+
+(use-package! ox-awesomecv
+  ;;  :init
+  ;;  (require 'ox-awesomecv)
+  )

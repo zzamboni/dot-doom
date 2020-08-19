@@ -24,6 +24,10 @@
 ;; Use Delta (https://github.com/dandavison/delta/) to show Magit diffs
 (package! magit-delta)
 
+;; Org-CV package, but from my awesomecv branch
+(package! org-cv
+  :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
+
 ;; To install a package directly from a remote git repo, you must specify a
 ;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
 ;; https://github.com/raxod502/straight.el#the-recipe-format
