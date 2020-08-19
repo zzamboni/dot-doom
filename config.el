@@ -29,8 +29,6 @@
 
 (map! "C-x b" #'counsel-recentf)
 
-(map! "C-x r" #'doom/quickload-session)
-
 (set (if EMACS27+
          'epg-pinentry-mode
        'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
@@ -41,8 +39,11 @@
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 (use-package! magit-delta
-  :config
-  (magit-delta-mode))
+  ;;:config
+  ;;(magit-delta-mode)
+)
+
+(setq minimap-major-modes '(prog-mode org-mode))
 
 (setq org-directory "~/org/")
 

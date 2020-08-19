@@ -34,9 +34,9 @@ Change the Mac modifiers to my liking
 
 When at the beginning of the line, make =Ctrl-K= remove the whole line, instead of just emptying it.
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (setq kill-whole-line t)
-  #+end_src
+#+end_src
 
 Set base and variable-pitch fonts.
 
@@ -81,12 +81,6 @@ Use =counsel-recentf= for ~C-x b~.
 (map! "C-x b" #'counsel-recentf)
 #+end_src
 
-Use ~C-x r~ for restoring the last session (shorter than ~C-c w L~).
-
-#+begin_src emacs-lisp
-(map! "C-x r" #'doom/quickload-session)
-#+end_src
-
 Use the GPG graphical PIN entry utility.
 
 #+begin_src emacs-lisp
@@ -108,14 +102,18 @@ Maximize the window upon startup.
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 #+end_src
 
-Use [[https://github.com/dandavison/delta/][Delta]] to show Magit diffs.
+Use [[https://github.com/dandavison/delta/][Delta]] to show Magit diffs. It gives an error sometimes, so I am not enabling it by default for now.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package! magit-delta
-  :config
-  (magit-delta-mode))
-#+END_SRC
+  ;;:config
+  ;;(magit-delta-mode)
+)
+#+end_src
 
+#+begin_src emacs-lisp
+(setq minimap-major-modes '(prog-mode org-mode))
+#+end_src
 ** Org mode
 
 Default directory for Org files.
@@ -251,7 +249,7 @@ I define a helper function to define keybindings that open files. Since I use th
         (desc desc))
     (map! key (lambda () (interactive) (find-file file)))
     (which-key-add-key-based-replacements key (or desc file))))
-  #+end_src
+#+end_src
 
 Now I define keybindings to access my commonly-used org files, and add them to =org-agenda-files=
 
