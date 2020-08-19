@@ -1,3 +1,5 @@
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
 (setq user-full-name "Diego Zamboni"
       user-mail-address "diego@zzamboni.org")
 
@@ -27,10 +29,20 @@
 
 (map! "C-x b" #'counsel-recentf)
 
+(map! "C-x r" #'doom/quickload-session)
+
 (set (if EMACS27+
          'epg-pinentry-mode
        'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
      nil)
+
+;;(add-hook 'window-setup-hook #'doom/quickload-session)
+
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+(use-package! magit-delta
+  :config
+  (magit-delta-mode))
 
 (setq org-directory "~/org/")
 
@@ -104,3 +116,17 @@
      (concat "https://www.lua.org/manual/5.3/manual.html#"
              (concat "pdf-" func))
      (zz/org-if-str (concat "=" func "()=") desc)))
+
+(defun zz/add-file-keybinding (key file &optional desc)
+  (let ((key key)
+        (file file)
+        (desc desc))
+    (map! key (lambda () (interactive) (find-file file)))
+    (which-key-add-key-based-replacements key (or desc file))))
+
+(setq org-agenda-files
+      '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org"))
+(zz/add-file-keybinding "C-c z w" "~/Work/work.org.gpg" "work.org")
+(zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
+(zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
+(zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
