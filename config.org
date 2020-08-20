@@ -81,6 +81,18 @@ Use =counsel-recentf= for ~C-x b~.
 (map! "C-x b" #'counsel-recentf)
 #+end_src
 
+Use =counsel-grep-or-swiper= for searching by default.
+
+#+begin_src emacs-lisp
+(map! "C-s" #'counsel-grep-or-swiper)
+#+end_src
+
+Map ~C-c C-g~ to =magit-status= - I have too ingrained muscle memory for this keybinding.
+
+#+begin_src emacs-lisp
+(map! "C-c C-g" #'magit-status)
+#+end_src
+
 Use the GPG graphical PIN entry utility.
 
 #+begin_src emacs-lisp
@@ -114,6 +126,17 @@ Use [[https://github.com/dandavison/delta/][Delta]] to show Magit diffs. It give
 #+begin_src emacs-lisp
 (setq minimap-major-modes '(prog-mode org-mode))
 #+end_src
+
+Some hooks and custom variables I use and want to declare as safe (avoid writing to =custom.el=).
+
+#+begin_src emacs-lisp
+(add-to-list 'safe-local-variable-values
+   '(eval add-hook 'after-save-hook
+           (lambda nil
+             (org-export-to-file 'awesomecv "zamboni-vita.tex"))
+           :append :local))
+#+end_src
+
 ** Org mode
 
 Default directory for Org files.

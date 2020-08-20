@@ -29,6 +29,10 @@
 
 (map! "C-x b" #'counsel-recentf)
 
+(map! "C-s" #'counsel-grep-or-swiper)
+
+(map! "C-c C-g" #'magit-status)
+
 (set (if EMACS27+
          'epg-pinentry-mode
        'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
@@ -44,6 +48,12 @@
 )
 
 (setq minimap-major-modes '(prog-mode org-mode))
+
+(add-to-list 'safe-local-variable-values
+   '(eval add-hook 'after-save-hook
+           (lambda nil
+             (org-export-to-file 'awesomecv "zamboni-vita.tex"))
+           :append :local))
 
 (setq org-directory "~/org/")
 
