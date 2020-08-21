@@ -34,19 +34,21 @@
 (map! "C-c C-g" #'magit-status)
 
 (setq zz/repolist "/Users/taazadi1/.elvish/package-data/elvish-themes/chain-summary-repos.json")
-(setq magit-repository-directories
-      (seq-map (lambda (e) (cons e 0)) (json-read-file zz/repolist)))
-;; Customize columns in magit-list-repositories
-(setq magit-repolist-columns
-      '(("Name" 25 magit-repolist-column-ident nil)
-        ("Status" 7 magit-repolist-column-flag nil)
-        ("B<U" 3 magit-repolist-column-unpulled-from-upstream
-         ((:right-align t)
-          (:help-echo "Upstream changes not in branch")))
-        ("B>U" 3 magit-repolist-column-unpushed-to-upstream
-         ((:right-align t)
-          (:help-echo "Local changes not in upstream")))
-        ("Path" 99 magit-repolist-column-path nil)))
+(after! magit
+  (defadvice! +zz/load-magit-repositories ()
+    :before #'magit-list-repositories
+    (setq magit-repository-directories
+          (seq-map (lambda (e) (cons e 0)) (json-read-file zz/repolist))))
+  (setq magit-repolist-columns
+        '(("Name" 25 magit-repolist-column-ident nil)
+          ("Status" 7 magit-repolist-column-flag nil)
+          ("B<U" 3 magit-repolist-column-unpulled-from-upstream
+           ((:right-align t)
+            (:help-echo "Upstream changes not in branch")))
+          ("B>U" 3 magit-repolist-column-unpushed-to-upstream
+           ((:right-align t)
+            (:help-echo "Local changes not in upstream")))
+          ("Path" 99 magit-repolist-column-path nil))))
 
 (set (if EMACS27+
          'epg-pinentry-mode
