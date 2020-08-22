@@ -49,6 +49,7 @@ Allow mixed fonts in a buffer.
 
 #+begin_src emacs-lisp
 (use-package! mixed-pitch
+  :defer
   :config
   (setq mixed-pitch-variable-pitch-cursor nil)
   :hook
@@ -139,6 +140,7 @@ Use [[https://github.com/dandavison/delta/][Delta]] to show Magit diffs. It give
 
 #+begin_src emacs-lisp
 (use-package! magit-delta
+  :after magit
   ;;:config
   ;;(magit-delta-mode)
 )
@@ -185,6 +187,7 @@ Export to Leanpub.
 
 #+begin_src emacs-lisp
 (use-package! ox-leanpub
+  :after org
   :config
   (require 'ox-leanpub-markdown)
   (org-leanpub-book-setup-menu-markdown))
@@ -312,6 +315,7 @@ I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to expo
 
 #+begin_src emacs-lisp
 (use-package! ox-awesomecv
+  :after org
   ;;  :init
   ;;  (require 'ox-awesomecv)
   )

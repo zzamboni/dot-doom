@@ -14,6 +14,7 @@
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
 
 (use-package! mixed-pitch
+  :defer
   :config
   (setq mixed-pitch-variable-pitch-cursor nil)
   :hook
@@ -60,6 +61,7 @@
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 (use-package! magit-delta
+  :after magit
   ;;:config
   ;;(magit-delta-mode)
 )
@@ -82,6 +84,7 @@
            (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
 
 (use-package! ox-leanpub
+  :after org
   :config
   (require 'ox-leanpub-markdown)
   (org-leanpub-book-setup-menu-markdown))
@@ -160,6 +163,7 @@
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
 
 (use-package! ox-awesomecv
+  :after org
   ;;  :init
   ;;  (require 'ox-awesomecv)
   )
