@@ -62,6 +62,75 @@
 
 (setq kill-whole-line t)
 
+;; This determines the style of line numbers in effect. If set to `nil', line
+;; numbers are disabled. For relative line numbers, set this to `relative'.
+(setq display-line-numbers-type nil)
+
+(setq confirm-kill-emacs nil)
+
+(map! "C-x b" #'counsel-recentf)
+
+;;(map! "C-s" #'counsel-grep-or-swiper)
+(map! "C-s" #'+default/search-buffer)
+
+(map! :after magit "C-c C-g" #'magit-status)
+
+(use-package! visual-regexp-steroids
+  :defer
+  :config
+  (require 'pcre2el)
+  (setq vr/engine 'pcre2el)
+  (map! "C-c s r" #'vr/replace)
+  (map! "C-c s q" #'vr/query-replace))
+
+(after! smartparens
+  (defun zz/goto-match-paren (arg)
+    "Go to the matching paren/bracket, otherwise (or if ARG is not
+    nil) insert %.  vi style of % jumping to matching brace."
+    (interactive "p")
+    (if (not (memq last-command '(set-mark
+                                  cua-set-mark
+                                  zz/goto-match-paren
+                                  down-list
+                                  up-list
+                                  end-of-defun
+                                  beginning-of-defun
+                                  backward-sexp
+                                  forward-sexp
+                                  backward-up-list
+                                  forward-paragraph
+                                  backward-paragraph
+                                  end-of-buffer
+                                  beginning-of-buffer
+                                  backward-word
+                                  forward-word
+                                  mwheel-scroll
+                                  backward-word
+                                  forward-word
+                                  mouse-start-secondary
+                                  mouse-yank-secondary
+                                  mouse-secondary-save-then-kill
+                                  move-end-of-line
+                                  move-beginning-of-line
+                                  backward-char
+                                  forward-char
+                                  scroll-up
+                                  scroll-down
+                                  scroll-left
+                                  scroll-right
+                                  mouse-set-point
+                                  next-buffer
+                                  previous-buffer
+                                  previous-line
+                                  next-line
+                                  back-to-indentation
+                                  )))
+        (self-insert-command (or arg 1))
+      (cond ((looking-at "\\s\(") (sp-forward-sexp) (backward-char 1))
+            ((looking-at "\\s\)") (forward-char 1) (sp-backward-sexp))
+            (t (self-insert-command (or arg 1))))))
+  (map! "%" 'zz/goto-match-paren))
+
 (setq doom-font (font-spec :family "Fira Code Retina" :size 16)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
 
@@ -74,20 +143,19 @@
 
 (setq doom-theme 'spacemacs-light)
 
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type nil)
+;;(add-hook 'window-setup-hook #'doom/quickload-session)
 
-(setq confirm-kill-emacs nil)
+;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
 
-(map! "C-x b" #'counsel-recentf)
+(add-to-list 'safe-local-variable-values
+             '(eval add-hook 'after-save-hook
+                    (lambda nil
+                      (org-export-to-file 'awesomecv "zamboni-vita.tex"))
+                    :append :local))
 
-(map! "C-s" #'counsel-grep-or-swiper)
-
-(map! "C-c C-g" #'magit-status)
-
-(setq zz/repolist "/Users/taazadi1/.elvish/package-data/elvish-themes/chain-summary-repos.json")
 (after! magit
+  (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
   (defadvice! +zz/load-magit-repositories ()
     :before #'magit-list-repositories
     (setq magit-repository-directories
@@ -103,32 +171,31 @@
             (:help-echo "Local changes not in upstream")))
           ("Path" 99 magit-repolist-column-path nil))))
 
-(set (if EMACS27+
-         'epg-pinentry-mode
-       'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
-     nil)
-
-;;(add-hook 'window-setup-hook #'doom/quickload-session)
-
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(after! epa
+  (set (if EMACS27+
+           'epg-pinentry-mode
+         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
+       nil))
 
 (use-package! magit-delta
   :after magit
   ;;:config
   ;;(magit-delta-mode)
-)
-
-(setq minimap-major-modes '(prog-mode org-mode))
-
-(add-to-list 'safe-local-variable-values
-   '(eval add-hook 'after-save-hook
-           (lambda nil
-             (org-export-to-file 'awesomecv "zamboni-vita.tex"))
-           :append :local))
+  )
 
 (setq org-directory "~/org/")
 
 (setq org-hide-emphasis-markers t)
+
+(setq org-insert-heading-respect-content nil)
+
+(setq org-special-ctrl-a/e t)
+(setq org-special-ctrl-k t)
+
+(setq org-use-speed-commands
+      (lambda ()
+        (and (looking-at org-outline-regexp)
+             (looking-back "^\**"))))
 
 (add-hook! org-mode :append
            #'visual-line-mode
@@ -204,11 +271,10 @@
   (let ((key key)
         (file file)
         (desc desc))
-    (map! key (lambda () (interactive) (find-file file)))
-    (which-key-add-key-based-replacements key (or desc file))))
+    (map! :desc (or desc file) key (lambda () (interactive) (find-file file)))))
 
-(setq org-agenda-files
-      '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org"))
+;(setq org-agenda-files
+;      '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org"))
 (zz/add-file-keybinding "C-c z w" "~/Work/work.org.gpg" "work.org")
 (zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
 (zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")

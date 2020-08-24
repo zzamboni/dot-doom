@@ -48,20 +48,21 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+(package! pcre2el)
+(package! visual-regexp-steroids)
+
+(package! mixed-pitch)
+
 (package! spacemacs-theme)
+
+(package! magit-delta)
 
 ;; Elvish shell
 (package! elvish-mode)
 (package! ob-elvish)
 
-;; Mixed pitch
-(package! mixed-pitch)
-
 ;; Export to Leanpub
 (package! ox-leanpub)
-
-;; Use Delta (https://github.com/dandavison/delta/) to show Magit diffs
-(package! magit-delta)
 
 ;; Org-CV package, but from my awesomecv branch
 (package! org-cv
