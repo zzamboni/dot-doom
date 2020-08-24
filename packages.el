@@ -60,16 +60,15 @@
 
 (package! org-super-agenda)
 
+(package! org-cv
+  :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
+
 ;; Elvish shell
 (package! elvish-mode)
 (package! ob-elvish)
 
 ;; Export to Leanpub
 (package! ox-leanpub)
-
-;; Org-CV package, but from my awesomecv branch
-(package! org-cv
-  :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
 
 ;; Org-GTD
 (package! org-gtd)

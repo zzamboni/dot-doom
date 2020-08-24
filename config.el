@@ -194,6 +194,31 @@
 (zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
 
+(setq org-roam-directory org-directory)
+
+(use-package! org-download
+  :commands
+  org-download-clipboard
+  :init
+  (defun zz/org-download-paste-clipboard (&optional noask)
+    (interactive "P")
+    (require 'org-download)
+    (let ((file
+           (if (not noask)
+               (read-string (format "Filename [%s]: " org-download-screenshot-basename)
+                            nil nil org-download-screenshot-basename)
+             nil)))
+      (org-download-clipboard file)))
+  (map! :map org-mode-map
+        "C-c l a b" #'zz/org-download-paste-clipboard
+        "C-M-y" #'zz/org-download-paste-clipboard)
+  :config
+  (setq org-download-method 'directory)
+  (setq org-download-image-dir "images")
+  (setq org-download-heading-lvl nil)
+  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
+  (setq org-image-actual-width 300))
+
 (after! org-agenda
   (setq org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
                                    ;; Indent todo items by level to show nesting
@@ -271,10 +296,7 @@
                  :kill-buffer t)))
 
 (use-package! ox-awesomecv
-  :after org
-  ;;  :init
-  ;;  (require 'ox-awesomecv)
-  )
+  :after org)
 
   (defun zz/org-if-str (str &optional desc)
     (when (org-string-nw-p str)

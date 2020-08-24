@@ -27,7 +27,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#org-mode][Org mode]]
   - [[#general-org-configuration][General Org Configuration]]
   - [[#org-visual-settings][Org visual settings]]
-  - [[#capturing-stuff][Capturing stuff]]
+  - [[#capturing-and-note-taking][Capturing and note taking]]
   - [[#tasks-and-agenda][Tasks and agenda]]
   - [[#gtd][GTD]]
   - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
@@ -325,7 +325,7 @@ This code is written to the =init.el= to select which modules to load. Written h
        ;;nim                                    ; python + lisp at the speed of c
        ;;nix                                    ; I hereby declare "nix geht mehr!"
        ;;ocaml                                  ; an objective camel
-       (org +pretty +journal +hugo +dragndrop)  ; organize your plain life in plain text
+       (org +pretty +journal +hugo +dragndrop +roam)  ; organize your plain life in plain text
        ;;php                                    ; perl's insecure younger brother
        plantuml                                 ; diagrams for confusing people more
        ;;purescript                             ; javascript, but functional
@@ -644,9 +644,12 @@ Export to Leanpub.
   (org-leanpub-book-setup-menu-markdown))
 #+end_src
 
-** Capturing stuff
+** Capturing and note taking :ATTACH:
+:PROPERTIES:
+:ID:       3ffdb2e2-5cea-4b1d-864a-ab37b4f1af0a
+:END:
 
-First, I define where all my Org-captured actions can be found.
+First, I define where all my Org-captured things can be found.
 
 #+begin_src emacs-lisp
 (after! org
@@ -673,6 +676,39 @@ Now I define keybindings to access my commonly-used org files.
 (zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
 (zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
+#+end_src
+
+I'm still trying out =org-roam=, although I have not figured out very well how it works for my setup. For now I configure it to include my whole Org directory.
+
+#+begin_src emacs-lisp
+(setq org-roam-directory org-directory)
+#+end_src
+
+Using =org-download= to make it easier to insert images into my org notes. The package itself is installed and configured by Doom as part of the =(org +dragndrop)= module, but I reconfigure some parameters to my liking and define a new keybinding to paste an image from the clipboard.
+
+#+begin_src emacs-lisp
+(use-package! org-download
+  :commands
+  org-download-clipboard
+  :init
+  (defun zz/org-download-paste-clipboard (&optional noask)
+    (interactive "P")
+    (require 'org-download)
+    (let ((file
+           (if (not noask)
+               (read-string (format "Filename [%s]: " org-download-screenshot-basename)
+                            nil nil org-download-screenshot-basename)
+             nil)))
+      (org-download-clipboard file)))
+  (map! :map org-mode-map
+        "C-c l a b" #'zz/org-download-paste-clipboard
+        "C-M-y" #'zz/org-download-paste-clipboard)
+  :config
+  (setq org-download-method 'directory)
+  (setq org-download-image-dir "images")
+  (setq org-download-heading-lvl nil)
+  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
+  (setq org-image-actual-width 300))
 #+end_src
 
 ** Tasks and agenda
@@ -743,7 +779,7 @@ I configure =org-archive= to archive completed TODOs by default to the =archive.
 
 ** GTD
 
-I use Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]].
+I am trying out Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]]. I haven't figured out my perfect workflow for tracking GTD with Org yet, but this looks like a very promising approach.
 
 #+begin_src emacs-lisp
 (use-package! org-gtd
@@ -790,12 +826,15 @@ We define the corresponding Org-GTD capture templates.
 
 I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].
 
+My =ox-awesomecv= package is not yet merged into the main Org-CV distribution, so I install from my branch for now.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-cv
+  :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
+#+end_src
 #+begin_src emacs-lisp
 (use-package! ox-awesomecv
-  :after org
-  ;;  :init
-  ;;  (require 'ox-awesomecv)
-  )
+  :after org)
 #+end_src
 ** Code for org-mode macros
 
@@ -928,10 +967,6 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
 
 ;; Export to Leanpub
 (package! ox-leanpub)
-
-;; Org-CV package, but from my awesomecv branch
-(package! org-cv
-  :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
 
 ;; Org-GTD
 (package! org-gtd)
