@@ -19,20 +19,21 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#references][References]]
 - [[#doom-modules][Doom modules]]
 - [[#general-configuration][General configuration]]
-- [[#key-bindings][Key bindings]]
-  - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
-  - [[#emulating-vis--key][Emulating vi's =%= key]]
-- [[#visual-session-and-window-settings][Visual, session and window settings]]
-- [[#safe-variables][Safe variables]]
-- [[#other-tools][Other tools]]
+  - [[#key-bindings][Key bindings]]
+    - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
+    - [[#emulating-vis--key][Emulating vi's =%= key]]
+  - [[#visual-session-and-window-settings][Visual, session and window settings]]
+  - [[#safe-variables][Safe variables]]
 - [[#org-mode][Org mode]]
   - [[#general-org-configuration][General Org Configuration]]
   - [[#org-visual-settings][Org visual settings]]
-  - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
-  - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#capturing-stuff][Capturing stuff]]
-  - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
+  - [[#tasks-and-agenda][Tasks and agenda]]
   - [[#gtd][GTD]]
+  - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
+  - [[#code-for-org-mode-macros][Code for org-mode macros]]
+  - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
+- [[#other-tools][Other tools]]
 - [[#original-files-to-avoid-breaking-my-config][Original files to avoid breaking my config]]
 
 * Doom config file overview
@@ -401,13 +402,13 @@ Disable exit confirmation.
 (setq confirm-kill-emacs nil)
 #+end_src
 
-* Key bindings
+** Key bindings
 
 Doom Emacs has an extensive keybinding system, and most module functions are already bound. I modify some keybindings for simplicity of to match the muscle memory I have from my previous Emacs configuration.
 
 *Note:* I do not use VI-style keybindings (which are the default for Doom) because I have decades of muscle memory with Emacs-style keybindings. You may need to adjust these if you want to use them.
 
-** Miscellaneous keybindings
+*** Miscellaneous keybindings
 
 Use =counsel-recentf= for ~C-x b~. I like being able to see all recently opened files, instead of just the current ones. This makes it possible to use ~C-x b~ almost as a replacement for ~C-c C-f~, for files that I edit often.
 
@@ -447,7 +448,7 @@ Interactive search key bindings -  [[https://github.com/benma/visual-regexp-ster
   (map! "C-c s q" #'vr/query-replace))
 #+end_src
 
-** Emulating vi's =%= key
+*** Emulating vi's =%= key
 
 One of the few things I missed in Emacs from vi was the =%= key, which jumps to the parenthesis, bracket or brace which matches the one below the cursor. This function implements this functionality, bound to the same key. Inspired by [[http://www.emacswiki.org/emacs/NavigatingParentheses]], but modified to use =smartparens= instead of the default commands, and to work on brackets and braces.
 
@@ -501,7 +502,7 @@ One of the few things I missed in Emacs from vi was the =%= key, which jumps to 
   (map! "%" 'zz/goto-match-paren))
 #+end_src
 
-* Visual, session and window settings
+** Visual, session and window settings
 
 Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://edwardtufte.github.io/et-book/][ET Book]].
 
@@ -550,7 +551,7 @@ Maximize the window upon startup. The =(fullscreen . maximized)= value suggested
 (setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
 #+end_src
 
-* Safe variables
+** Safe variables
 
 Doom [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#configure][does not recommend the Emacs =customize= mechanism]]:
 
@@ -569,62 +570,16 @@ To avoid writing to =custom.el=, I declare some hooks and custom variables I use
                     :append :local))
   #+end_src
 
-* Other tools
-
-- Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using ~defadvice!~. I also customize the display to add the =Status= column.
-
-  #+begin_src emacs-lisp
-(after! magit
-  (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
-  (defadvice! +zz/load-magit-repositories ()
-    :before #'magit-list-repositories
-    (setq magit-repository-directories
-          (seq-map (lambda (e) (cons e 0)) (json-read-file zz/repolist))))
-  (setq magit-repolist-columns
-        '(("Name" 25 magit-repolist-column-ident nil)
-          ("Status" 7 magit-repolist-column-flag nil)
-          ("B<U" 3 magit-repolist-column-unpulled-from-upstream
-           ((:right-align t)
-            (:help-echo "Upstream changes not in branch")))
-          ("B>U" 3 magit-repolist-column-unpushed-to-upstream
-           ((:right-align t)
-            (:help-echo "Local changes not in upstream")))
-          ("Path" 99 magit-repolist-column-path nil))))
-  #+end_src
-
-- I prefer to use the GPG graphical PIN entry utility. This is achieved by setting =epg-pinentry-mode= (=epa-pinentry-mode= before Emacs 27) to =nil= instead of the default ='loopback=.
-
-  #+begin_src emacs-lisp
-(after! epa
-  (set (if EMACS27+
-           'epg-pinentry-mode
-         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
-       nil))
-  #+end_src
-
-- Use [[https://github.com/dandavison/delta/][Delta]] to show Magit diffs. It gives an error sometimes, so I am not enabling it by default for now.
-
-  #+begin_src emacs-lisp :tangle packages.el
-(package! magit-delta)
-  #+end_src  
-  #+begin_src emacs-lisp
-(use-package! magit-delta
-  :after magit
-  ;;:config
-  ;;(magit-delta-mode)
-  )
-  #+end_src
-
 * Org mode
 
-I have started using [[http://orgmode.org/][org-mode]] to writing, blogging, coding, presentations and more, thanks to the hearty recommendations and information from [[http://www.cmdln.org/][Nick]] and many others. I am duly impressed. I have been a fan of the idea of [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many of my homeworks and projects), but org-mode is the first tool I have encountered which seems to make it practical. Here are some of the resources I have found useful in learning it:
+[[http://orgmode.org/][Org-mode]] has become my primary tool for writing, blogging, coding, presentations and more. I am duly impressed. I have been a fan of the idea of [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many of my homeworks and projects), but org-mode is the first tool I have encountered which seems to make it practical. Here are some of the resources I have found useful in learning it:
 
 - Howard Abrams' [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]], which got me jumpstarted into writing code documented with org-mode.
-- Nick Anderson's [[https://github.com/nickanderson/Level-up-your-notes-with-Org][Level up your notes with Org]], which contains many useful tips and configuration tricks.
+- Nick Anderson's [[https://github.com/nickanderson/Level-up-your-notes-with-Org][Level up your notes with Org]], which contains many useful tips and configuration tricks. Nick's recommendation also got me to start looking into Org-mode in the first place!
 - Sacha Chua's [[http://sachachua.com/blog/2014/01/tips-learning-org-mode-emacs/][Some tips for learning Org Mode for Emacs]], her [[http://pages.sachachua.com/.emacs.d/Sacha.html][Emacs configuration]] and many of her [[http://sachachua.com/blog/category/emacs/][other articles]].
 - Rainer König's [[https://www.youtube.com/playlist?list=PLVtKhBrRV_ZkPnBtt_TD1Cs9PJlU0IIdE][OrgMode Tutorial]] video series.
 
-Doom's Org module provides a lot of sane configuration settings, so I don't have to configure so much as in my previous hand-crafted config.
+Doom's Org module provides a lot of sane configuration settings, so I don't have to configure so much as in my [[https://github.com/zzamboni/dot-emacs/][previous hand-crafted config]].
 
 ** General Org Configuration
 
@@ -689,36 +644,159 @@ Export to Leanpub.
   (org-leanpub-book-setup-menu-markdown))
 #+end_src
 
-** Reformatting an Org buffer
+** Capturing stuff
 
-I picked up this little gem in the org mailing list. A function that reformats the current buffer by regenerating the text from its internal parsed representation. Quite amazing.
-
-#+begin_src emacs-lisp
-  (defun zz/org-reformat-buffer ()
-    (interactive)
-    (when (y-or-n-p "Really format current buffer? ")
-      (let ((document (org-element-interpret-data (org-element-parse-buffer))))
-        (erase-buffer)
-        (insert document)
-        (goto-char (point-min)))))
-#+end_src
-
-Remove a link. For some reason this is not part of org-mode. From https://emacs.stackexchange.com/a/10714/11843, I bind it to ~C-c~ ~C-M-u~.
+First, I define where all my Org-captured actions can be found.
 
 #+begin_src emacs-lisp
-  (defun afs/org-remove-link ()
-      "Replace an org link by its description or if empty its address"
-    (interactive)
-    (if (org-in-regexp org-bracket-link-regexp 1)
-        (let ((remove (list (match-beginning 0) (match-end 0)))
-          (description (if (match-end 3)
-                   (org-match-string-no-properties 3)
-                   (org-match-string-no-properties 1))))
-      (apply 'delete-region remove)
-      (insert description))))
-  (bind-key "C-c C-M-u" 'afs/org-remove-link)
+(after! org
+  (setq org-agenda-files
+        '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
 #+end_src
 
+I define some global keybindings  to open my frequently-used org files (original tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
+
+First, I define a helper function to define keybindings that open files. Note the use of =lexical-let= so that  the =lambda= creates a closure, otherwise the keybindings don't work.
+
+#+begin_src emacs-lisp
+(defun zz/add-file-keybinding (key file &optional desc)
+  (let ((key key)
+        (file file)
+        (desc desc))
+    (map! :desc (or desc file) key (lambda () (interactive) (find-file file)))))
+#+end_src
+
+Now I define keybindings to access my commonly-used org files.
+
+#+begin_src emacs-lisp
+(zz/add-file-keybinding "C-c z w" "~/Work/work.org.gpg" "work.org")
+(zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
+(zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
+(zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
+#+end_src
+
+** Tasks and agenda
+
+Customize the agenda display to indent todo items by level to show nesting, and enable showing holidays in the Org agenda display.
+
+#+begin_src emacs-lisp
+(after! org-agenda
+  (setq org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
+                                   ;; Indent todo items by level to show nesting
+                                   (todo . " %i %-12:c%l")
+                                   (tags . " %i %-12:c")
+                                   (search . " %i %-12:c")))
+  (setq org-agenda-include-diary t))
+#+end_src
+
+Install and load some custom local holiday lists I'm interested in.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! mexican-holidays)
+(package! swiss-holidays)
+#+end_src
+#+begin_src emacs-lisp
+(use-package! holidays
+  :after org-agenda
+  :config
+  (require 'mexican-holidays)
+  (require 'swiss-holidays)
+  (setq swiss-holidays-zh-city-holidays
+        '((holiday-float 4 1 3 "Sechseläuten") ;; meistens dritter Montag im April
+          (holiday-float 9 1 3 "Knabenschiessen"))) ;; zweites Wochenende im September
+  (setq calendar-holidays
+        (append '((holiday-fixed 1 1 "New Year's Day")
+                  (holiday-fixed 2 14 "Valentine's Day")
+                  (holiday-fixed 4 1 "April Fools' Day")
+                  (holiday-fixed 10 31 "Halloween")
+                  (holiday-easter-etc)
+                  (holiday-fixed 12 25 "Christmas")
+                  (solar-equinoxes-solstices))
+                swiss-holidays
+                swiss-holidays-labour-day
+                swiss-holidays-catholic
+                swiss-holidays-zh-city-holidays
+                holiday-mexican-holidays)))
+#+end_src
+
+[[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] provides great grouping and customization features to make agenda mode easier to use.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-super-agenda)
+#+end_src
+#+begin_src emacs-lisp
+(use-package! org-super-agenda
+  :after org-agenda
+  :config
+  (setq org-super-agenda-groups '((:auto-dir-name t)))
+  (org-super-agenda-mode))
+#+end_src
+
+I configure =org-archive= to archive completed TODOs by default to the =archive.org= file in the same directory as the source file, under the "date tree" corresponding to the task's CLOSED date - this allows me to easily separate work from non-work stuff. Note that this can be overridden for specific files by specifying the desired value of =org-archive-location= in the =#+archive:= property at the top of the file.
+
+#+begin_src emacs-lisp
+(use-package! org-archive
+  :after org
+  :config
+  (setq org-archive-location "archive.org::datetree/"))
+#+end_src
+
+** GTD
+
+I use Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]].
+
+#+begin_src emacs-lisp
+(use-package! org-gtd
+  :after org
+  :config
+  ;; where org-gtd will put its files. This value is also the default one.
+  (setq org-gtd-directory "~/gtd/")
+  ;; package: https://github.com/Malabarba/org-agenda-property
+  ;; this is so you can see who an item was delegated to in the agenda
+  (setq org-agenda-property-list '("DELEGATED_TO"))
+  ;; I think this makes the agenda easier to read
+  (setq org-agenda-property-position 'next-line)
+  ;; package: https://www.nongnu.org/org-edna-el/
+  ;; org-edna is used to make sure that when a project task gets DONE,
+  ;; the next TODO is automatically changed to NEXT.
+  (setq org-edna-use-inheritance t)
+  (org-edna-load)
+  :bind
+  (("C-c d c" . org-gtd-capture) ;; add item to inbox
+   ("C-c d a" . org-agenda-list) ;; see what's on your plate today
+   ("C-c d p" . org-gtd-process-inbox) ;; process entire inbox
+   ("C-c d n" . org-gtd-show-all-next) ;; see all NEXT items
+   ("C-c d s" . org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
+   ("C-c d f" . org-gtd-clarify-finalize))) ;; the keybinding to hit when you're done editing an item in the processing phase
+#+end_src
+
+We define the corresponding Org-GTD capture templates.
+
+#+begin_src emacs-lisp
+(after! (org-gtd org-capture)
+  (add-to-list 'org-capture-templates
+               '("i" "GTD item"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i"
+                 :kill-buffer t))
+  (add-to-list 'org-capture-templates
+               '("l" "GTD item with link to where you are in emacs now"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i\n  %a"
+                 :kill-buffer t)))
+#+end_src
+
+** Exporting a Curriculum Vitae
+
+I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].
+
+#+begin_src emacs-lisp
+(use-package! ox-awesomecv
+  :after org
+  ;;  :init
+  ;;  (require 'ox-awesomecv)
+  )
+#+end_src
 ** Code for org-mode macros
 
 Here I define functions which get used in some of my org-mode macros
@@ -779,86 +857,68 @@ Links to a specific section/function of the Lua manual.
              (concat "pdf-" func))
      (zz/org-if-str (concat "=" func "()=") desc)))
 #+end_src
-** Capturing stuff
+** Reformatting an Org buffer
 
-First, I define some global keybindings  to open my frequently-used org files (original tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
-
-I define a helper function to define keybindings that open files. Since I use the =which-key= package, it also defines the description of the key that will appear in the =which-key= menu. Note the use of =lexical-let= so that  the =lambda= creates a closure, otherwise the keybindings don't work.
+I picked up this little gem in the org mailing list. A function that reformats the current buffer by regenerating the text from its internal parsed representation. Quite amazing.
 
 #+begin_src emacs-lisp
-(defun zz/add-file-keybinding (key file &optional desc)
-  (let ((key key)
-        (file file)
-        (desc desc))
-    (map! :desc (or desc file) key (lambda () (interactive) (find-file file)))))
+  (defun zz/org-reformat-buffer ()
+    (interactive)
+    (when (y-or-n-p "Really format current buffer? ")
+      (let ((document (org-element-interpret-data (org-element-parse-buffer))))
+        (erase-buffer)
+        (insert document)
+        (goto-char (point-min)))))
 #+end_src
 
-Now I define keybindings to access my commonly-used org files, and add them to =org-agenda-files=
+Remove a link. For some reason this is not part of org-mode. From https://emacs.stackexchange.com/a/10714/11843, I bind it to ~C-c~ ~C-M-u~.
 
 #+begin_src emacs-lisp
-;(setq org-agenda-files
-;      '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org"))
-(zz/add-file-keybinding "C-c z w" "~/Work/work.org.gpg" "work.org")
-(zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
-(zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
-(zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
+  (defun afs/org-remove-link ()
+      "Replace an org link by its description or if empty its address"
+    (interactive)
+    (if (org-in-regexp org-bracket-link-regexp 1)
+        (let ((remove (list (match-beginning 0) (match-end 0)))
+          (description (if (match-end 3)
+                   (org-match-string-no-properties 3)
+                   (org-match-string-no-properties 1))))
+      (apply 'delete-region remove)
+      (insert description))))
+  (bind-key "C-c C-M-u" 'afs/org-remove-link)
 #+end_src
 
-** Exporting a Curriculum Vitae
+* Other tools
 
-I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].
+- Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using ~defadvice!~. I also customize the display to add the =Status= column.
 
-#+begin_src emacs-lisp
-(use-package! ox-awesomecv
-  :after org
-  ;;  :init
-  ;;  (require 'ox-awesomecv)
-  )
-#+end_src
-** GTD
+  #+begin_src emacs-lisp
+(after! magit
+  (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
+  (defadvice! +zz/load-magit-repositories ()
+    :before #'magit-list-repositories
+    (setq magit-repository-directories
+          (seq-map (lambda (e) (cons e 0)) (json-read-file zz/repolist))))
+  (setq magit-repolist-columns
+        '(("Name" 25 magit-repolist-column-ident nil)
+          ("Status" 7 magit-repolist-column-flag nil)
+          ("B<U" 3 magit-repolist-column-unpulled-from-upstream
+           ((:right-align t)
+            (:help-echo "Upstream changes not in branch")))
+          ("B>U" 3 magit-repolist-column-unpushed-to-upstream
+           ((:right-align t)
+            (:help-echo "Local changes not in upstream")))
+          ("Path" 99 magit-repolist-column-path nil))))
+  #+end_src
 
-I use Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]].
+- I prefer to use the GPG graphical PIN entry utility. This is achieved by setting =epg-pinentry-mode= (=epa-pinentry-mode= before Emacs 27) to =nil= instead of the default ='loopback=.
 
-#+begin_src emacs-lisp
-(use-package! org-gtd
-  :after org
-  :config
-  ;; where org-gtd will put its files. This value is also the default one.
-  (setq org-gtd-directory "~/gtd/")
-  ;; package: https://github.com/Malabarba/org-agenda-property
-  ;; this is so you can see who an item was delegated to in the agenda
-  (setq org-agenda-property-list '("DELEGATED_TO"))
-  ;; I think this makes the agenda easier to read
-  (setq org-agenda-property-position 'next-line)
-  ;; package: https://www.nongnu.org/org-edna-el/
-  ;; org-edna is used to make sure that when a project task gets DONE,
-  ;; the next TODO is automatically changed to NEXT.
-  (setq org-edna-use-inheritance t)
-  (org-edna-load)
-  :bind
-  (("C-c d c" . org-gtd-capture) ;; add item to inbox
-   ("C-c d a" . org-agenda-list) ;; see what's on your plate today
-   ("C-c d p" . org-gtd-process-inbox) ;; process entire inbox
-   ("C-c d n" . org-gtd-show-all-next) ;; see all NEXT items
-   ("C-c d s" . org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
-   ("C-c d f" . org-gtd-clarify-finalize))) ;; the keybinding to hit when you're done editing an item in the processing phase
-#+end_src
-
-We define the corresponding Org-GTD capture templates.
-
-#+begin_src emacs-lisp
-(after! (org-gtd org-capture)
-  (add-to-list 'org-capture-templates
-               '("i" "GTD item"
-                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
-                 "* %?\n%U\n\n  %i"
-                 :kill-buffer t))
-  (add-to-list 'org-capture-templates
-               '("l" "GTD item with link to where you are in emacs now"
-                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
-                 "* %?\n%U\n\n  %i\n  %a"
-                 :kill-buffer t)))
-#+end_src
+  #+begin_src emacs-lisp
+(after! epa
+  (set (if EMACS27+
+           'epg-pinentry-mode
+         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
+       nil))
+  #+end_src
 
 * Original files to avoid breaking my config
 #+begin_src emacs-lisp :tangle packages.el

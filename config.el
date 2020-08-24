@@ -154,35 +154,6 @@
                       (org-export-to-file 'awesomecv "zamboni-vita.tex"))
                     :append :local))
 
-(after! magit
-  (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
-  (defadvice! +zz/load-magit-repositories ()
-    :before #'magit-list-repositories
-    (setq magit-repository-directories
-          (seq-map (lambda (e) (cons e 0)) (json-read-file zz/repolist))))
-  (setq magit-repolist-columns
-        '(("Name" 25 magit-repolist-column-ident nil)
-          ("Status" 7 magit-repolist-column-flag nil)
-          ("B<U" 3 magit-repolist-column-unpulled-from-upstream
-           ((:right-align t)
-            (:help-echo "Upstream changes not in branch")))
-          ("B>U" 3 magit-repolist-column-unpushed-to-upstream
-           ((:right-align t)
-            (:help-echo "Local changes not in upstream")))
-          ("Path" 99 magit-repolist-column-path nil))))
-
-(after! epa
-  (set (if EMACS27+
-           'epg-pinentry-mode
-         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
-       nil))
-
-(use-package! magit-delta
-  :after magit
-  ;;:config
-  ;;(magit-delta-mode)
-  )
-
 (setq org-directory "~/org/")
 
 (setq org-hide-emphasis-markers t)
@@ -208,25 +179,102 @@
   (require 'ox-leanpub-markdown)
   (org-leanpub-book-setup-menu-markdown))
 
-  (defun zz/org-reformat-buffer ()
-    (interactive)
-    (when (y-or-n-p "Really format current buffer? ")
-      (let ((document (org-element-interpret-data (org-element-parse-buffer))))
-        (erase-buffer)
-        (insert document)
-        (goto-char (point-min)))))
+(after! org
+  (setq org-agenda-files
+        '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
 
-  (defun afs/org-remove-link ()
-      "Replace an org link by its description or if empty its address"
-    (interactive)
-    (if (org-in-regexp org-bracket-link-regexp 1)
-        (let ((remove (list (match-beginning 0) (match-end 0)))
-          (description (if (match-end 3)
-                   (org-match-string-no-properties 3)
-                   (org-match-string-no-properties 1))))
-      (apply 'delete-region remove)
-      (insert description))))
-  (bind-key "C-c C-M-u" 'afs/org-remove-link)
+(defun zz/add-file-keybinding (key file &optional desc)
+  (let ((key key)
+        (file file)
+        (desc desc))
+    (map! :desc (or desc file) key (lambda () (interactive) (find-file file)))))
+
+(zz/add-file-keybinding "C-c z w" "~/Work/work.org.gpg" "work.org")
+(zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
+(zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
+(zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
+
+(after! org-agenda
+  (setq org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
+                                   ;; Indent todo items by level to show nesting
+                                   (todo . " %i %-12:c%l")
+                                   (tags . " %i %-12:c")
+                                   (search . " %i %-12:c")))
+  (setq org-agenda-include-diary t))
+
+(use-package! holidays
+  :after org-agenda
+  :config
+  (require 'mexican-holidays)
+  (require 'swiss-holidays)
+  (setq swiss-holidays-zh-city-holidays
+        '((holiday-float 4 1 3 "Sechseläuten") ;; meistens dritter Montag im April
+          (holiday-float 9 1 3 "Knabenschiessen"))) ;; zweites Wochenende im September
+  (setq calendar-holidays
+        (append '((holiday-fixed 1 1 "New Year's Day")
+                  (holiday-fixed 2 14 "Valentine's Day")
+                  (holiday-fixed 4 1 "April Fools' Day")
+                  (holiday-fixed 10 31 "Halloween")
+                  (holiday-easter-etc)
+                  (holiday-fixed 12 25 "Christmas")
+                  (solar-equinoxes-solstices))
+                swiss-holidays
+                swiss-holidays-labour-day
+                swiss-holidays-catholic
+                swiss-holidays-zh-city-holidays
+                holiday-mexican-holidays)))
+
+(use-package! org-super-agenda
+  :after org-agenda
+  :config
+  (setq org-super-agenda-groups '((:auto-dir-name t)))
+  (org-super-agenda-mode))
+
+(use-package! org-archive
+  :after org
+  :config
+  (setq org-archive-location "archive.org::datetree/"))
+
+(use-package! org-gtd
+  :after org
+  :config
+  ;; where org-gtd will put its files. This value is also the default one.
+  (setq org-gtd-directory "~/gtd/")
+  ;; package: https://github.com/Malabarba/org-agenda-property
+  ;; this is so you can see who an item was delegated to in the agenda
+  (setq org-agenda-property-list '("DELEGATED_TO"))
+  ;; I think this makes the agenda easier to read
+  (setq org-agenda-property-position 'next-line)
+  ;; package: https://www.nongnu.org/org-edna-el/
+  ;; org-edna is used to make sure that when a project task gets DONE,
+  ;; the next TODO is automatically changed to NEXT.
+  (setq org-edna-use-inheritance t)
+  (org-edna-load)
+  :bind
+  (("C-c d c" . org-gtd-capture) ;; add item to inbox
+   ("C-c d a" . org-agenda-list) ;; see what's on your plate today
+   ("C-c d p" . org-gtd-process-inbox) ;; process entire inbox
+   ("C-c d n" . org-gtd-show-all-next) ;; see all NEXT items
+   ("C-c d s" . org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
+   ("C-c d f" . org-gtd-clarify-finalize))) ;; the keybinding to hit when you're done editing an item in the processing phase
+
+(after! (org-gtd org-capture)
+  (add-to-list 'org-capture-templates
+               '("i" "GTD item"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i"
+                 :kill-buffer t))
+  (add-to-list 'org-capture-templates
+               '("l" "GTD item with link to where you are in emacs now"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i\n  %a"
+                 :kill-buffer t)))
+
+(use-package! ox-awesomecv
+  :after org
+  ;;  :init
+  ;;  (require 'ox-awesomecv)
+  )
 
   (defun zz/org-if-str (str &optional desc)
     (when (org-string-nw-p str)
@@ -267,56 +315,45 @@
              (concat "pdf-" func))
      (zz/org-if-str (concat "=" func "()=") desc)))
 
-(defun zz/add-file-keybinding (key file &optional desc)
-  (let ((key key)
-        (file file)
-        (desc desc))
-    (map! :desc (or desc file) key (lambda () (interactive) (find-file file)))))
+  (defun zz/org-reformat-buffer ()
+    (interactive)
+    (when (y-or-n-p "Really format current buffer? ")
+      (let ((document (org-element-interpret-data (org-element-parse-buffer))))
+        (erase-buffer)
+        (insert document)
+        (goto-char (point-min)))))
 
-;(setq org-agenda-files
-;      '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org"))
-(zz/add-file-keybinding "C-c z w" "~/Work/work.org.gpg" "work.org")
-(zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
-(zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
-(zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
+  (defun afs/org-remove-link ()
+      "Replace an org link by its description or if empty its address"
+    (interactive)
+    (if (org-in-regexp org-bracket-link-regexp 1)
+        (let ((remove (list (match-beginning 0) (match-end 0)))
+          (description (if (match-end 3)
+                   (org-match-string-no-properties 3)
+                   (org-match-string-no-properties 1))))
+      (apply 'delete-region remove)
+      (insert description))))
+  (bind-key "C-c C-M-u" 'afs/org-remove-link)
 
-(use-package! ox-awesomecv
-  :after org
-  ;;  :init
-  ;;  (require 'ox-awesomecv)
-  )
+(after! magit
+  (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
+  (defadvice! +zz/load-magit-repositories ()
+    :before #'magit-list-repositories
+    (setq magit-repository-directories
+          (seq-map (lambda (e) (cons e 0)) (json-read-file zz/repolist))))
+  (setq magit-repolist-columns
+        '(("Name" 25 magit-repolist-column-ident nil)
+          ("Status" 7 magit-repolist-column-flag nil)
+          ("B<U" 3 magit-repolist-column-unpulled-from-upstream
+           ((:right-align t)
+            (:help-echo "Upstream changes not in branch")))
+          ("B>U" 3 magit-repolist-column-unpushed-to-upstream
+           ((:right-align t)
+            (:help-echo "Local changes not in upstream")))
+          ("Path" 99 magit-repolist-column-path nil))))
 
-(use-package! org-gtd
-  :after org
-  :config
-  ;; where org-gtd will put its files. This value is also the default one.
-  (setq org-gtd-directory "~/gtd/")
-  ;; package: https://github.com/Malabarba/org-agenda-property
-  ;; this is so you can see who an item was delegated to in the agenda
-  (setq org-agenda-property-list '("DELEGATED_TO"))
-  ;; I think this makes the agenda easier to read
-  (setq org-agenda-property-position 'next-line)
-  ;; package: https://www.nongnu.org/org-edna-el/
-  ;; org-edna is used to make sure that when a project task gets DONE,
-  ;; the next TODO is automatically changed to NEXT.
-  (setq org-edna-use-inheritance t)
-  (org-edna-load)
-  :bind
-  (("C-c d c" . org-gtd-capture) ;; add item to inbox
-   ("C-c d a" . org-agenda-list) ;; see what's on your plate today
-   ("C-c d p" . org-gtd-process-inbox) ;; process entire inbox
-   ("C-c d n" . org-gtd-show-all-next) ;; see all NEXT items
-   ("C-c d s" . org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
-   ("C-c d f" . org-gtd-clarify-finalize))) ;; the keybinding to hit when you're done editing an item in the processing phase
-
-(after! (org-gtd org-capture)
-  (add-to-list 'org-capture-templates
-               '("i" "GTD item"
-                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
-                 "* %?\n%U\n\n  %i"
-                 :kill-buffer t))
-  (add-to-list 'org-capture-templates
-               '("l" "GTD item with link to where you are in emacs now"
-                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
-                 "* %?\n%U\n\n  %i\n  %a"
-                 :kill-buffer t)))
+(after! epa
+  (set (if EMACS27+
+           'epg-pinentry-mode
+         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
+       nil))

@@ -55,7 +55,10 @@
 
 (package! spacemacs-theme)
 
-(package! magit-delta)
+(package! mexican-holidays)
+(package! swiss-holidays)
+
+(package! org-super-agenda)
 
 ;; Elvish shell
 (package! elvish-mode)
