@@ -197,12 +197,10 @@
 (setq org-roam-directory org-directory)
 
 (use-package! org-download
-  :commands
-  org-download-clipboard
-  :init
+  :after org
+  :config
   (defun zz/org-download-paste-clipboard (&optional noask)
     (interactive "P")
-    (require 'org-download)
     (let ((file
            (if (not noask)
                (read-string (format "Filename [%s]: " org-download-screenshot-basename)
@@ -210,14 +208,21 @@
              nil)))
       (org-download-clipboard file)))
   (map! :map org-mode-map
-        "C-c l a b" #'zz/org-download-paste-clipboard
+        "C-c l a y" #'zz/org-download-paste-clipboard
         "C-M-y" #'zz/org-download-paste-clipboard)
-  :config
   (setq org-download-method 'directory)
   (setq org-download-image-dir "images")
   (setq org-download-heading-lvl nil)
   (setq org-download-timestamp "%Y%m%d-%H%M%S_")
   (setq org-image-actual-width 300))
+
+(use-package! org-mac-link
+  :after org
+  :config
+  (setq org-mac-grab-Acrobat-app-p nil) ; Disable grabbing from Adobe Acrobat
+  (setq org-mac-grab-devonthink-app-p nil) ; Disable grabbinb from DevonThink
+  (map! :map org-mode-map
+        "C-c g"  #'org-mac-grab-link))
 
 (after! org-agenda
   (setq org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
