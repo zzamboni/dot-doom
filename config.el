@@ -142,6 +142,8 @@
   (text-mode . mixed-pitch-mode))
 
 (setq doom-theme 'spacemacs-light)
+;(setq doom-theme 'doom-nord-light)
+;(setq doom-theme 'doom-solarized-light)
 
 ;;(add-hook 'window-setup-hook #'doom/quickload-session)
 
