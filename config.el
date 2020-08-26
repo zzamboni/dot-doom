@@ -201,6 +201,11 @@
 (use-package! org-download
   :after org
   :config
+  (setq org-download-method 'directory
+        org-download-image-dir "images"
+        org-download-heading-lvl nil
+        org-download-timestamp "%Y%m%d-%H%M%S_"
+        org-image-actual-width 300)
   (defun zz/org-download-paste-clipboard (&optional noask)
     (interactive "P")
     (let ((file
@@ -211,12 +216,7 @@
       (org-download-clipboard file)))
   (map! :map org-mode-map
         "C-c l a y" #'zz/org-download-paste-clipboard
-        "C-M-y" #'zz/org-download-paste-clipboard)
-  (setq org-download-method 'directory)
-  (setq org-download-image-dir "images")
-  (setq org-download-heading-lvl nil)
-  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
-  (setq org-image-actual-width 300))
+        "C-M-y" #'zz/org-download-paste-clipboard))
 
 (use-package! org-mac-link
   :after org

@@ -692,6 +692,11 @@ Using =org-download= to make it easier to insert images into my org notes. The p
 (use-package! org-download
   :after org
   :config
+  (setq org-download-method 'directory
+        org-download-image-dir "images"
+        org-download-heading-lvl nil
+        org-download-timestamp "%Y%m%d-%H%M%S_"
+        org-image-actual-width 300)
   (defun zz/org-download-paste-clipboard (&optional noask)
     (interactive "P")
     (let ((file
@@ -702,12 +707,7 @@ Using =org-download= to make it easier to insert images into my org notes. The p
       (org-download-clipboard file)))
   (map! :map org-mode-map
         "C-c l a y" #'zz/org-download-paste-clipboard
-        "C-M-y" #'zz/org-download-paste-clipboard)
-  (setq org-download-method 'directory)
-  (setq org-download-image-dir "images")
-  (setq org-download-heading-lvl nil)
-  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
-  (setq org-image-actual-width 300))
+        "C-M-y" #'zz/org-download-paste-clipboard))
 #+end_src
 
 =org-mac-link= implements the ability to grab links from different Mac apps and insert them in the file. Bind =C-c g= to call =org-mac-grab-link= to choose an application and insert a link.
