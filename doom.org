@@ -6,11 +6,14 @@
 #+property: header-args:emacs-lisp :tangle config.el
 #+property: header-args :mkdirp yes :comments no
 
+* Introduction
+
 This is my Doom Emacs configuration. From this org file, all the necessary Doom Emacs config files are generated.
 
 This file is written in [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][literate programming style]] using [[https://orgmode.org/][org-mode]]. See [[file:init.el][init.el]], [[file:packages.el][packages.el]] and [[file:config.el][config.el]] for the generated files.
 
 * Table of Contents :TOC_3:noexport:
+- [[#introduction][Introduction]]
 - [[#doom-config-file-overview][Doom config file overview]]
   - [[#config-file-headers][Config file headers]]
     - [[#initel][init.el]]
@@ -847,6 +850,7 @@ My =ox-awesomecv= package is not yet merged into the main Org-CV distribution, s
 (use-package! ox-awesomecv
   :after org)
 #+end_src
+
 ** Code for org-mode macros
 
 Here I define functions which get used in some of my org-mode macros
