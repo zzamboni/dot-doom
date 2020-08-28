@@ -36,8 +36,8 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
+- [[#coding][Coding]]
 - [[#other-tools][Other tools]]
-- [[#original-files-to-avoid-breaking-my-config][Original files to avoid breaking my config]]
 
 * Doom config file overview
 
@@ -305,7 +305,7 @@ This code is written to the =init.el= to select which modules to load. Written h
        elvish                                   ; The Elvish shell
        emacs-lisp                               ; drown in parentheses
        ;;erlang                                 ; an elegant language for a more civilized age
-       ;;ess                                    ; emacs speaks statistics
+       (ess +lsp)                               ; emacs speaks statistics
        ;;faust                                  ; dsp, but you get to keep your soul
        ;;fsharp                                 ; ML stands for Microsoft's Language
        ;;fstar                                  ; (dependent) types and (monadic) effects and Z3
@@ -328,7 +328,7 @@ This code is written to the =init.el= to select which modules to load. Written h
        ;;nim                                    ; python + lisp at the speed of c
        ;;nix                                    ; I hereby declare "nix geht mehr!"
        ;;ocaml                                  ; an objective camel
-       (org +pretty +journal +hugo +dragndrop +roam +pandoc +present)  ; organize your plain life in plain text
+       (org +pretty +journal +hugo +roam +pandoc +present)  ; organize your plain life in plain text
        ;;php                                    ; perl's insecure younger brother
        plantuml                                 ; diagrams for confusing people more
        ;;purescript                             ; javascript, but functional
@@ -539,8 +539,8 @@ And then from =config.el= we specify the theme to use.
 
 #+begin_src emacs-lisp
 (setq doom-theme 'spacemacs-light)
-;(setq doom-theme 'doom-nord-light)
-;(setq doom-theme 'doom-solarized-light)
+;;(setq doom-theme 'doom-nord-light)
+;;(setq doom-theme 'doom-solarized-light)
 #+end_src
 
 In my previous configuration, I used to automatically restore the previous session upon startup. Doom Emacs starts up so fast that it does not feel right to do it automatically. In any case, from the Doom dashboard I can simply press Enter to invoke the first item, which is "Reload Last Session". So this code is commented out now.
@@ -641,6 +641,9 @@ Enable variable and visual line mode in Org mode, also enable tangle-on-save.
 
 Export to Leanpub.
 
+#+begin_src emacs-lisp :tangle packages.el
+(package! ox-leanpub)
+#+end_src
 #+begin_src emacs-lisp
 (use-package! ox-leanpub
   :after org
@@ -689,25 +692,28 @@ I'm still trying out =org-roam=, although I have not figured out very well how i
 (setq org-roam-directory org-directory)
 #+end_src
 
-Using =org-download= to make it easier to insert images into my org notes. The package itself is installed and configured by Doom as part of the =(org +dragndrop)= module, but I reconfigure some parameters to my liking and define a new keybinding to paste an image from the clipboard.
+Using =org-download= to make it easier to insert images into my org notes. I don't like the configuration provided by Doom as part of the =(org +dragndrop)= module, so I install the package by hand and configure it to my liking. I also define a new keybinding to paste an image from the clipboard, asking for the filename first.
 
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-download)
+#+end_src
 #+begin_src emacs-lisp
-(use-package! org-download
-  :after org
-  :config
-  (setq org-download-method 'directory
-        org-download-image-dir "images"
-        org-download-heading-lvl nil
-        org-download-timestamp "%Y%m%d-%H%M%S_"
-        org-image-actual-width 300)
-  (defun zz/org-download-paste-clipboard (&optional noask)
-    (interactive "P")
-    (let ((file
-           (if (not noask)
-               (read-string (format "Filename [%s]: " org-download-screenshot-basename)
-                            nil nil org-download-screenshot-basename)
-             nil)))
-      (org-download-clipboard file)))
+(defun zz/org-download-paste-clipboard (&optional use-default-filename)
+  (interactive "P")
+  (require 'org-download)
+  (let ((file
+         (if (not use-default-filename)
+             (read-string (format "Filename [%s]: " org-download-screenshot-basename)
+                          nil nil org-download-screenshot-basename)
+           nil)))
+    (org-download-clipboard file)))
+
+(after! org
+  (setq org-download-method 'directory)
+  (setq org-download-image-dir "images")
+  (setq org-download-heading-lvl nil)
+  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
+  (setq org-image-actual-width 300)
   (map! :map org-mode-map
         "C-c l a y" #'zz/org-download-paste-clipboard
         "C-M-y" #'zz/org-download-paste-clipboard))
@@ -795,6 +801,9 @@ I configure =org-archive= to archive completed TODOs by default to the =archive.
 
 I am trying out Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]]. I haven't figured out my perfect workflow for tracking GTD with Org yet, but this looks like a very promising approach.
 
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-gtd)
+#+end_src
 #+begin_src emacs-lisp
 (use-package! org-gtd
   :after org
@@ -858,88 +867,117 @@ Here I define functions which get used in some of my org-mode macros
 The first is a support function which gets used in some of the following, to return a string (or an optional custom  string) only if  it  is a non-zero, non-whitespace string,  and =nil= otherwise.
 
 #+begin_src emacs-lisp
-  (defun zz/org-if-str (str &optional desc)
-    (when (org-string-nw-p str)
-      (or (org-string-nw-p desc) str)))
+(defun zz/org-if-str (str &optional desc)
+  (when (org-string-nw-p str)
+    (or (org-string-nw-p desc) str)))
 #+end_src
 
 This function receives three arguments, and returns the org-mode code for a link to the Hammerspoon API documentation for the =link= module, optionally to a specific =function=. If =desc= is passed, it is used as the display text, otherwise =section.function= is used.
 
 #+begin_src emacs-lisp
-  (defun zz/org-macro-hsapi-code (module &optional func desc)
-    (org-link-make-string
-     (concat "https://www.hammerspoon.org/docs/"
-             (concat module (zz/org-if-str func (concat "#" func))))
-     (or (org-string-nw-p desc)
-         (format "=%s="
-                 (concat module
-                         (zz/org-if-str func (concat "." func)))))))
+(defun zz/org-macro-hsapi-code (module &optional func desc)
+  (org-link-make-string
+   (concat "https://www.hammerspoon.org/docs/"
+           (concat module (zz/org-if-str func (concat "#" func))))
+   (or (org-string-nw-p desc)
+       (format "=%s="
+               (concat module
+                       (zz/org-if-str func (concat "." func)))))))
 #+end_src
 
 Split STR at spaces and wrap each element with the =~= char, separated by =+=. Zero-width spaces are inserted around the plus signs so that they get formatted correctly. Envisioned use is for formatting keybinding descriptions. There are two versions of this function: "outer" wraps each element in  =~=, the "inner" wraps the whole sequence in them.
 
 #+begin_src emacs-lisp
-  (defun zz/org-macro-keys-code-outer (str)
-    (mapconcat (lambda (s)
-                 (concat "~" s "~"))
-               (split-string str)
-               (concat (string ?\u200B) "+" (string ?\u200B))))
-  (defun zz/org-macro-keys-code-inner (str)
-    (concat "~" (mapconcat (lambda (s)
-                             (concat s))
-                           (split-string str)
-                           (concat (string ?\u200B) "-" (string ?\u200B)))
-            "~"))
-  (defun zz/org-macro-keys-code (str)
-    (zz/org-macro-keys-code-inner str))
+(defun zz/org-macro-keys-code-outer (str)
+  (mapconcat (lambda (s)
+               (concat "~" s "~"))
+             (split-string str)
+             (concat (string ?\u200B) "+" (string ?\u200B))))
+(defun zz/org-macro-keys-code-inner (str)
+  (concat "~" (mapconcat (lambda (s)
+                           (concat s))
+                         (split-string str)
+                         (concat (string ?\u200B) "-" (string ?\u200B)))
+          "~"))
+(defun zz/org-macro-keys-code (str)
+  (zz/org-macro-keys-code-inner str))
 #+end_src
 
 Links to a specific section/function of the Lua manual.
 
 #+begin_src emacs-lisp
-  (defun zz/org-macro-luadoc-code (func &optional section desc)
-    (org-link-make-string
-     (concat "https://www.lua.org/manual/5.3/manual.html#"
-             (zz/org-if-str func section))
-     (zz/org-if-str func desc)))
+(defun zz/org-macro-luadoc-code (func &optional section desc)
+  (org-link-make-string
+   (concat "https://www.lua.org/manual/5.3/manual.html#"
+           (zz/org-if-str func section))
+   (zz/org-if-str func desc)))
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun zz/org-macro-luafun-code (func &optional desc)
-    (org-link-make-string
-     (concat "https://www.lua.org/manual/5.3/manual.html#"
-             (concat "pdf-" func))
-     (zz/org-if-str (concat "=" func "()=") desc)))
+(defun zz/org-macro-luafun-code (func &optional desc)
+  (org-link-make-string
+   (concat "https://www.lua.org/manual/5.3/manual.html#"
+           (concat "pdf-" func))
+   (zz/org-if-str (concat "=" func "()=") desc)))
 #+end_src
 ** Reformatting an Org buffer
 
 I picked up this little gem in the org mailing list. A function that reformats the current buffer by regenerating the text from its internal parsed representation. Quite amazing.
 
 #+begin_src emacs-lisp
-  (defun zz/org-reformat-buffer ()
-    (interactive)
-    (when (y-or-n-p "Really format current buffer? ")
-      (let ((document (org-element-interpret-data (org-element-parse-buffer))))
-        (erase-buffer)
-        (insert document)
-        (goto-char (point-min)))))
+(defun zz/org-reformat-buffer ()
+  (interactive)
+  (when (y-or-n-p "Really format current buffer? ")
+    (let ((document (org-element-interpret-data (org-element-parse-buffer))))
+      (erase-buffer)
+      (insert document)
+      (goto-char (point-min)))))
 #+end_src
 
 Remove a link. For some reason this is not part of org-mode. From https://emacs.stackexchange.com/a/10714/11843, I bind it to ~C-c~ ~C-M-u~.
 
 #+begin_src emacs-lisp
-  (defun afs/org-remove-link ()
-      "Replace an org link by its description or if empty its address"
-    (interactive)
-    (if (org-in-regexp org-bracket-link-regexp 1)
-        (let ((remove (list (match-beginning 0) (match-end 0)))
-          (description (if (match-end 3)
-                   (org-match-string-no-properties 3)
-                   (org-match-string-no-properties 1))))
-      (apply 'delete-region remove)
-      (insert description))))
-  (bind-key "C-c C-M-u" 'afs/org-remove-link)
+(defun afs/org-remove-link ()
+  "Replace an org link by its description or if empty its address"
+  (interactive)
+  (if (org-in-regexp org-bracket-link-regexp 1)
+      (let ((remove (list (match-beginning 0) (match-end 0)))
+            (description (if (match-end 3)
+                             (org-match-string-no-properties 3)
+                           (org-match-string-no-properties 1))))
+        (apply 'delete-region remove)
+        (insert description))))
+(bind-key "C-c C-M-u" 'afs/org-remove-link)
 #+end_src
+* Coding
+
+Coding is one of my primary uses for Emacs, although lately it has shifted toward more general writing. This used to be the largest section in my config until [[Org mode][Org mode]] overtook it :)
+
+Some useful settings for LISP coding - =smartparens-strict-mode= to enforce parenthesis to match. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
+
+#+begin_src emacs-lisp
+(defun zz/sp-enclose-next-sexp (num)
+  (interactive "p")
+  (insert-parentheses (or num 1)))
+
+(after! smartparens
+  (add-hook! (clojure-mode
+              emacs-lisp-mode
+              lisp-mode
+              cider-repl-mode
+              racket-mode
+              racket-repl-mode) :append #'smartparens-strict-mode)
+  (add-hook! smartparens-mode :append #'sp-use-paredit-bindings)
+  (map! :map (smartparens-mode-map smartparens-strict-mode-map) "M-(" #'zz/sp-enclose-next-sexp))
+#+end_src
+
+Some other languages I use.
+
+- [[http://elvish.io/][Elvish shell]]
+  #+begin_src emacs-lisp :tangle packages.el
+(package! elvish-mode)
+(package! ob-elvish)
+  #+end_src
 
 * Other tools
 
@@ -974,56 +1012,26 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
        nil))
   #+end_src
 
-* Original files to avoid breaking my config
-#+begin_src emacs-lisp :tangle packages.el
-;; Elvish shell
-(package! elvish-mode)
-(package! ob-elvish)
+- I find =iedit= absolutely indispensable when coding. In short: when you hit =Ctrl-;=, all occurrences of the symbol under the cursor (or the current selection) are highlighted, and any changes you make on one of them will be automatically applied to all others. It's great for renaming variables in code, but it needs to be used with care, as it has no idea of semantics, it's  a plain string replacement, so it can inadvertently modify unintended parts of the code.
 
-;; Export to Leanpub
-(package! ox-leanpub)
+  #+begin_src emacs-lisp :tangle packages.el
+(package! iedit)
+  #+end_src
+  #+begin_src emacs-lisp
+(use-package! iedit
+  :defer
+  :config
+  (set-face-background 'iedit-occurrence "Magenta")
+  :bind
+  ("C-;" . iedit-mode))
+  #+end_src
 
-;; Org-GTD
-(package! org-gtd)
+- A useful macro (sometimes) for timing the execution of things. From https://stackoverflow.com/questions/23622296/emacs-timing-execution-of-function-calls-in-emacs-lisp.
 
-;; To install a package directly from a remote git repo, you must specify a
-;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
-;; https://github.com/raxod502/straight.el#the-recipe-format
-;(package! another-package
-;  :recipe (:host github :repo "username/repo"))
-
-;; If the package you are trying to install does not contain a PACKAGENAME.el
-;; file, or is located in a subdirectory of the repo, you'll need to specify
-;; `:files' in the `:recipe':
-;(package! this-package
-;  :recipe (:host github :repo "username/repo"
-;           :files ("some-file.el" "src/lisp/*.el")))
-
-;; If you'd like to disable a package included with Doom, you can do so here
-;; with the `:disable' property:
-;(package! builtin-package :disable t)
-
-;; You can override the recipe of a built in package without having to specify
-;; all the properties for `:recipe'. These will inherit the rest of its recipe
-;; from Doom or MELPA/ELPA/Emacsmirror:
-;(package! builtin-package :recipe (:nonrecursive t))
-;(package! builtin-package-2 :recipe (:repo "myfork/package"))
-
-;; Specify a `:branch' to install a package from a particular branch or tag.
-;; This is required for some packages whose default branch isn't 'master' (which
-;; our package manager can't deal with; see raxod502/straight.el#279)
-;(package! builtin-package :recipe (:branch "develop"))
-
-;; Use `:pin' to specify a particular commit to install.
-;(package! builtin-package :pin "1a2b3c4d5e")
-
-
-;; Doom's packages are pinned to a specific commit and updated from release to
-;; release. The `unpin!' macro allows you to unpin single packages...
-;(unpin! pinned-package)
-;; ...or multiple packages
-;(unpin! pinned-package another-pinned-package)
-;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
-;(unpin! t)
-
-#+end_src
+  #+begin_src emacs-lisp
+(defmacro zz/measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (message "%.06f" (float-time (time-since time)))))
+  #+end_src

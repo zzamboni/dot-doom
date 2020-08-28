@@ -122,7 +122,7 @@
        elvish                                   ; The Elvish shell
        emacs-lisp                               ; drown in parentheses
        ;;erlang                                 ; an elegant language for a more civilized age
-       ;;ess                                    ; emacs speaks statistics
+       (ess +lsp)                               ; emacs speaks statistics
        ;;faust                                  ; dsp, but you get to keep your soul
        ;;fsharp                                 ; ML stands for Microsoft's Language
        ;;fstar                                  ; (dependent) types and (monadic) effects and Z3
@@ -145,7 +145,7 @@
        ;;nim                                    ; python + lisp at the speed of c
        ;;nix                                    ; I hereby declare "nix geht mehr!"
        ;;ocaml                                  ; an objective camel
-       (org +pretty +journal +hugo +dragndrop +roam +pandoc +present)  ; organize your plain life in plain text
+       (org +pretty +journal +hugo +roam +pandoc +present)  ; organize your plain life in plain text
        ;;php                                    ; perl's insecure younger brother
        plantuml                                 ; diagrams for confusing people more
        ;;purescript                             ; javascript, but functional

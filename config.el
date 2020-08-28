@@ -142,8 +142,8 @@
   (text-mode . mixed-pitch-mode))
 
 (setq doom-theme 'spacemacs-light)
-;(setq doom-theme 'doom-nord-light)
-;(setq doom-theme 'doom-solarized-light)
+;;(setq doom-theme 'doom-nord-light)
+;;(setq doom-theme 'doom-solarized-light)
 
 ;;(add-hook 'window-setup-hook #'doom/quickload-session)
 
@@ -198,22 +198,22 @@
 
 (setq org-roam-directory org-directory)
 
-(use-package! org-download
-  :after org
-  :config
-  (setq org-download-method 'directory
-        org-download-image-dir "images"
-        org-download-heading-lvl nil
-        org-download-timestamp "%Y%m%d-%H%M%S_"
-        org-image-actual-width 300)
-  (defun zz/org-download-paste-clipboard (&optional noask)
-    (interactive "P")
-    (let ((file
-           (if (not noask)
-               (read-string (format "Filename [%s]: " org-download-screenshot-basename)
-                            nil nil org-download-screenshot-basename)
-             nil)))
-      (org-download-clipboard file)))
+(defun zz/org-download-paste-clipboard (&optional use-default-filename)
+  (interactive "P")
+  (require 'org-download)
+  (let ((file
+         (if (not use-default-filename)
+             (read-string (format "Filename [%s]: " org-download-screenshot-basename)
+                          nil nil org-download-screenshot-basename)
+           nil)))
+    (org-download-clipboard file)))
+
+(after! org
+  (setq org-download-method 'directory)
+  (setq org-download-image-dir "images")
+  (setq org-download-heading-lvl nil)
+  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
+  (setq org-image-actual-width 300)
   (map! :map org-mode-map
         "C-c l a y" #'zz/org-download-paste-clipboard
         "C-M-y" #'zz/org-download-paste-clipboard))
@@ -305,64 +305,78 @@
 (use-package! ox-awesomecv
   :after org)
 
-  (defun zz/org-if-str (str &optional desc)
-    (when (org-string-nw-p str)
-      (or (org-string-nw-p desc) str)))
+(defun zz/org-if-str (str &optional desc)
+  (when (org-string-nw-p str)
+    (or (org-string-nw-p desc) str)))
 
-  (defun zz/org-macro-hsapi-code (module &optional func desc)
-    (org-link-make-string
-     (concat "https://www.hammerspoon.org/docs/"
-             (concat module (zz/org-if-str func (concat "#" func))))
-     (or (org-string-nw-p desc)
-         (format "=%s="
-                 (concat module
-                         (zz/org-if-str func (concat "." func)))))))
+(defun zz/org-macro-hsapi-code (module &optional func desc)
+  (org-link-make-string
+   (concat "https://www.hammerspoon.org/docs/"
+           (concat module (zz/org-if-str func (concat "#" func))))
+   (or (org-string-nw-p desc)
+       (format "=%s="
+               (concat module
+                       (zz/org-if-str func (concat "." func)))))))
 
-  (defun zz/org-macro-keys-code-outer (str)
-    (mapconcat (lambda (s)
-                 (concat "~" s "~"))
-               (split-string str)
-               (concat (string ?\u200B) "+" (string ?\u200B))))
-  (defun zz/org-macro-keys-code-inner (str)
-    (concat "~" (mapconcat (lambda (s)
-                             (concat s))
-                           (split-string str)
-                           (concat (string ?\u200B) "-" (string ?\u200B)))
-            "~"))
-  (defun zz/org-macro-keys-code (str)
-    (zz/org-macro-keys-code-inner str))
+(defun zz/org-macro-keys-code-outer (str)
+  (mapconcat (lambda (s)
+               (concat "~" s "~"))
+             (split-string str)
+             (concat (string ?\u200B) "+" (string ?\u200B))))
+(defun zz/org-macro-keys-code-inner (str)
+  (concat "~" (mapconcat (lambda (s)
+                           (concat s))
+                         (split-string str)
+                         (concat (string ?\u200B) "-" (string ?\u200B)))
+          "~"))
+(defun zz/org-macro-keys-code (str)
+  (zz/org-macro-keys-code-inner str))
 
-  (defun zz/org-macro-luadoc-code (func &optional section desc)
-    (org-link-make-string
-     (concat "https://www.lua.org/manual/5.3/manual.html#"
-             (zz/org-if-str func section))
-     (zz/org-if-str func desc)))
+(defun zz/org-macro-luadoc-code (func &optional section desc)
+  (org-link-make-string
+   (concat "https://www.lua.org/manual/5.3/manual.html#"
+           (zz/org-if-str func section))
+   (zz/org-if-str func desc)))
 
-  (defun zz/org-macro-luafun-code (func &optional desc)
-    (org-link-make-string
-     (concat "https://www.lua.org/manual/5.3/manual.html#"
-             (concat "pdf-" func))
-     (zz/org-if-str (concat "=" func "()=") desc)))
+(defun zz/org-macro-luafun-code (func &optional desc)
+  (org-link-make-string
+   (concat "https://www.lua.org/manual/5.3/manual.html#"
+           (concat "pdf-" func))
+   (zz/org-if-str (concat "=" func "()=") desc)))
 
-  (defun zz/org-reformat-buffer ()
-    (interactive)
-    (when (y-or-n-p "Really format current buffer? ")
-      (let ((document (org-element-interpret-data (org-element-parse-buffer))))
-        (erase-buffer)
-        (insert document)
-        (goto-char (point-min)))))
+(defun zz/org-reformat-buffer ()
+  (interactive)
+  (when (y-or-n-p "Really format current buffer? ")
+    (let ((document (org-element-interpret-data (org-element-parse-buffer))))
+      (erase-buffer)
+      (insert document)
+      (goto-char (point-min)))))
 
-  (defun afs/org-remove-link ()
-      "Replace an org link by its description or if empty its address"
-    (interactive)
-    (if (org-in-regexp org-bracket-link-regexp 1)
-        (let ((remove (list (match-beginning 0) (match-end 0)))
-          (description (if (match-end 3)
-                   (org-match-string-no-properties 3)
-                   (org-match-string-no-properties 1))))
-      (apply 'delete-region remove)
-      (insert description))))
-  (bind-key "C-c C-M-u" 'afs/org-remove-link)
+(defun afs/org-remove-link ()
+  "Replace an org link by its description or if empty its address"
+  (interactive)
+  (if (org-in-regexp org-bracket-link-regexp 1)
+      (let ((remove (list (match-beginning 0) (match-end 0)))
+            (description (if (match-end 3)
+                             (org-match-string-no-properties 3)
+                           (org-match-string-no-properties 1))))
+        (apply 'delete-region remove)
+        (insert description))))
+(bind-key "C-c C-M-u" 'afs/org-remove-link)
+
+(defun zz/sp-enclose-next-sexp (num)
+  (interactive "p")
+  (insert-parentheses (or num 1)))
+
+(after! smartparens
+  (add-hook! (clojure-mode
+              emacs-lisp-mode
+              lisp-mode
+              cider-repl-mode
+              racket-mode
+              racket-repl-mode) :append #'smartparens-strict-mode)
+  (add-hook! smartparens-mode :append #'sp-use-paredit-bindings)
+  (map! :map (smartparens-mode-map smartparens-strict-mode-map) "M-(" #'zz/sp-enclose-next-sexp))
 
 (after! magit
   (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
@@ -386,3 +400,16 @@
            'epg-pinentry-mode
          'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
        nil))
+
+(use-package! iedit
+  :defer
+  :config
+  (set-face-background 'iedit-occurrence "Magenta")
+  :bind
+  ("C-;" . iedit-mode))
+
+(defmacro zz/measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (message "%.06f" (float-time (time-since time)))))
