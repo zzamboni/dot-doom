@@ -300,6 +300,11 @@
                '("l" "GTD item with link to where you are in emacs now"
                  entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
                  "* %?\n%U\n\n  %i\n  %a"
+                 :kill-buffer t))
+  (add-to-list 'org-capture-templates
+               '("m" "GTD item with link to current Outlook mail message"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i\n  %(org-mac-outlook-message-get-links)"
                  :kill-buffer t)))
 
 (use-package! ox-awesomecv
