@@ -55,8 +55,6 @@
 
 (package! spacemacs-theme)
 
-(package! ox-leanpub)
-
 (package! org-download)
 
 (package! mexican-holidays)
@@ -68,6 +66,8 @@
 
 (package! org-cv
   :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
+
+(package! ox-leanpub)
 
 (package! elvish-mode)
 (package! ob-elvish)

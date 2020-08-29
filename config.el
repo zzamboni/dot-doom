@@ -175,12 +175,6 @@
            #'variable-pitch-mode
            (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
 
-(use-package! ox-leanpub
-  :after org
-  :config
-  (require 'ox-leanpub-markdown)
-  (org-leanpub-book-setup-menu-markdown))
-
 (after! org
   (setq org-agenda-files
         '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
@@ -309,6 +303,12 @@
 
 (use-package! ox-awesomecv
   :after org)
+
+(use-package! ox-leanpub
+  :after org
+  :config
+  (require 'ox-leanpub-markdown)
+  (org-leanpub-book-setup-menu-markdown))
 
 (defun zz/org-if-str (str &optional desc)
   (when (org-string-nw-p str)

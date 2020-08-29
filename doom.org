@@ -14,12 +14,12 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 
 * Table of Contents :TOC_3:noexport:
 - [[#introduction][Introduction]]
+- [[#references][References]]
 - [[#doom-config-file-overview][Doom config file overview]]
   - [[#config-file-headers][Config file headers]]
     - [[#initel][init.el]]
     - [[#packagesel][packages.el]]
     - [[#configel][config.el]]
-- [[#references][References]]
 - [[#doom-modules][Doom modules]]
 - [[#general-configuration][General configuration]]
   - [[#key-bindings][Key bindings]]
@@ -34,11 +34,22 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#tasks-and-agenda][Tasks and agenda]]
   - [[#gtd][GTD]]
   - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
+  - [[#publishing-to-leanpub][Publishing to LeanPub]]
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
 - [[#coding][Coding]]
 - [[#other-tools][Other tools]]
 
+* References
+
+Emacs config is an art, and I have learned a lot by reading through other people's config files, and from many other resources. These are some of the best ones (several are also written in org mode). You will find snippets from all of these (and possibly others) throughout my config.
+
+- [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's Emacs Configuration]]
+- [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]]
+- [[https://github.com/PythonNut/emacs-config][PythonNut's Emacs config]]
+- [[https://www.masteringemacs.org/][Mastering Emacs]]
+
+Note: a lot of manual configuration has been rendered moot by using Emacs Doom, which aggregates a well-maintained and organized collection of common configuration settings for performance optimization, package management, commonly used packages (e.g. Org) and much more.
 * Doom config file overview
 
 Doom Emacs used three config files:
@@ -182,16 +193,6 @@ We start by simply defining the standard headers used by the three files. These 
 ;; they are implemented.
 #+end_src
 
-* References
-
-Emacs config is an art, and I have learned a lot by reading through other people's config files, and from many other resources. These are some of the best ones (several are also written in org mode). You will find snippets from all of these (and possibly others) throughout my config.
-
-- [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's Emacs Configuration]]
-- [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]]
-- [[https://github.com/PythonNut/emacs-config][PythonNut's Emacs config]]
-- [[https://www.masteringemacs.org/][Mastering Emacs]]
-
-Note: a lot of manual configuration has been rendered moot by using Emacs Doom, which aggregates a well-maintained and organized collection of common configuration settings for performance optimization, package management, commonly used packages (e.g. Org) and much more.
 * Doom modules
 
 This code is written to the =init.el= to select which modules to load. Written here as-is for now, as it is quite well structured and clear.
@@ -639,19 +640,6 @@ Enable variable and visual line mode in Org mode, also enable tangle-on-save.
            (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
 #+end_src
 
-Export to Leanpub.
-
-#+begin_src emacs-lisp :tangle packages.el
-(package! ox-leanpub)
-#+end_src
-#+begin_src emacs-lisp
-(use-package! ox-leanpub
-  :after org
-  :config
-  (require 'ox-leanpub-markdown)
-  (org-leanpub-book-setup-menu-markdown))
-#+end_src
-
 ** Capturing and note taking :ATTACH:
 :PROPERTIES:
 :ID:       3ffdb2e2-5cea-4b1d-864a-ab37b4f1af0a
@@ -854,7 +842,7 @@ We define the corresponding Org-GTD capture templates.
 
 I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].
 
-My =ox-awesomecv= package is not yet merged into the main Org-CV distribution, so I install from my branch for now.
+My =ox-awesomecv= package is [[https://gitlab.com/Titan-C/org-cv/-/merge_requests/3][not yet merged]] into the main Org-CV distribution, so I install from my branch for now.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! org-cv
@@ -864,6 +852,36 @@ My =ox-awesomecv= package is not yet merged into the main Org-CV distribution, s
 (use-package! ox-awesomecv
   :after org)
 #+end_src
+
+** Publishing to LeanPub
+
+I use [[https://leanpub.com/][LeanPub]] for self-publishing [[https://leanpub.com/u/zzamboni][my books]]. Fortunately, it is possible to export from org-mode to both [[https://leanpub.com/lfm/read][LeanPub-flavored Markdown]] and [[https://leanpub.com/markua/read][Markua]], the new preferred Leanpub markup format, so I can use Org for writing the text and simply export it in the correct format and structure needed by Leanpub.
+
+When I decided to use org-mode to write my books, I looked around for existing modules and code. Here are some of the resources I found:
+- [[http://juanreyero.com/open/ox-leanpub/index.html][Description of ox-leanpub.el]] ([[https://github.com/juanre/ox-leanpub][GitHub repo]]) by [[http://juanreyero.com/about/][Juan Reyero]];
+- [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Publishing a book using org-mode]] by [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi Narasimhan]];
+- [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above).
+
+Building upon these, I have developed a new =ox-leanpub= package which you can find in MELPA (source at [[https://github.com/zzamboni/ox-leanpub]]), and which I load and configure below.
+
+The =ox-leanpub= module sets up Markua export automatically. I add the code for setting up the Markdown exporter too (I don't use it, but just to keep an eye on any breakage):
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! ox-leanpub)
+#+end_src
+#+begin_src emacs-lisp
+(use-package! ox-leanpub
+  :after org
+  :config
+  (require 'ox-leanpub-markdown)
+  (org-leanpub-book-setup-menu-markdown))
+#+end_src
+
+I highly recommend using Markua rather than Markdown, as it is the future that Leanpub is guaranteed to support in the future, and where most of the new features are being developed.
+
+With this setup, I can write my book in org-mode (I usually keep a single =book.org= file at the top of my repository), and then call the corresponding "Book" export commands. The =manuscript= directory, as well as the corresponding =Book.txt= and other necessary files are created and populated automatically.
+
+If you are interested in learning more about publishing to Leanpub with Org-mode, check out my book [[https://leanpub.com/emacs-org-leanpub][/Publishing with Emacs, Org-mode and Leanpub/]].
 
 ** Code for org-mode macros
 
@@ -955,8 +973,6 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
 (bind-key "C-c C-M-u" 'afs/org-remove-link)
 #+end_src
 * Coding
-
-Coding is one of my primary uses for Emacs, although lately it has shifted toward more general writing. This used to be the largest section in my config until [[Org mode][Org mode]] overtook it :)
 
 Some useful settings for LISP coding - =smartparens-strict-mode= to enforce parenthesis to match. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
 
