@@ -1000,6 +1000,18 @@ Some other languages I use.
 (package! ob-elvish)
   #+end_src
 
+- [[http://cfengine.com/][CFEngine]] policy files.
+  #+begin_src emacs-lisp :tangle packages.el
+(package! cfengine)
+(package! ob-cfengine3)
+  #+end_src
+  #+begin_src emacs-lisp
+(use-package! cfengine
+  :defer t
+  :commands cfengine3-mode
+  :mode ("\\.cf\\'" . cfengine3-mode))
+  #+end_src
+
 * Other tools
 
 - Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using ~defadvice!~. I also customize the display to add the =Status= column.

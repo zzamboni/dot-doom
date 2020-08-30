@@ -383,6 +383,11 @@
   (add-hook! smartparens-mode :append #'sp-use-paredit-bindings)
   (map! :map (smartparens-mode-map smartparens-strict-mode-map) "M-(" #'zz/sp-enclose-next-sexp))
 
+(use-package! cfengine
+  :defer t
+  :commands cfengine3-mode
+  :mode ("\\.cf\\'" . cfengine3-mode))
+
 (after! magit
   (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
   (defadvice! +zz/load-magit-repositories ()
