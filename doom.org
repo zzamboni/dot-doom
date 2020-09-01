@@ -36,6 +36,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
 - [[#coding][Coding]]
 - [[#other-tools][Other tools]]
+- [[#experiments][Experiments]]
 
 * References
 
@@ -1076,3 +1077,25 @@ Some other languages I use.
      ,@body
      (message "%.06f" (float-time (time-since time)))))
   #+end_src
+
+- I'm still not fully convinced of running a terminal inside Emacs, but =vterm= is much nicer than any of the previous terminal emulators, so I'm giving it a try. I configure it so that it runs my [[https://elv.sh/][favorite shell]]. Vterm runs Elvish flawlessly!
+  #+begin_src emacs-lisp
+(setq vterm-shell "/usr/local/bin/elvish")
+  #+end_src
+
+* Experiments
+
+Some experimental code to list functions which are not native-compiled. Sort of works but its very slow. This does not get tangled to my config.el, I just keep it here for reference.
+
+#+begin_src emacs-lisp :tangle no
+(with-current-buffer (get-buffer-create "*Non-native functions*")
+  (mapatoms
+   (lambda (s)
+     (when (and (functionp s) (not (helpful--native-compiled-p s)) (not (helpful--primitive-p s t)))
+       (insert (symbol-name s))
+       (insert " --- ")
+       (insert (or (cdr (find-function-library s)) "<no file>"))
+       (insert "\n"))
+     ))
+  )
+#+end_src
