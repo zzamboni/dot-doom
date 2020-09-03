@@ -212,7 +212,7 @@ This code is written to the =init.el= to select which modules to load. Written h
        ;;japanese
 
        :completion
-       company                                  ; the ultimate code completion backend
+       (company +childframe)                    ; the ultimate code completion backend
        ;;helm                                   ; the *other* search engine for love and life
        ;;ido                                    ; the other *other* search engine...
        (ivy +prescient +fuzzy +icons)           ; a search engine for love and life
