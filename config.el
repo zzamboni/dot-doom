@@ -191,6 +191,7 @@
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
 
 (setq org-roam-directory org-directory)
+(setq +org-roam-open-buffer-on-find-file nil)
 
 (defun zz/org-download-paste-clipboard (&optional use-default-filename)
   (interactive "P")
