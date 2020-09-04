@@ -150,12 +150,6 @@
 ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 (setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
 
-(add-to-list 'safe-local-variable-values
-             '(eval add-hook 'after-save-hook
-                    (lambda nil
-                      (org-export-to-file 'awesomecv "zamboni-vita.tex"))
-                    :append :local))
-
 (setq org-directory "~/org/")
 
 (setq org-hide-emphasis-markers t)

@@ -17,13 +17,13 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#references][References]]
 - [[#doom-config-file-overview][Doom config file overview]]
   - [[#config-file-headers][Config file headers]]
+  - [[#customized-variables][Customized variables]]
 - [[#doom-modules][Doom modules]]
 - [[#general-configuration][General configuration]]
   - [[#key-bindings][Key bindings]]
     - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
     - [[#emulating-vis--key][Emulating vi's =%= key]]
   - [[#visual-session-and-window-settings][Visual, session and window settings]]
-  - [[#safe-variables][Safe variables]]
 - [[#org-mode][Org mode]]
   - [[#general-org-configuration][General Org Configuration]]
   - [[#org-visual-settings][Org visual settings]]
@@ -201,6 +201,16 @@ We start by simply defining the standard headers used by the three files. These 
 #+end_src
 
 #+HTML: </details>
+
+** Customized variables
+
+Doom [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#configure][does not recommend the Emacs =customize= mechanism]]:
+
+#+begin_quote
+/Note: do not use M-x customize or the customize API in general. Doom is designed to be configured programmatically from your config.el, which can conflict with Customize’s way of modifying variables./
+#+end_quote
+
+All necessary settings are therefore set by hand as part of this configuration file.
 
 * Doom modules
 
@@ -565,25 +575,6 @@ Maximize the window upon startup. The =(fullscreen . maximized)= value suggested
 ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 (setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
 #+end_src
-
-** Safe variables
-
-Doom [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#configure][does not recommend the Emacs =customize= mechanism]]:
-
-#+begin_quote
-/Note: do not use M-x customize or the customize API in general. Doom is designed to be configured programmatically from your config.el, which can conflict with Customize’s way of modifying variables./
-#+end_quote
-
-To avoid writing to =custom.el=, I declare some hooks and custom variables I use and want to declare as safe.
-
-- This one is used to automatically export my [[https://gitlab.com/zzamboni/vita][CV]] whenever I save the source Org file (the module I use does not define a proper exporter yet).
-  #+begin_src emacs-lisp
-(add-to-list 'safe-local-variable-values
-             '(eval add-hook 'after-save-hook
-                    (lambda nil
-                      (org-export-to-file 'awesomecv "zamboni-vita.tex"))
-                    :append :local))
-  #+end_src
 
 * Org mode
 
