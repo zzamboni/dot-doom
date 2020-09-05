@@ -76,7 +76,7 @@
 (map! :after magit "C-c C-g" #'magit-status)
 
 (use-package! visual-regexp-steroids
-  :defer
+  :defer 3
   :config
   (require 'pcre2el)
   (setq vr/engine 'pcre2el)

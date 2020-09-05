@@ -463,7 +463,7 @@ Interactive search key bindings -  [[https://github.com/benma/visual-regexp-ster
 
 #+begin_src emacs-lisp
 (use-package! visual-regexp-steroids
-  :defer
+  :defer 3
   :config
   (require 'pcre2el)
   (setq vr/engine 'pcre2el)
