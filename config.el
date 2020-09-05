@@ -83,6 +83,9 @@
   (map! "C-c s r" #'vr/replace)
   (map! "C-c s q" #'vr/query-replace))
 
+(after! undo-fu
+  (map! :map undo-fu-mode-map "C-?" #'undo-fu-only-redo))
+
 (after! smartparens
   (defun zz/goto-match-paren (arg)
     "Go to the matching paren/bracket, otherwise (or if ARG is not

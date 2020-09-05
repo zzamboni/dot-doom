@@ -471,6 +471,13 @@ Interactive search key bindings -  [[https://github.com/benma/visual-regexp-ster
   (map! "C-c s q" #'vr/query-replace))
 #+end_src
 
+The Doom =undo= package introduces the use of [[https://gitlab.com/ideasman42/emacs-undo-fu][=undo-fu=]], which makes undo/redo more "lineal". I normally use ~C-/~ for undo and Emacs doesn't have a separate "redo" action, so I map ~C-?~ (in my keyboard, the same combination + ~Shift~) for redo.
+
+#+begin_src emacs-lisp
+(after! undo-fu
+  (map! :map undo-fu-mode-map "C-?" #'undo-fu-only-redo))
+#+end_src
+
 *** Emulating vi's =%= key
 
 One of the few things I missed in Emacs from vi was the =%= key, which jumps to the parenthesis, bracket or brace which matches the one below the cursor. This function implements this functionality, bound to the same key. Inspired by [[http://www.emacswiki.org/emacs/NavigatingParentheses]], but modified to use =smartparens= instead of the default commands, and to work on brackets and braces.
