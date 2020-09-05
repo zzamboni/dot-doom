@@ -1020,6 +1020,13 @@ Some other languages I use.
   :mode ("\\.cf\\'" . cfengine3-mode))
   #+end_src
 
+- [[https://graphviz.org/][Graphviz]] for graph generation.
+  #+begin_src emacs-lisp :tangle packages.el
+(package! graphviz-dot-mode)
+  #+end_src
+  #+begin_src emacs-lisp
+(use-package! graphviz-dot-mode)
+  #+end_src
 * Other tools
 
 - Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using ~defadvice!~. I also customize the display to add the =Status= column.

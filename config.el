@@ -386,6 +386,8 @@
   :commands cfengine3-mode
   :mode ("\\.cf\\'" . cfengine3-mode))
 
+(use-package! graphviz-dot-mode)
+
 (after! magit
   (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
   (defadvice! +zz/load-magit-repositories ()
