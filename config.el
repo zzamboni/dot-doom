@@ -127,6 +127,8 @@
                                   previous-line
                                   next-line
                                   back-to-indentation
+                                  doom/backward-to-bol-or-indent
+                                  doom/forward-to-last-non-comment-or-eol
                                   )))
         (self-insert-command (or arg 1))
       (cond ((looking-at "\\s\(") (sp-forward-sexp) (backward-char 1))
