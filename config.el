@@ -136,6 +136,8 @@
             (t (self-insert-command (or arg 1))))))
   (map! "%" 'zz/goto-match-paren))
 
+(setq fancy-splash-image "~/.doom.d/splash.png")
+
 (setq doom-font (font-spec :family "Fira Code Retina" :size 16)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
 
