@@ -1019,7 +1019,6 @@ Some other languages I use.
 
 - [[http://cfengine.com/][CFEngine]] policy files.
   #+begin_src emacs-lisp :tangle packages.el
-(package! cfengine)
 (package! ob-cfengine3)
   #+end_src
   #+begin_src emacs-lisp

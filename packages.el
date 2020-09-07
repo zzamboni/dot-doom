@@ -72,7 +72,6 @@
 (package! elvish-mode)
 (package! ob-elvish)
 
-(package! cfengine)
 (package! ob-cfengine3)
 
 (package! graphviz-dot-mode)
