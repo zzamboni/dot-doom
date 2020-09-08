@@ -540,7 +540,7 @@ One of the few things I missed in Emacs from vi was the =%= key, which jumps to 
 I made a super simple Doom-Emacs custom splash screen by combining [[http://www.thedreamcastjunkyard.co.uk/2018/03/cross-platform-online-multiplayer-added.html][a Doom logo]] with the word "Emacs" rendered in the [[https://fontmeme.com/doom-font/][Doom Font]]. You can see the result above, and I configure it to be used instead of the default splash screen. It took me all of 5 minutes to make, so improvements are welcome!
 
 #+begin_src emacs-lisp
-(setq fancy-splash-image (concat doom-private-dir "splash.png"))
+(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-bw-light.svg"))
 #+end_src
 
 Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://edwardtufte.github.io/et-book/][ET Book]].
