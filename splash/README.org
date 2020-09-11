@@ -3,13 +3,6 @@
 #+email: diego@zzamboni.org
 #+DATE:    September 11, 2020
 
-* Table of Contents :TOC_3:noexport:
-- [[#description][Description]]
-- [[#the-images][The images]]
-  - [[#doom-emacs-colorpng][doom-emacs-color.png]]
-  - [[#doom-emacs-bw-darksvg][doom-emacs-bw-dark.svg]]
-  - [[#doom-emacs-bw-lightsvg][doom-emacs-bw-light.svg]]
-
 * Description
 
 This directory contains a few custom splash screens I have made for [[https://github.com/hlissner/doom-emacs/][Doom Emacs]]. I'm no designer nor artist, so any suggestions for improvements are welcome!
