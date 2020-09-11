@@ -6,7 +6,7 @@
 
 See [[file:doom.org][doom.org]] for the source configuration file with full commentary. From this file, three configuration files are generated: [[file:init.el][init.el]], [[file:packages.el][packages.el]] and [[file:config.el][config.el]]. These are the files read by Doom Emacs.
 
-I made a custom [[file:splash.png][splash image file]] which you can see above, this is also shown in the Doom dashboard in Emacs.
+I also made a super simple set of Doom-Emacs custom splash screens, which you can find them in the [[https://gitlab.com/zzamboni/dot-doom/-/tree/master/splash][splash/]] directory.
 
 If you are interested in the topic of literate configuration, you should check out my free book [[https://leanpub.com/lit-config][Literate Configuration]]!
 

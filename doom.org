@@ -537,10 +537,10 @@ One of the few things I missed in Emacs from vi was the =%= key, which jumps to 
 
 ** Visual, session and window settings
 
-I made a super simple Doom-Emacs custom splash screen by combining [[http://www.thedreamcastjunkyard.co.uk/2018/03/cross-platform-online-multiplayer-added.html][a Doom logo]] with the word "Emacs" rendered in the [[https://fontmeme.com/doom-font/][Doom Font]]. You can see the result above, and I configure it to be used instead of the default splash screen. It took me all of 5 minutes to make, so improvements are welcome!
+I made a super simple set of Doom-Emacs custom splash screens by combining [[http://www.thedreamcastjunkyard.co.uk/2018/03/cross-platform-online-multiplayer-added.html][a Doom logo]] with the word "Emacs" rendered in the [[https://fontmeme.com/doom-font/][Doom Font]]. You can see them at https://gitlab.com/zzamboni/dot-doom/-/tree/master/splash (you can also see one of them at the top of this file). I configure it to be used instead of the default splash screen. It took me all of 5 minutes to make, so improvements are welcome!
 
 #+begin_src emacs-lisp
-(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-bw-light.svg"))
+(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
 #+end_src
 
 Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://edwardtufte.github.io/et-book/][ET Book]].
