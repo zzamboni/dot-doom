@@ -22,10 +22,10 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#customized-variables][Customized variables]]
 - [[#doom-modules][Doom modules]]
 - [[#general-configuration][General configuration]]
+  - [[#visual-session-and-window-settings][Visual, session and window settings]]
   - [[#key-bindings][Key bindings]]
     - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
     - [[#emulating-vis--key][Emulating vi's =%= key]]
-  - [[#visual-session-and-window-settings][Visual, session and window settings]]
 - [[#org-mode][Org mode]]
   - [[#general-org-configuration][General Org Configuration]]
   - [[#org-visual-settings][Org visual settings]]
@@ -427,6 +427,63 @@ Disable exit confirmation.
 (setq confirm-kill-emacs nil)
 #+end_src
 
+** Visual, session and window settings
+
+I made a super simple set of Doom-Emacs custom splash screens by combining [[http://www.thedreamcastjunkyard.co.uk/2018/03/cross-platform-online-multiplayer-added.html][a Doom logo]] with the word "Emacs" rendered in the [[https://fontmeme.com/doom-font/][Doom Font]]. You can see them at https://gitlab.com/zzamboni/dot-doom/-/tree/master/splash (you can also see one of them at the top of this file). I configure it to be used instead of the default splash screen. It took me all of 5 minutes to make, so improvements are welcome!
+
+#+begin_src emacs-lisp
+(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
+#+end_src
+
+Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://edwardtufte.github.io/et-book/][ET Book]].
+
+#+begin_src emacs-lisp
+(setq doom-font (font-spec :family "Fira Code Retina" :size 16)
+      doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
+#+end_src
+
+Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I can mix source and prose blocks in the same document.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! mixed-pitch)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package! mixed-pitch
+  :defer
+  :config
+  (setq mixed-pitch-variable-pitch-cursor nil)
+  :hook
+  (text-mode . mixed-pitch-mode))
+#+end_src
+
+Set the theme to use. I like the [[https://github.com/nashamri/spacemacs-theme][Spacemacs-Light]], which does not come with Doom, so we need to install it from =package.el=:
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! spacemacs-theme)
+#+end_src
+
+And then from =config.el= we specify the theme to use.
+
+#+begin_src emacs-lisp
+(setq doom-theme 'spacemacs-light)
+;;(setq doom-theme 'doom-nord-light)
+;;(setq doom-theme 'doom-solarized-light)
+#+end_src
+
+In my previous configuration, I used to automatically restore the previous session upon startup. Doom Emacs starts up so fast that it does not feel right to do it automatically. In any case, from the Doom dashboard I can simply press Enter to invoke the first item, which is "Reload Last Session". So this code is commented out now.
+
+#+begin_src emacs-lisp
+;;(add-hook 'window-setup-hook #'doom/quickload-session)
+#+end_src
+
+Maximize the window upon startup. The =(fullscreen . maximized)= value suggested in the [[https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-do-i-maximizefullscreen-emacs-on-startup][Doom FAQ]] works, but results in a window that cannot be resized. For now I just manually set it to a large-enough window size by hand.
+
+#+begin_src emacs-lisp
+;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
+#+end_src
+
 ** Key bindings
 
 Doom Emacs has an extensive keybinding system, and most module functions are already bound. I modify some keybindings for simplicity of to match the muscle memory I have from my previous Emacs configuration.
@@ -534,63 +591,6 @@ One of the few things I missed in Emacs from vi was the =%= key, which jumps to 
             ((looking-at "\\s\)") (forward-char 1) (sp-backward-sexp))
             (t (self-insert-command (or arg 1))))))
   (map! "%" 'zz/goto-match-paren))
-#+end_src
-
-** Visual, session and window settings
-
-I made a super simple set of Doom-Emacs custom splash screens by combining [[http://www.thedreamcastjunkyard.co.uk/2018/03/cross-platform-online-multiplayer-added.html][a Doom logo]] with the word "Emacs" rendered in the [[https://fontmeme.com/doom-font/][Doom Font]]. You can see them at https://gitlab.com/zzamboni/dot-doom/-/tree/master/splash (you can also see one of them at the top of this file). I configure it to be used instead of the default splash screen. It took me all of 5 minutes to make, so improvements are welcome!
-
-#+begin_src emacs-lisp
-(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
-#+end_src
-
-Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://edwardtufte.github.io/et-book/][ET Book]].
-
-#+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Fira Code Retina" :size 16)
-      doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
-#+end_src
-
-Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I can mix source and prose blocks in the same document.
-
-#+begin_src emacs-lisp :tangle packages.el
-(package! mixed-pitch)
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package! mixed-pitch
-  :defer
-  :config
-  (setq mixed-pitch-variable-pitch-cursor nil)
-  :hook
-  (text-mode . mixed-pitch-mode))
-#+end_src
-
-Set the theme to use. I like the [[https://github.com/nashamri/spacemacs-theme][Spacemacs-Light]], which does not come with Doom, so we need to install it from =package.el=:
-
-#+begin_src emacs-lisp :tangle packages.el
-(package! spacemacs-theme)
-#+end_src
-
-And then from =config.el= we specify the theme to use.
-
-#+begin_src emacs-lisp
-(setq doom-theme 'spacemacs-light)
-;;(setq doom-theme 'doom-nord-light)
-;;(setq doom-theme 'doom-solarized-light)
-#+end_src
-
-In my previous configuration, I used to automatically restore the previous session upon startup. Doom Emacs starts up so fast that it does not feel right to do it automatically. In any case, from the Doom dashboard I can simply press Enter to invoke the first item, which is "Reload Last Session". So this code is commented out now.
-
-#+begin_src emacs-lisp
-;;(add-hook 'window-setup-hook #'doom/quickload-session)
-#+end_src
-
-Maximize the window upon startup. The =(fullscreen . maximized)= value suggested in the [[https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-do-i-maximizefullscreen-emacs-on-startup][Doom FAQ]] works, but results in a window that cannot be resized. For now I just manually set it to a large-enough window size by hand.
-
-#+begin_src emacs-lisp
-;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
 #+end_src
 
 * Org mode

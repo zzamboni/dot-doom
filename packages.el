@@ -48,12 +48,12 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;;(unpin! t)
 
-(package! pcre2el)
-(package! visual-regexp-steroids)
-
 (package! mixed-pitch)
 
 (package! spacemacs-theme)
+
+(package! pcre2el)
+(package! visual-regexp-steroids)
 
 (package! org-download)
 

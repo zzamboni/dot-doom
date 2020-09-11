@@ -68,6 +68,27 @@
 
 (setq confirm-kill-emacs nil)
 
+(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
+
+(setq doom-font (font-spec :family "Fira Code Retina" :size 16)
+      doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
+
+(use-package! mixed-pitch
+  :defer
+  :config
+  (setq mixed-pitch-variable-pitch-cursor nil)
+  :hook
+  (text-mode . mixed-pitch-mode))
+
+(setq doom-theme 'spacemacs-light)
+;;(setq doom-theme 'doom-nord-light)
+;;(setq doom-theme 'doom-solarized-light)
+
+;;(add-hook 'window-setup-hook #'doom/quickload-session)
+
+;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
+
 (map! "C-x b" #'counsel-recentf)
 
 ;;(map! "C-s" #'counsel-grep-or-swiper)
@@ -135,27 +156,6 @@
             ((looking-at "\\s\)") (forward-char 1) (sp-backward-sexp))
             (t (self-insert-command (or arg 1))))))
   (map! "%" 'zz/goto-match-paren))
-
-(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
-
-(setq doom-font (font-spec :family "Fira Code Retina" :size 16)
-      doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
-
-(use-package! mixed-pitch
-  :defer
-  :config
-  (setq mixed-pitch-variable-pitch-cursor nil)
-  :hook
-  (text-mode . mixed-pitch-mode))
-
-(setq doom-theme 'spacemacs-light)
-;;(setq doom-theme 'doom-nord-light)
-;;(setq doom-theme 'doom-solarized-light)
-
-;;(add-hook 'window-setup-hook #'doom/quickload-session)
-
-;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
 
 (setq org-directory "~/org/")
 
