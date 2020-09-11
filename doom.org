@@ -614,35 +614,37 @@ Default directory for Org files.
 Hide Org markup indicators.
 
 #+begin_src emacs-lisp
-(setq org-hide-emphasis-markers t)
+(after! org (setq org-hide-emphasis-markers t))
 #+end_src
 
 Insert Org headings at point, not after the current subtree (this is enabled by default by Doom).
 
 #+begin_src emacs-lisp
-(setq org-insert-heading-respect-content nil)
+(after! org (setq org-insert-heading-respect-content nil))
 #+end_src
 
 Log stuff into the LOGBOOK drawer by default
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
-(setq org-log-into-drawer t)
+#+begin_src emacs-lisp
+(after! (setq org-log-into-drawer t))
 #+end_src
 
 Use the special ~C-a~, ~C-e~ and ~C-k~ definitions for Org, which enable some special behavior in headings.
 
 #+begin_src emacs-lisp
-(setq org-special-ctrl-a/e t)
-(setq org-special-ctrl-k t)
+(after! org
+  (setq org-special-ctrl-a/e t)
+  (setq org-special-ctrl-k t))
 #+end_src
 
 Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows quick single-key commands when the cursor is placed on a heading. Usually the cursor needs to be at the beginning of a headline line, but defining it with this function makes them active on any of the asterisks at the beginning of the line.
 
 #+begin_src emacs-lisp
-(setq org-use-speed-commands
-      (lambda ()
-        (and (looking-at org-outline-regexp)
-             (looking-back "^\**"))))
+(after! org
+  (setq org-use-speed-commands
+        (lambda ()
+          (and (looking-at org-outline-regexp)
+               (looking-back "^\**")))))
 #+end_src
 
 ** Org visual settings

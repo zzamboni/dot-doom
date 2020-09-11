@@ -159,17 +159,21 @@
 
 (setq org-directory "~/org/")
 
-(setq org-hide-emphasis-markers t)
+(after! org (setq org-hide-emphasis-markers t))
 
-(setq org-insert-heading-respect-content nil)
+(after! org (setq org-insert-heading-respect-content nil))
 
-(setq org-special-ctrl-a/e t)
-(setq org-special-ctrl-k t)
+(after! (setq org-log-into-drawer t))
 
-(setq org-use-speed-commands
-      (lambda ()
-        (and (looking-at org-outline-regexp)
-             (looking-back "^\**"))))
+(after! org
+  (setq org-special-ctrl-a/e t)
+  (setq org-special-ctrl-k t))
+
+(after! org
+  (setq org-use-speed-commands
+        (lambda ()
+          (and (looking-at org-outline-regexp)
+               (looking-back "^\**")))))
 
 (add-hook! org-mode :append
            #'visual-line-mode
