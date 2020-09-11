@@ -375,6 +375,8 @@
         (insert description))))
 (bind-key "C-c C-M-u" 'afs/org-remove-link)
 
+(use-package org-pandoc-import)
+
 (defun zz/sp-enclose-next-sexp (num)
   (interactive "p")
   (insert-parentheses (or num 1)))

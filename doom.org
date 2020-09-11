@@ -36,6 +36,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#publishing-to-leanpub][Publishing to LeanPub]]
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
+  - [[#avoiding-non-org-mode-files][Avoiding non-Org mode files]]
 - [[#coding][Coding]]
 - [[#other-tools][Other tools]]
 - [[#experiments][Experiments]]
@@ -990,6 +991,20 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
         (apply 'delete-region remove)
         (insert description))))
 (bind-key "C-c C-M-u" 'afs/org-remove-link)
+#+end_src
+** Avoiding non-Org mode files
+
+[[https://github.com/tecosaur/org-pandoc-import][org-pandoc-import]] is a mode that automates conversions to/from Org mode as much as possible.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-pandoc-import
+  :recipe (:host github
+           :repo "tecosaur/org-pandoc-import"
+           :files ("*.el" "filters" "preprocessors")))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package org-pandoc-import)
 #+end_src
 * Coding
 
