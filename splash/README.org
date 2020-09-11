@@ -1,0 +1,45 @@
+#+TITLE:   Doom Emacs splash images
+#+author: Diego Zamboni
+#+email: diego@zzamboni.org
+#+DATE:    September 11, 2020
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+- [[#the-images][The images]]
+  - [[#doom-emacs-colorpng][doom-emacs-color.png]]
+  - [[#doom-emacs-bw-darksvg][doom-emacs-bw-dark.svg]]
+  - [[#doom-emacs-bw-lightsvg][doom-emacs-bw-light.svg]]
+
+* Description
+
+This directory contains a few custom splash screens I have made for [[https://github.com/hlissner/doom-emacs/][Doom Emacs]]. I'm no designer nor artist, so any suggestions for improvements are welcome!
+
+To configure any of these, put them under your =~/.doom.d/splash/= directory, and configure as follows:
+
+#+begin_src emacs-lisp
+(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
+#+end_src
+
+* The images
+
+** doom-emacs-color.png
+
+I made this by combining [[http://www.thedreamcastjunkyard.co.uk/2018/03/cross-platform-online-multiplayer-added.html][a Doom logo]] with the word "Emacs" rendered in the [[https://fontmeme.com/doom-font/][Doom Font]].
+
+[[file:doom-emacs-color.png]]
+
+** doom-emacs-bw-dark.svg
+
+This was made by vectorizing the PNG image using ImageMagick's =convert= utility (needs =potrace= installed to support SVG):
+#+begin_src shell
+convert doom-emacs-color.png doom-emacs-bw-dark.svg
+#+end_src
+
+[[file:doom-emacs-bw-dark.svg]]
+** doom-emacs-bw-light.svg
+
+This was made by vectorizing the PNG image using ImageMagick's =convert= utility (needs =potrace= installed to support SVG) with the =-negate= flag:
+#+begin_src shell
+convert -negate doom-emacs-color.png doom-emacs-bw-light.svg
+#+end_src
+[[file:doom-emacs-bw-light.svg]]
