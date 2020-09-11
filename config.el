@@ -68,7 +68,9 @@
 
 (setq confirm-kill-emacs nil)
 
-(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
+(setq fancy-splash-image
+      (concat doom-private-dir "splash/"
+              (nth (random 2) '("doom-emacs-color.png" "doom-emacs-bw-light.svg"))))
 
 (setq doom-font (font-spec :family "Fira Code Retina" :size 16)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
