@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: graph
+# uuid:
+# key: graph
+# condition: t
+# --
+graph G {
+    bgcolor = transparent;
+    node [style=filled];
+    $0
+}

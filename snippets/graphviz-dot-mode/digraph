@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: digraph
+# uuid:
+# key: digraph
+# condition: t
+# --
+digraph G {
+    bgcolor = transparent;
+    node [style=filled];
+    $0
+}
