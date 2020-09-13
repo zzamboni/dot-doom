@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: dot block with a graph
+# key: graph
+# --
+#+begin_src dot :file images/${1:graph}.svg :cmdline -T${2:svg} :exports none :results silent
+graph G {
+    bgcolor = transparent;
+    node [style=filled];
+    $0
+}
+#+end_src
+
+[[file:$1.svg]]
