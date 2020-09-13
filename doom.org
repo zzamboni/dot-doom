@@ -663,10 +663,7 @@ Enable variable and visual line mode in Org mode, also enable tangle-on-save.
            (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
 #+end_src
 
-** Capturing and note taking :ATTACH:
-:PROPERTIES:
-:ID:       3ffdb2e2-5cea-4b1d-864a-ab37b4f1af0a
-:END:
+** Capturing and note taking
 
 First, I define where all my Org-captured things can be found.
 
