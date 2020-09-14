@@ -10,4 +10,4 @@ digraph G {
 }
 #+end_src
 
-[[file:$1.svg]]
+[[file:images/$1.svg]]

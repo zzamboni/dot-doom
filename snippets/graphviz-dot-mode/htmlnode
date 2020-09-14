@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Graphviz HTML-like record node
+# key: htmlnode
+# condition: t
+# --
+${1:nodename} [shape=none style=solid margin=0 label=
+          <<table border="0" cellspacing="0" cellborder="1">
+          <tr><td>$0</td></tr>
+          </table>>
+    ]
