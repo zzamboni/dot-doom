@@ -30,6 +30,8 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#general-org-configuration][General Org Configuration]]
   - [[#org-visual-settings][Org visual settings]]
   - [[#capturing-and-note-taking][Capturing and note taking]]
+  - [[#capturing-images][Capturing images]]
+  - [[#capturing-links][Capturing links]]
   - [[#tasks-and-agenda][Tasks and agenda]]
   - [[#gtd][GTD]]
   - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
@@ -702,6 +704,8 @@ I'm still trying out =org-roam=, although I have not figured out very well how i
 (setq +org-roam-open-buffer-on-find-file nil)
 #+end_src
 
+** Capturing images
+
 Using =org-download= to make it easier to insert images into my org notes. I don't like the configuration provided by Doom as part of the =(org +dragndrop)= module, so I install the package by hand and configure it to my liking. I also define a new keybinding to paste an image from the clipboard, asking for the filename first.
 
 #+begin_src emacs-lisp :tangle packages.el
@@ -728,6 +732,8 @@ Using =org-download= to make it easier to insert images into my org notes. I don
         "C-c l a y" #'zz/org-download-paste-clipboard
         "C-M-y" #'zz/org-download-paste-clipboard))
 #+end_src
+
+** Capturing links
 
 =org-mac-link= implements the ability to grab links from different Mac apps and insert them in the file. Bind =C-c g= to call =org-mac-grab-link= to choose an application and insert a link.
 
