@@ -37,6 +37,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
   - [[#avoiding-non-org-mode-files][Avoiding non-Org mode files]]
+  - [[#find-the-numbering-of-the-current-headline][Find the numbering of the current headline.]]
 - [[#coding][Coding]]
 - [[#other-tools][Other tools]]
 - [[#experiments][Experiments]]
@@ -1007,6 +1008,43 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
 #+begin_src emacs-lisp
 (use-package org-pandoc-import)
 #+end_src
+
+** Find the numbering of the current headline.
+
+This function is a modified version of the =org-num--number-region= function of the =org-num= package, but modified to only return the numbering of the innermost headline in which the cursor is currently placed. I use this when writing slides using =org-re-reveal=, to automatically go to the current slide on save/export.
+
+#+begin_src emacs-lisp
+(defun zz/org-current-headline-number ()
+  "Get the numbering of the innermost headling which contains the
+cursor. Returns nil if the cursor is above the first level-1
+headline, or at the very end of the file."
+  (require 'org-num)
+  (let ((org-num--numbering nil)
+        (start (point-min))
+        (end (point-max))
+        (original-point (point)))
+    (org-with-point-at (or start 1)
+      ;; Do not match headline starting at START.
+      (when start (end-of-line))
+      (let ((regexp (org-num--headline-regexp))
+            (new nil))
+        (while (re-search-forward regexp end t)
+          (let* ((level (org-reduced-level
+                         (- (match-end 0) (match-beginning 0) 1)))
+                 (skip (org-num--skip-value))
+                 (numbering (org-num--current-numbering level skip)))
+            (let* ((current-subtree (save-excursion (org-element-at-point)))
+                   (point-in-subtree (<= (org-element-property :begin current-subtree)
+                                         original-point
+                                         (1- (org-element-property :end current-subtree)))))
+              ;; Get numbering to current headline if the cursor is in it.
+              (when point-in-subtree (push numbering
+                                           new)))))
+        ;; New contains all the trees that contain the cursor, so we only return
+        ;; the innermost one. We reverse its order to make it more readable.
+        (reverse (car new))))))
+#+end_src
+
 * Coding
 
 Some useful settings for LISP coding - =smartparens-strict-mode= to enforce parenthesis to match. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
