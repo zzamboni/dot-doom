@@ -409,6 +409,30 @@ headline, or at the very end of the file."
         ;; the innermost one. We reverse its order to make it more readable.
         (reverse (car new))))))
 
+(defun zz/refresh-reveal-prez ()
+  ;; Export the file
+  (org-re-reveal-export-to-html)
+  (let* ((slide-list (zz/org-current-headline-number)) ;; Get the current slide number
+         (slide-str (string-join (mapcar #'number-to-string slide-list) "-"))
+         ;; Determine the filename to use
+         (file (concat (file-name-directory (buffer-file-name))
+                       (org-export-output-file-name ".html" nil)))
+         ;; Final URL including the slide number
+         (uri (concat "file://" file "#/slide-" slide-str))
+         ;; Get the document title
+         (title (cadar (org-collect-keywords '("TITLE"))))
+         ;; Command to reload the browser and move to the correct slide
+         (cmd (concat "osascript -e \"tell application \\\"Brave\\\" to repeat with W in windows
+repeat with T in (tabs in W whose title is \\\"" title "\\\")
+reload T
+delay 0.1
+set URL of T to \\\"" uri "\\\"
+end repeat
+end repeat\"")))
+    ;; Short sleep seems necessary for the file changes to be noticed
+    (sleep-for 0.2)
+    (call-process-shell-command cmd)))
+
 (defun zz/sp-enclose-next-sexp (num)
   (interactive "p")
   (insert-parentheses (or num 1)))
