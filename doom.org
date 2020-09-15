@@ -39,7 +39,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
   - [[#avoiding-non-org-mode-files][Avoiding non-Org mode files]]
-  - [[#find-the-numbering-of-the-current-headline][Find the numbering of the current headline.]]
+  - [[#revealjs-presentations][Reveal.js presentations]]
 - [[#coding][Coding]]
 - [[#other-tools][Other tools]]
 - [[#experiments][Experiments]]
@@ -1015,9 +1015,11 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
 (use-package org-pandoc-import)
 #+end_src
 
-** Find the numbering of the current headline.
+** Reveal.js presentations
 
-This function is a modified version of the =org-num--number-region= function of the =org-num= package, but modified to only return the numbering of the innermost headline in which the cursor is currently placed. I use this when writing slides using =org-re-reveal=, to automatically go to the current slide on save/export.
+I use =org-re-reveal= to make presentations. The functions below help me improve my workflow by automatically exporting the slides whenever I save the file, refreshing the presentation in my browser, and moving it to the slide where the cursor was when I saved the file. This helps keeping a "live" rendering of the presentation next to my Emacs window.
+
+The first function is a modified version of the =org-num--number-region= function of the =org-num= package, but modified to only return the numbering of the innermost headline in which the cursor is currently placed.
 
 #+begin_src emacs-lisp
 (defun zz/org-current-headline-number ()
@@ -1051,7 +1053,19 @@ headline, or at the very end of the file."
         (reverse (car new))))))
 #+end_src
 
-Refreshing the opened presentation in my browser, to the correct current slide
+The =zz/refresh-reveal-prez= function makes use of the above to perform the presentation export, refresh and update. You can use it by adding an after-save hook like this:
+
+#+begin_example
+,* Local variables :ARCHIVE:noexport:
+,# Local variables:
+,# eval: (add-hook! after-save :append :local (zz/refresh-reveal-prez))
+,# end:
+#+end_example
+
+*Note #1:* This is specific to my OS (macOS) and the browser I use (Brave). I will make it more generic in the future, but for now feel free to change it to your needs.
+
+*Note #2:* the presentation must be already open in the browser, so you must run "Export to reveal.js -> To file and browse" (=C-c C-e v b=) once by hand.
+
 #+begin_src emacs-lisp
 (defun zz/refresh-reveal-prez ()
   ;; Export the file
