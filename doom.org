@@ -56,7 +56,7 @@ Emacs config is an art, and I have learned a lot by reading through other people
 Note: a lot of manual configuration has been rendered moot by using Emacs Doom, which aggregates a well-maintained and organized collection of common configuration settings for performance optimization, package management, commonly used packages (e.g. Org) and much more.
 * Doom config file overview
 
-Doom Emacs used three config files:
+Doom Emacs uses three config files:
 
 - =init.el= defines which of the existing Doom [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#modules][modules]] are loaded. A Doom module is a bundle of packages, configuration and commands, organized into a unit that can be toggled easily from this file.
 - =packages.el= defines which [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#package-management][packages]] should be installed, beyond those that are installed and loaded as part of the enabled modules.
