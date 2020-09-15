@@ -1053,13 +1053,13 @@ headline, or at the very end of the file."
         (reverse (car new))))))
 #+end_src
 
-The =zz/refresh-reveal-prez= function makes use of the above to perform the presentation export, refresh and update. You can use it by adding an after-save hook like this:
+The =zz/refresh-reveal-prez= function makes use of the above to perform the presentation export, refresh and update. You can use it by adding an after-save hook like this (add at the end of the file):
 
 #+begin_example
 ,* Local variables :ARCHIVE:noexport:
-,# Local variables:
-,# eval: (add-hook! after-save :append :local (zz/refresh-reveal-prez))
-,# end:
+# Local variables:
+# eval: (add-hook! after-save :append :local (zz/refresh-reveal-prez))
+# end:
 #+end_example
 
 *Note #1:* This is specific to my OS (macOS) and the browser I use (Brave). I will make it more generic in the future, but for now feel free to change it to your needs.
