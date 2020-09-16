@@ -866,6 +866,14 @@ We define the corresponding Org-GTD capture templates.
                  :kill-buffer t)))
 #+end_src
 
+I set up an advice before =org-capture= to make sure =org-gtd= and =org-capture= are loaded, which triggers the setup of the templates above.
+
+#+begin_src emacs-lisp
+(defadvice! +zz/load-org-gtd-before-capture ()
+    :before #'org-capture
+    (require 'org-capture)
+    (require 'org-gtd))
+#+end_src
 ** Exporting a Curriculum Vitae
 
 I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].

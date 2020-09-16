@@ -309,6 +309,11 @@
                  "* %?\n%U\n\n  %i\n  %(org-mac-outlook-message-get-links)"
                  :kill-buffer t)))
 
+(defadvice! +zz/load-org-gtd-before-capture ()
+    :before #'org-capture
+    (require 'org-capture)
+    (require 'org-gtd))
+
 (use-package! ox-awesomecv
   :after org)
 
