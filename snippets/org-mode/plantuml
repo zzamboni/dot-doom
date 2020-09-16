@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: plantuml
+# key: plantuml
+# condition: t
+# --
+#+begin_src plantuml :file images/${1:file}.png  :exports none :results silent
+@startuml
+skinparam backgroundcolor transparent
+$0
+@enduml
+#+end_src
+
+[[file:images/$1.png]]
