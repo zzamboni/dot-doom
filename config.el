@@ -380,33 +380,31 @@
 (use-package org-pandoc-import)
 
 (defun zz/org-current-headline-number ()
-  "Get the numbering of the innermost headling which contains the
+  "Get the numbering of the innermost headline which contains the
 cursor. Returns nil if the cursor is above the first level-1
-headline, or at the very end of the file."
+headline, or at the very end of the file. Does not count
+headlines tagged with :noexport:"
   (require 'org-num)
   (let ((org-num--numbering nil)
-        (start (point-min))
-        (end (point-max))
         (original-point (point)))
-    (org-with-point-at (or start 1)
-      ;; Do not match headline starting at START.
-      (when start (end-of-line))
-      (let ((regexp (org-num--headline-regexp))
-            (new nil))
-        (while (re-search-forward regexp end t)
-          (let* ((level (org-reduced-level
-                         (- (match-end 0) (match-beginning 0) 1)))
-                 (skip (org-num--skip-value))
-                 (numbering (org-num--current-numbering level skip)))
-            (let* ((current-subtree (save-excursion (org-element-at-point)))
-                   (point-in-subtree (<= (org-element-property :begin current-subtree)
-                                         original-point
-                                         (1- (org-element-property :end current-subtree)))))
-              ;; Get numbering to current headline if the cursor is in it.
-              (when point-in-subtree (push numbering
-                                           new)))))
-        ;; New contains all the trees that contain the cursor, so we only return
-        ;; the innermost one. We reverse its order to make it more readable.
+    (save-mark-and-excursion
+      (let ((new nil))
+        (org-map-entries
+         (lambda ()
+           (when (org-at-heading-p)
+             (let* ((level (nth 1 (org-heading-components)))
+                    (numbering (org-num--current-numbering level nil)))
+               (let* ((current-subtree (save-excursion (org-element-at-point)))
+                      (point-in-subtree (<= (org-element-property :begin current-subtree)
+                                            original-point
+                                            (1- (org-element-property :end current-subtree)))))
+                 ;; Get numbering to current headline if the cursor is in it.
+                 (when point-in-subtree (push numbering
+                                              new))))))
+         "-noexport")
+        ;; New contains all the trees that contain the cursor (i.e. the
+        ;; innermost and all its parents), so we only return the innermost one.
+        ;; We reverse its order to make it more readable.
         (reverse (car new))))))
 
 (defun zz/refresh-reveal-prez ()
