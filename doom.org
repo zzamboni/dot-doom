@@ -1087,10 +1087,15 @@ The =zz/refresh-reveal-prez= function makes use of the above to perform the pres
          (title (cadar (org-collect-keywords '("TITLE"))))
          ;; Command to reload the browser and move to the correct slide
          (cmd (concat "osascript -e \"tell application \\\"Brave\\\" to repeat with W in windows
-repeat with T in (tabs in W whose title is \\\"" title "\\\")
-reload T
-delay 0.1
-set URL of T to \\\"" uri "\\\"
+set i to 0
+repeat with T in (tabs in W)
+set i to i + 1
+if title of T is \\\"" title "\\\" then
+  reload T
+  delay 0.1
+  set URL of T to \\\"" uri "\\\"
+  set (active tab index of W) to i
+end if
 end repeat
 end repeat\"")))
     ;; Short sleep seems necessary for the file changes to be noticed
