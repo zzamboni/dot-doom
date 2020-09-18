@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: htmldiv
+# key: htmldiv
+# condition: t
+# --
+#+html: <div style="width:${1:50%};">
+$0
+#+html: </div>
