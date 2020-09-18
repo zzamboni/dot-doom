@@ -66,6 +66,9 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type nil)
 
+(setq auto-save-default t
+      make-backup-files t)
+
 (setq confirm-kill-emacs nil)
 
 (setq fancy-splash-image
