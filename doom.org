@@ -64,7 +64,7 @@ Doom Emacs uses three config files:
 
 There are other files that can be loaded, but theses are the main ones. The load order of different files is [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#load-order][defined depending on the type of session]] being started.
 
-All the config files are generated from this Org file, to try and make its meaning as clear as possible. All ~use-package!~ declarations are written to =packages.el=, and all other LISP code is written to =config.el=.
+All the config files are generated from this Org file, to try and make its meaning as clear as possible. All ~package!~ declarations are written to =packages.el=, all other LISP code is written to =config.el=.
 
 ** Config file headers
 
