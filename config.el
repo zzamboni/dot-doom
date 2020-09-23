@@ -499,6 +499,6 @@ end repeat\"")))
   "Measure the time it takes to evaluate BODY."
   `(let ((time (current-time)))
      ,@body
-     (message "%.06f" (float-time (time-since time)))))
+     (float-time (time-since time))))
 
 (setq vterm-shell "/usr/local/bin/elvish")

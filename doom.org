@@ -1210,7 +1210,7 @@ Some other languages I use.
   "Measure the time it takes to evaluate BODY."
   `(let ((time (current-time)))
      ,@body
-     (message "%.06f" (float-time (time-since time)))))
+     (float-time (time-since time))))
   #+end_src
 
 - I'm still not fully convinced of running a terminal inside Emacs, but =vterm= is much nicer than any of the previous terminal emulators, so I'm giving it a try. I configure it so that it runs my [[https://elv.sh/][favorite shell]]. Vterm runs Elvish flawlessly!
