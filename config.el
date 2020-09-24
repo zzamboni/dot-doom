@@ -168,7 +168,7 @@
 
 (after! org (setq org-insert-heading-respect-content nil))
 
-(after! (setq org-log-into-drawer t))
+(after! org (setq org-log-into-drawer t))
 
 (after! org
   (setq org-special-ctrl-a/e t)

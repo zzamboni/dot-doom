@@ -641,7 +641,7 @@ Insert Org headings at point, not after the current subtree (this is enabled by 
 Log stuff into the LOGBOOK drawer by default
 
 #+begin_src emacs-lisp
-(after! (setq org-log-into-drawer t))
+(after! org (setq org-log-into-drawer t))
 #+end_src
 
 Use the special ~C-a~, ~C-e~ and ~C-k~ definitions for Org, which enable some special behavior in headings.
