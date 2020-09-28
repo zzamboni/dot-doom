@@ -910,7 +910,8 @@ Building upon these, I have developed a new =ox-leanpub= package which you can f
 The =ox-leanpub= module sets up Markua export automatically. I add the code for setting up the Markdown exporter too (I don't use it, but just to keep an eye on any breakage):
 
 #+begin_src emacs-lisp :tangle packages.el
-(package! ox-leanpub)
+(package! ox-leanpub
+  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/ox-leanpub"))
 #+end_src
 #+begin_src emacs-lisp
 (use-package! ox-leanpub

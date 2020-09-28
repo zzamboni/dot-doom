@@ -67,7 +67,8 @@
 (package! org-cv
   :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
 
-(package! ox-leanpub)
+(package! ox-leanpub
+  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/ox-leanpub"))
 
 (package! org-pandoc-import
   :recipe (:host github
