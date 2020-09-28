@@ -6,7 +6,7 @@
 #+property: header-args:emacs-lisp :tangle config.el
 #+property: header-args :mkdirp yes :comments no
 
-[[file:splash/doom-emacs-color.png]]
+[[file:splash/doom-emacs-bw-light.svg]]
 
 * Introduction
 
