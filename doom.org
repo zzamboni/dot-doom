@@ -452,7 +452,7 @@ I like two of the images, so I select one at random.
 Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://edwardtufte.github.io/et-book/][ET Book]].
 
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Fira Code Retina" :size 16)
+(setq doom-font (font-spec :family "Fira Code Retina" :size 18)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
 #+end_src
 
@@ -506,13 +506,33 @@ Doom Emacs has an extensive keybinding system, and most module functions are alr
 
 *** Miscellaneous keybindings
 
-Use =counsel-recentf= for ~C-x b~. I like being able to see all recently opened files, instead of just the current ones. This makes it possible to use ~C-x b~ almost as a replacement for ~C-c C-f~, for files that I edit often.
+Use =counsel-buffer-or-recentf= for ~C-x b~. I like being able to see all recently opened files, instead of just the current ones. This makes it possible to use ~C-x b~ almost as a replacement for ~C-c C-f~, for files that I edit often. Similarly, for switching between non-file buffers I use =counsel-switch-buffer=, mapped to ~C-x C-b~.
 
 #+begin_src emacs-lisp
-(map! "C-x b" #'counsel-recentf)
+(map! "C-x b" #'counsel-buffer-or-recentf
+      "C-x C-b" #'counsel-switch-buffer)
 #+end_src
 
-# Use =counsel-grep-or-swiper= for searching by default, I like the Swiper interface but it can get slow for large files, so this function automatically switches to =counsel-grep= for files above a threshold defined by the =counsel-grep-swiper-limit= variable (300,000 characters by default, but in Org buffers this limit is divided by 4).
+The =counsel-buffer-or-recentf= function by default shows duplicated entries because it does not abbreviate the paths of the open buffers. The function below fixes this, I have submitted this change to the =counsel= library (https://github.com/abo-abo/swiper/pull/2687), in the meantime I define it here and integrate it via =advice-add=.
+
+#+begin_src emacs-lisp
+(defun zz/counsel-buffer-or-recentf-candidates ()
+  "Return candidates for `counsel-buffer-or-recentf'."
+  (require 'recentf)
+  (recentf-mode)
+  (let ((buffers
+         (delq nil
+               (mapcar (lambda (b)
+                         (when (buffer-file-name b)
+                           (abbreviate-file-name (buffer-file-name b))))
+                       (delq (current-buffer) (buffer-list))))))
+    (append
+     buffers
+     (cl-remove-if (lambda (f) (member f buffers))
+                   (counsel-recentf-candidates)))))
+
+(advice-add #'counsel-buffer-or-recentf-candidates :override #'zz/counsel-buffer-or-recentf-candidates)
+#+end_src
 
 Use =+default/search-buffer= for searching by default, I like the Swiper interface.
 
