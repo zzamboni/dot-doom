@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: floatright
+# key: floatright
+# condition: t
+# --
+#+attr_html: :style float:right;$0
