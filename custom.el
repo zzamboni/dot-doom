@@ -4,7 +4,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values
-   '((eval add-hook! after-save :append :local
+   '((eval add-hook 'after-save-hook
+           (lambda nil
+             (org-export-to-file 'awesomecv "zamboni-vita.tex"))
+           :append :local)
+     (eval add-hook! after-save :append :local
            (zz/refresh-reveal-prez)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
