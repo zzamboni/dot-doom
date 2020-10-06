@@ -92,7 +92,7 @@
 ;;(add-hook 'window-setup-hook #'doom/quickload-session)
 
 ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
+(setq initial-frame-alist '((top . 1) (left . 1) (width . 129) (height . 37)))
 
 (map! "C-x b" #'counsel-buffer-or-recentf
       "C-x C-b" #'counsel-switch-buffer)
@@ -475,6 +475,13 @@ end repeat\"")))
               racket-repl-mode) :append #'smartparens-strict-mode)
   (add-hook! smartparens-mode :append #'sp-use-paredit-bindings)
   (map! :map (smartparens-mode-map smartparens-strict-mode-map) "M-(" #'zz/sp-enclose-next-sexp))
+
+(after! prog-mode
+  (map! :map prog-mode-map "C-h C-f" #'find-function-at-point)
+  (map! :map prog-mode-map
+        :localleader
+        :desc "Find function at point"
+        "g p" #'find-function-at-point))
 
 (use-package! cfengine
   :defer t

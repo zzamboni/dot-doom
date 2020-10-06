@@ -495,7 +495,7 @@ Maximize the window upon startup. The =(fullscreen . maximized)= value suggested
 
 #+begin_src emacs-lisp
 ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(setq initial-frame-alist '((top . 1) (left . 1) (width . 143) (height . 55)))
+(setq initial-frame-alist '((top . 1) (left . 1) (width . 129) (height . 37)))
 #+end_src
 
 ** Key bindings
@@ -1151,6 +1151,17 @@ Some useful settings for LISP coding - =smartparens-strict-mode= to enforce pare
   (map! :map (smartparens-mode-map smartparens-strict-mode-map) "M-(" #'zz/sp-enclose-next-sexp))
 #+end_src
 
+Adding keybindings for some useful functions:
+
+- =find-function-at-point= gets bound to =C-c l g p= (grouped together with other "go to" functions bound by Doom) and to =C-c C-f= (analog to the existing =C-c f=) for faster access.
+  #+begin_src emacs-lisp
+(after! prog-mode
+  (map! :map prog-mode-map "C-h C-f" #'find-function-at-point)
+  (map! :map prog-mode-map
+        :localleader
+        :desc "Find function at point"
+        "g p" #'find-function-at-point))
+  #+end_src
 Some other languages I use.
 
 - [[http://elvish.io/][Elvish shell]]
