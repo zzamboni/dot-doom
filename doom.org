@@ -216,7 +216,7 @@ Doom [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.
 /Note: do not use M-x customize or the customize API in general. Doom is designed to be configured programmatically from your config.el, which can conflict with Customize’s way of modifying variables./
 #+end_quote
 
-All necessary settings are therefore set by hand as part of this configuration file.
+All necessary settings are therefore set by hand as part of this configuration file. The only exceptions are "safe variable" and "safe theme" settings, which are automatically saved by Emacs in =custom.el=, but this is OK as they don't conflict with anything else from the config.
 
 * Doom modules
 
