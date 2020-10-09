@@ -1,10 +1,14 @@
+:DOC-CONFIG:
+# Tangle by default to config.el, which is the most common case
+#+property: header-args:emacs-lisp :tangle config.el
+#+property: header-args :mkdirp yes :comments no
+#+startup: fold
+:END:
+
 #+title: Doom Emacs configuration
 #+author: Diego Zamboni
 #+email: diego@zzamboni.org
 
-# Tangle by default to config.el, which is the most common case
-#+property: header-args:emacs-lisp :tangle config.el
-#+property: header-args :mkdirp yes :comments no
 
 [[file:splash/doom-emacs-bw-light.svg]]
 
@@ -52,6 +56,7 @@ Emacs config is an art, and I have learned a lot by reading through other people
 - [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]]
 - [[https://github.com/PythonNut/emacs-config][PythonNut's Emacs config]]
 - [[https://www.masteringemacs.org/][Mastering Emacs]]
+- [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur's Emacs config]]
 
 Note: a lot of manual configuration has been rendered moot by using Emacs Doom, which aggregates a well-maintained and organized collection of common configuration settings for performance optimization, package management, commonly used packages (e.g. Org) and much more.
 * Doom config file overview
@@ -328,7 +333,6 @@ This code is written to the =init.el= to select which modules to load. Written h
        ;;(dart +flutter)                        ; paint ui and not much else
        ;;elixir                                 ; erlang done right
        ;;elm                                    ; care for a cup of TEA?
-       elvish                                   ; The Elvish shell
        emacs-lisp                               ; drown in parentheses
        ;;erlang                                 ; an elegant language for a more civilized age
        (ess +lsp)                               ; emacs speaks statistics
@@ -1162,15 +1166,16 @@ Adding keybindings for some useful functions:
         :desc "Find function at point"
         "g p" #'find-function-at-point))
   #+end_src
+
 Some other languages I use.
 
-- [[http://elvish.io/][Elvish shell]]
+- [[http://elvish.io/][Elvish shell]], with support for org-babel.
   #+begin_src emacs-lisp :tangle packages.el
 (package! elvish-mode)
 (package! ob-elvish)
   #+end_src
 
-- [[http://cfengine.com/][CFEngine]] policy files.
+- [[http://cfengine.com/][CFEngine]] policy files. The =cfengine3-mode= package is included with Emacs, but I also install org-babel support.
   #+begin_src emacs-lisp :tangle packages.el
 (package! ob-cfengine3)
   #+end_src

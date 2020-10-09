@@ -119,7 +119,6 @@
        ;;(dart +flutter)                        ; paint ui and not much else
        ;;elixir                                 ; erlang done right
        ;;elm                                    ; care for a cup of TEA?
-       elvish                                   ; The Elvish shell
        emacs-lisp                               ; drown in parentheses
        ;;erlang                                 ; an elegant language for a more civilized age
        (ess +lsp)                               ; emacs speaks statistics
