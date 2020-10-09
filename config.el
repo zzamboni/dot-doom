@@ -330,7 +330,7 @@
                  "* %?\n%U\n\n  %i\n  %(org-mac-outlook-message-get-links)"
                  :kill-buffer t)))
 
-(defadvice! +zz/load-org-gtd-before-capture ()
+(defadvice! +zz/load-org-gtd-before-capture (&optional goto keys)
     :before #'org-capture
     (require 'org-capture)
     (require 'org-gtd))
