@@ -675,10 +675,12 @@ Insert Org headings at point, not after the current subtree (this is enabled by 
 (after! org (setq org-insert-heading-respect-content nil))
 #+end_src
 
-Log stuff into the LOGBOOK drawer by default
+Enable logging of done tasks, and log stuff into the LOGBOOK drawer by default
 
 #+begin_src emacs-lisp
-(after! org (setq org-log-into-drawer t))
+(after! org
+  (setq org-log-done t)
+  (setq org-log-into-drawer t))
 #+end_src
 
 Use the special ~C-a~, ~C-e~ and ~C-k~ definitions for Org, which enable some special behavior in headings.
