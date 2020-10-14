@@ -859,6 +859,13 @@ I configure =org-archive= to archive completed TODOs by default to the =archive.
   (setq org-archive-location "archive.org::datetree/"))
 #+end_src
 
+I have started using =org-clock= to track time I spend on tasks. Often I restart Emacs for different reasons in the middle of a session, so I want to persist all the running clocks and their history.
+
+#+begin_src emacs-lisp
+(after! org-clock
+  (setq org-clock-persist t)
+  (org-clock-persistence-insinuate))
+#+end_src
 ** GTD
 
 I am trying out Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]]. I haven't figured out my perfect workflow for tracking GTD with Org yet, but this looks like a very promising approach.

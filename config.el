@@ -297,6 +297,10 @@
   :config
   (setq org-archive-location "archive.org::datetree/"))
 
+(after! org-clock
+  (setq org-clock-persist t)
+  (org-clock-persistence-insinuate))
+
 (use-package! org-gtd
   :after org
   :config
