@@ -304,7 +304,7 @@ This code is written to the =init.el= to select which modules to load. Written h
        vterm                                    ; the best terminal emulation in Emacs
 
        :checkers
-       syntax                                   ; tasing you for every semicolon you forget
+       (syntax +childframe)                     ; tasing you for every semicolon you forget
        spell                                    ; tasing you for misspelling mispelling
        ;;grammar                                ; tasing grammar mistake every you make
 
@@ -322,7 +322,7 @@ This code is written to the =init.el= to select which modules to load. Written h
        (magit +forge)                           ; a git porcelain for Emacs
        ;;make                                   ; run make tasks from Emacs
        pass                                     ; password manager for nerds
-       ;;pdf                                    ; pdf enhancements
+       pdf                                      ; pdf enhancements
        ;;prodigy                                ; FIXME managing external services & code builders
        ;;rgb                                    ; creating color strings
        ;;taskrunner                             ; taskrunner for all your projects
@@ -362,7 +362,7 @@ This code is written to the =init.el= to select which modules to load. Written h
        ;;javascript                             ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia                                  ; a better, faster MATLAB
        ;;kotlin                                 ; a better, slicker Java(Script)
-       (latex +lsp)                             ; writing papers in Emacs has never been so fun
+       latex                                    ; writing papers in Emacs has never been so fun
        ;;lean
        ;;factor
        ;;ledger                                 ; an accounting system in Emacs
@@ -371,7 +371,8 @@ This code is written to the =init.el= to select which modules to load. Written h
        ;;nim                                    ; python + lisp at the speed of c
        ;;nix                                    ; I hereby declare "nix geht mehr!"
        ;;ocaml                                  ; an objective camel
-       (org +pretty +journal +hugo +roam +pandoc +present)  ; organize your plain life in plain text
+       (org +pretty +journal +hugo
+            +roam +pandoc +present)             ; organize your plain life in plain text
        ;;php                                    ; perl's insecure younger brother
        plantuml                                 ; diagrams for confusing people more
        ;;purescript                             ; javascript, but functional
