@@ -36,6 +36,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#gtd][GTD]]
   - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
   - [[#publishing-to-leanpub][Publishing to LeanPub]]
+  - [[#blogging-with-hugo][Blogging with Hugo]]
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
   - [[#avoiding-non-org-mode-files][Avoiding non-Org mode files]]
@@ -974,6 +975,21 @@ With this setup, I can write my book in org-mode (I usually keep a single =book.
 
 If you are interested in learning more about publishing to Leanpub with Org-mode, check out my book [[https://leanpub.com/emacs-org-leanpub][/Publishing with Emacs, Org-mode and Leanpub/]].
 
+** Blogging with Hugo
+
+[[https://ox-hugo.scripter.co/][ox-hugo]] is an awesome way to blog from org-mode. It makes it possible for posts in org-mode format to be kept separate, and it generates the Markdown files for Hugo. Hugo [[https://gohugo.io/content-management/formats/][supports org files]], but using ox-hugo has multiple advantages:
+
+- Parsing is done by org-mode natively, not by an external library. Although goorgeous (used by Hugo) is very good, it still lacks in many areas, which leads to text being interpreted differently as by org-mode.
+- Hugo is left to parse a native Markdown file, which means that many of its features such as shortcodes, TOC generation, etc., can still be used on the generated file.
+
+Doom Emacs includes and configures =ox-hugo= as part of its =(:lang org +hugo)= module, so all that's left is to configure some parameters to my liking.
+
+I set =org-hugo-use-code-for-kbd= so that I can apply a custom style to keyboard bindings in my blog.
+
+#+begin_src emacs-lisp
+(after! ox-hugo
+  (setq org-hugo-use-code-for-kbd t))
+#+end_src
 ** Code for org-mode macros
 
 Here I define functions which get used in some of my org-mode macros

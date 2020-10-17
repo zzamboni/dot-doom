@@ -355,6 +355,9 @@
   (require 'ox-leanpub-markdown)
   (org-leanpub-book-setup-menu-markdown))
 
+(after! ox-hugo
+  (setq org-hugo-use-code-for-kbd t))
+
 (defun zz/org-if-str (str &optional desc)
   (when (org-string-nw-p str)
     (or (org-string-nw-p desc) str)))
