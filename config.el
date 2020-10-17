@@ -212,7 +212,7 @@
 
 (after! org
   (setq org-agenda-files
-        '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
+        '("~/gtd" "~/Work/work.org.gpg" "~/org/")))
 
 (defun zz/add-file-keybinding (key file &optional desc)
   (let ((key key)
