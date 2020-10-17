@@ -720,7 +720,7 @@ First, I define where all my Org-captured things can be found.
 #+begin_src emacs-lisp
 (after! org
   (setq org-agenda-files
-        '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
+        '("~/gtd" "~/Work/work.org.gpg" "~/org/")))
 #+end_src
 
 I define some global keybindings  to open my frequently-used org files (original tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
