@@ -66,7 +66,7 @@ Doom Emacs uses three config files:
 
 There are other files that can be loaded, but theses are the main ones. The load order of different files is [[https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#load-order][defined depending on the type of session]] being started.
 
-All the config files are generated from this Org file, to try and make its meaning as clear as possible. All ~package!~ declarations are written to =packages.el=, all other LISP code is written to =config.el=.
+All the config files are generated from this Org file, to try and make its meaning as clear as possible. All =package!= declarations are written to =packages.el=, all other LISP code is written to =config.el=.
 
 ** Config file headers
 
@@ -1219,7 +1219,7 @@ Some other languages I use.
   #+end_src
 * Other tools
 
-- Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using ~defadvice!~. I also customize the display to add the =Status= column.
+- Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using =defadvice!=. I also customize the display to add the =Status= column.
 
   #+begin_src emacs-lisp
 (after! magit
