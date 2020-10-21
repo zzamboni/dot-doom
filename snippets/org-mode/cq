@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: cq
+# key: cq
+# condition: t
+# --
+? Are $1 a physical, administrative or technical control?
+
+a) Physical
+b) Administrative
+C) Technical
+
+? What type of control are $1?
+
+a) Preventive
+b) Detective
+c) Corrective
+d) Deterrent
+e) Recovery
+
+$0
