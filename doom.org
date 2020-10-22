@@ -1279,6 +1279,19 @@ Some other languages I use.
 (setq vterm-shell "/usr/local/bin/elvish")
   #+end_src
 
+- Add "unfill" commands to parallel the "fill" ones, bind ~A-q~ to =unfill-paragraph= and rebind ~M-q~ to the =unfill-toggle= command, which fills/unfills paragraphs alternatively.
+
+  #+begin_src emacs-lisp :tangle packages.el
+(package! unfill)
+  #+end_src
+  #+begin_src emacs-lisp
+(use-package! unfill
+  :defer t
+  :bind
+  ("M-q" . unfill-toggle)
+  ("A-q" . unfill-paragraph))
+  #+end_src
+
 * Experiments
 
 Some experimental code to list functions which are not native-compiled. Sort of works but its very slow. This does not get tangled to my config.el, I just keep it here for reference.

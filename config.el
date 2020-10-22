@@ -529,3 +529,9 @@ end repeat\"")))
      (float-time (time-since time))))
 
 (setq vterm-shell "/usr/local/bin/elvish")
+
+(use-package! unfill
+  :defer t
+  :bind
+  ("M-q" . unfill-toggle)
+  ("A-q" . unfill-paragraph))
