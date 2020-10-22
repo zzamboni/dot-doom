@@ -711,7 +711,7 @@ Enable variable and visual line mode in Org mode, also enable tangle-on-save.
 (add-hook! org-mode :append
            #'visual-line-mode
            #'variable-pitch-mode
-           (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
+           (lambda () (add-hook 'after-save-hook #'org-babel-tangle :append :local)))
 #+end_src
 
 ** Capturing and note taking

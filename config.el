@@ -208,7 +208,7 @@
 (add-hook! org-mode :append
            #'visual-line-mode
            #'variable-pitch-mode
-           (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
+           (lambda () (add-hook 'after-save-hook #'org-babel-tangle :append :local)))
 
 (after! org
   (setq org-agenda-files
