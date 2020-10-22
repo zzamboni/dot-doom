@@ -443,7 +443,7 @@ Disable line numbers.
 (setq display-line-numbers-type nil)
 #+end_src
 
-For some reason Doom disabled auto-save and backup files by default. Let's reenable them.
+For some reason Doom disables auto-save and backup files by default. Let's reenable them.
 
 #+begin_src emacs-lisp
 (setq auto-save-default t
