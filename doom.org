@@ -426,7 +426,7 @@ Change the Mac modifiers to my liking
 (cond (IS-MAC
        (setq mac-command-modifier      'meta
              mac-option-modifier       'alt
-             mac-right-option-modifier 'super)))
+             mac-right-option-modifier 'alt)))
 #+end_src
 
 When at the beginning of the line, make =Ctrl-K= remove the whole line, instead of just emptying it.
