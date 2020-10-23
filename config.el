@@ -78,7 +78,8 @@
 
 (setq fancy-splash-image
       (concat doom-private-dir "splash/"
-              (nth (random 2) '("doom-emacs-color.png" "doom-emacs-bw-light.svg"))))
+              (nth (random 2) '("doom-emacs-color.png"
+                                "doom-emacs-bw-light.svg"))))
 
 (setq doom-font (font-spec :family "Fira Code Retina" :size 18)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
@@ -117,7 +118,8 @@
      (cl-remove-if (lambda (f) (member f buffers))
                    (counsel-recentf-candidates)))))
 
-(advice-add #'counsel-buffer-or-recentf-candidates :override #'zz/counsel-buffer-or-recentf-candidates)
+(advice-add #'counsel-buffer-or-recentf-candidates
+            :override #'zz/counsel-buffer-or-recentf-candidates)
 
 ;;(map! "C-s" #'counsel-grep-or-swiper)
 (map! "C-s" #'+default/search-buffer)
@@ -207,8 +209,7 @@
 
 (add-hook! org-mode :append
            #'visual-line-mode
-           #'variable-pitch-mode
-           (lambda () (add-hook 'after-save-hook #'org-babel-tangle :append :local)))
+           #'variable-pitch-mode)
 
 (after! org
   (setq org-agenda-files
@@ -233,7 +234,8 @@
   (require 'org-download)
   (let ((file
          (if (not use-default-filename)
-             (read-string (format "Filename [%s]: " org-download-screenshot-basename)
+             (read-string (format "Filename [%s]: "
+                                  org-download-screenshot-basename)
                           nil nil org-download-screenshot-basename)
            nil)))
     (org-download-clipboard file)))
@@ -270,8 +272,8 @@
   (require 'mexican-holidays)
   (require 'swiss-holidays)
   (setq swiss-holidays-zh-city-holidays
-        '((holiday-float 4 1 3 "Sechseläuten") ;; meistens dritter Montag im April
-          (holiday-float 9 1 3 "Knabenschiessen"))) ;; zweites Wochenende im September
+        '((holiday-float 4 1 3 "Sechseläuten")
+          (holiday-float 9 1 3 "Knabenschiessen")))
   (setq calendar-holidays
         (append '((holiday-fixed 1 1 "New Year's Day")
                   (holiday-fixed 2 14 "Valentine's Day")
@@ -321,23 +323,29 @@
    ("C-c d a" . org-agenda-list) ;; see what's on your plate today
    ("C-c d p" . org-gtd-process-inbox) ;; process entire inbox
    ("C-c d n" . org-gtd-show-all-next) ;; see all NEXT items
-   ("C-c d s" . org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
-   ("C-c d f" . org-gtd-clarify-finalize))) ;; the keybinding to hit when you're done editing an item in the processing phase
+   ;; see projects that don't have a NEXT item
+   ("C-c d s" . org-gtd-show-stuck-projects)
+   ;; the keybinding to hit when you're done editing an item in the
+   ;; processing phase
+   ("C-c d f" . org-gtd-clarify-finalize)))
 
 (after! (org-gtd org-capture)
   (add-to-list 'org-capture-templates
                '("i" "GTD item"
-                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 entry
+                 (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
                  "* %?\n%U\n\n  %i"
                  :kill-buffer t))
   (add-to-list 'org-capture-templates
                '("l" "GTD item with link to where you are in emacs now"
-                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 entry
+                 (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
                  "* %?\n%U\n\n  %i\n  %a"
                  :kill-buffer t))
   (add-to-list 'org-capture-templates
                '("m" "GTD item with link to current Outlook mail message"
-                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 entry
+                 (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
                  "* %?\n%U\n\n  %i\n  %(org-mac-outlook-message-get-links)"
                  :kill-buffer t)))
 
@@ -423,9 +431,10 @@ headlines tagged with :noexport:"
              (let* ((level (nth 1 (org-heading-components)))
                     (numbering (org-num--current-numbering level nil)))
                (let* ((current-subtree (save-excursion (org-element-at-point)))
-                      (point-in-subtree (<= (org-element-property :begin current-subtree)
-                                            original-point
-                                            (1- (org-element-property :end current-subtree)))))
+                      (point-in-subtree
+                       (<= (org-element-property :begin current-subtree)
+                           original-point
+                           (1- (org-element-property :end current-subtree)))))
                  ;; Get numbering to current headline if the cursor is in it.
                  (when point-in-subtree (push numbering
                                               new))))))
@@ -438,7 +447,7 @@ headlines tagged with :noexport:"
 (defun zz/refresh-reveal-prez ()
   ;; Export the file
   (org-re-reveal-export-to-html)
-  (let* ((slide-list (zz/org-current-headline-number)) ;; Get the current slide number
+  (let* ((slide-list (zz/org-current-headline-number))
          (slide-str (string-join (mapcar #'number-to-string slide-list) "-"))
          ;; Determine the filename to use
          (file (concat (file-name-directory (buffer-file-name))
@@ -448,7 +457,8 @@ headlines tagged with :noexport:"
          ;; Get the document title
          (title (cadar (org-collect-keywords '("TITLE"))))
          ;; Command to reload the browser and move to the correct slide
-         (cmd (concat "osascript -e \"tell application \\\"Brave\\\" to repeat with W in windows
+         (cmd (concat
+"osascript -e \"tell application \\\"Brave\\\" to repeat with W in windows
 set i to 0
 repeat with T in (tabs in W)
 set i to i + 1
@@ -464,6 +474,10 @@ end repeat\"")))
     (sleep-for 0.2)
     (call-process-shell-command cmd)))
 
+(add-hook! org-mode :append
+  (lambda () (add-hook 'after-save-hook
+                  #'org-babel-tangle :append :local)))
+
 (defun zz/sp-enclose-next-sexp (num)
   (interactive "p")
   (insert-parentheses (or num 1)))
@@ -476,7 +490,8 @@ end repeat\"")))
               racket-mode
               racket-repl-mode) :append #'smartparens-strict-mode)
   (add-hook! smartparens-mode :append #'sp-use-paredit-bindings)
-  (map! :map (smartparens-mode-map smartparens-strict-mode-map) "M-(" #'zz/sp-enclose-next-sexp))
+  (map! :map (smartparens-mode-map smartparens-strict-mode-map)
+        "M-(" #'zz/sp-enclose-next-sexp))
 
 (after! prog-mode
   (map! :map prog-mode-map "C-h C-f" #'find-function-at-point)
@@ -493,7 +508,8 @@ end repeat\"")))
 (use-package! graphviz-dot-mode)
 
 (after! magit
-  (setq zz/repolist "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
+  (setq zz/repolist
+        "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")
   (defadvice! +zz/load-magit-repositories ()
     :before #'magit-list-repositories
     (setq magit-repository-directories
