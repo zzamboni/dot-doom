@@ -53,8 +53,6 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;;(unpin! t)
 
-(package! mixed-pitch)
-
 (package! spacemacs-theme)
 
 (package! pcre2el)

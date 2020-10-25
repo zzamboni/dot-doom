@@ -475,17 +475,9 @@ Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/
 
 Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I can mix source and prose blocks in the same document.
 
-#+begin_src emacs-lisp :tangle packages.el
-(package! mixed-pitch)
-#+end_src
-
 #+begin_src emacs-lisp
-(use-package! mixed-pitch
-  :defer
-  :config
-  (setq mixed-pitch-variable-pitch-cursor nil)
-  :hook
-  (text-mode . mixed-pitch-mode))
+(add-hook! 'org-mode-hook #'mixed-pitch-mode)
+(setq mixed-pitch-variable-pitch-cursor nil)
 #+end_src
 
 Set the theme to use. I like the [[https://github.com/nashamri/spacemacs-theme][Spacemacs-Light]], which does not come with Doom, so we need to install it from =package.el=:

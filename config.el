@@ -84,12 +84,8 @@
 (setq doom-font (font-spec :family "Fira Code Retina" :size 18)
       doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
 
-(use-package! mixed-pitch
-  :defer
-  :config
-  (setq mixed-pitch-variable-pitch-cursor nil)
-  :hook
-  (text-mode . mixed-pitch-mode))
+(add-hook! 'org-mode-hook #'mixed-pitch-mode)
+(setq mixed-pitch-variable-pitch-cursor nil)
 
 (setq doom-theme 'spacemacs-light)
 ;;(setq doom-theme 'doom-nord-light)
