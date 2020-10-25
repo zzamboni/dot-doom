@@ -215,7 +215,9 @@
   (let ((key key)
         (file file)
         (desc desc))
-    (map! :desc (or desc file) key (lambda () (interactive) (find-file file)))))
+    (map! :desc (or desc file)
+          key
+          (lambda () (interactive) (find-file file)))))
 
 (zz/add-file-keybinding "C-c z w" "~/Work/work.org.gpg" "work.org")
 (zz/add-file-keybinding "C-c z i" "~/org/ideas.org" "ideas.org")
@@ -255,11 +257,12 @@
         "C-c g"  #'org-mac-grab-link))
 
 (after! org-agenda
-  (setq org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
-                                   ;; Indent todo items by level to show nesting
-                                   (todo . " %i %-12:c%l")
-                                   (tags . " %i %-12:c")
-                                   (search . " %i %-12:c")))
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12:c%?-12t% s")
+          ;; Indent todo items by level to show nesting
+          (todo . " %i %-12:c%l")
+          (tags . " %i %-12:c")
+          (search . " %i %-12:c")))
   (setq org-agenda-include-diary t))
 
 (use-package! holidays
