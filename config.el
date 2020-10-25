@@ -471,8 +471,7 @@ end repeat\"")))
     (call-process-shell-command cmd)))
 
 (add-hook! org-mode :append
-  (lambda () (add-hook 'after-save-hook
-                  #'org-babel-tangle :append :local)))
+  (add-hook! after-save :append :local #'org-babel-tangle))
 
 (defun zz/sp-enclose-next-sexp (num)
   (interactive "p")

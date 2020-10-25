@@ -1167,8 +1167,7 @@ Tangle-on-save has revolutionized my literate programming workflow. It automatic
 
   #+begin_src emacs-lisp
 (add-hook! org-mode :append
-  (lambda () (add-hook 'after-save-hook
-                  #'org-babel-tangle :append :local)))
+  (add-hook! after-save :append :local #'org-babel-tangle))
   #+end_src
 
 Some useful settings for LISP coding - =smartparens-strict-mode= to enforce parenthesis to match. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
