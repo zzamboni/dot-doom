@@ -507,6 +507,19 @@ Maximize the window upon startup. The =(fullscreen . maximized)= value suggested
 (setq initial-frame-alist '((top . 1) (left . 1) (width . 129) (height . 37)))
 #+end_src
 
+Truncate lines in =ivy= childframes. [[https://discord.com/channels/406534637242810369/484105925733646336/770756709857755187][Thanks Henrik]]!
+
+#+begin_src emacs-lisp
+(setq posframe-arghandler
+      (lambda (buffer-or-name key value)
+        (or (and (eq key :lines-truncate)
+                 (equal ivy-posframe-buffer
+                        (if (stringp buffer-or-name)
+                            buffer-or-name
+                          (buffer-name buffer-or-name)))
+                 t)
+            value)))
+#+end_src
 ** Key bindings
 
 Doom Emacs has an extensive keybinding system, and most module functions are already bound. I modify some keybindings for simplicity of to match the muscle memory I have from my previous Emacs configuration.
