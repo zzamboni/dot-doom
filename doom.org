@@ -1227,6 +1227,11 @@ Some other languages I use.
   #+begin_src emacs-lisp
 (use-package! graphviz-dot-mode)
   #+end_src
+
+- I am learning [[http://www.gigamonkeys.com/book/][Common LISP]], which is well supported through the =common-lisp= Doom module, but I need to configure this in the =~/.slynkrc= file for I/O in the Sly REPL to work fine ([[https://github.com/joaotavora/sly/issues/347#issuecomment-717065056][source]]).
+  #+begin_src emacs-lisp :tangle ~/.slynkrc
+(setf slynk:*use-dedicated-output-stream* nil)
+  #+end_src
 * Other tools
 
 - Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using =defadvice!=. I also customize the display to add the =Status= column.
