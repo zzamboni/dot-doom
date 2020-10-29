@@ -36,3 +36,13 @@ This was made by vectorizing the PNG image using ImageMagick's =convert= utility
 convert -negate doom-emacs-color.png doom-emacs-bw-light.svg
 #+end_src
 [[file:doom-emacs-bw-light.svg]]
+** doom-emacs-color2.png and doom-emacs-color2.svg
+
+Variants of the color image kindly contributed by /Seoushi/ and /Kir/ in the Doom Discord - thanks!
+
+PNG:
+
+[[file:doom-emacs-color2.png]]
+
+SVG:
+[[file:doom-emacs-color2.svg]]
