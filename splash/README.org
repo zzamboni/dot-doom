@@ -45,4 +45,5 @@ PNG:
 [[file:doom-emacs-color2.png]]
 
 SVG:
+
 [[file:doom-emacs-color2.svg]]
