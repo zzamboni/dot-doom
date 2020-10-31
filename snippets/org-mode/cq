@@ -3,18 +3,8 @@
 # key: cq
 # condition: t
 # --
-? Are $1 a physical, administrative or technical control?
+? Is $1 considered Personally Identifiable Information (PII)?
 
-a) Physical
-b) Administrative
-C) Technical
-
-? What type of control are $1?
-
-a) Preventive
-b) Detective
-c) Corrective
-d) Deterrent
-e) Recovery
-
-$0
+a) Yes
+b) No
+$0c) It depends
