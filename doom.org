@@ -13,7 +13,7 @@
 
 This is my Doom Emacs configuration. From this org file, all the necessary Doom Emacs config files are generated.
 
-This file is written in [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][literate programming style]] using [[https://orgmode.org/][org-mode]]. See [[file:init.el][init.el]], [[file:packages.el][packages.el]] and [[file:config.el][config.el]] for the generated files. You can see this in a nicer format on my blog post [[https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/][My Doom Emacs configuration, with commentary]].
+This file is written in [[https://leanpub.com/lit-config][literate programming style]] using [[https://orgmode.org/][org-mode]]. See [[file:init.el][init.el]], [[file:packages.el][packages.el]] and [[file:config.el][config.el]] for the generated files. You can see this in a nicer format on my blog post [[https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/][My Doom Emacs configuration, with commentary]].
 
 * Table of Contents :TOC_3:noexport:
 - [[#references][References]]
@@ -319,7 +319,7 @@ This code is written to the =init.el= to select which modules to load. Written h
  (magit +forge)        ; a git porcelain for Emacs
  ;;make                ; run make tasks from Emacs
  pass                  ; password manager for nerds
- pdf                   ; pdf enhancements
+ ;;pdf                 ; pdf enhancements
  ;;prodigy             ; FIXME managing external services & code builders
  ;;rgb                 ; creating color strings
  ;;taskrunner          ; taskrunner for all your projects
