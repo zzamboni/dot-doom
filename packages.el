@@ -88,3 +88,5 @@
 (package! iedit)
 
 (package! unfill)
+
+(package! annotate)

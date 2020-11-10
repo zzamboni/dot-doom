@@ -34,6 +34,7 @@ This file is written in [[https://leanpub.com/lit-config][literate programming s
   - [[#capturing-links][Capturing links]]
   - [[#tasks-and-agenda][Tasks and agenda]]
   - [[#gtd][GTD]]
+    - [[#capture-templates][Capture templates]]
   - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
   - [[#publishing-to-leanpub][Publishing to LeanPub]]
   - [[#blogging-with-hugo][Blogging with Hugo]]
@@ -911,6 +912,8 @@ I am trying out Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]]. I 
    ("C-c d f" . org-gtd-clarify-finalize)))
 #+end_src
 
+*** Capture templates
+
 We define the corresponding Org-GTD capture templates.
 
 #+begin_src emacs-lisp
@@ -1321,6 +1324,13 @@ Some other languages I use.
   ("M-q" . unfill-toggle)
   ("A-q" . unfill-paragraph))
   #+end_src
+
+- The [[https://github.com/bastibe/annotate.el][annotate]] package is nice - allows adding annotations to files without modifying the file itself.
+
+  #+begin_src emacs-lisp :tangle packages.el
+(package! annotate)
+  #+end_src
+
 
 * Experiments
 
