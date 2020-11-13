@@ -484,6 +484,9 @@ end repeat\"")))
     (sleep-for 0.2)
     (call-process-shell-command cmd)))
 
+(use-package! org-ml
+  :after org)
+
 (add-hook! org-mode :append
   (add-hook! after-save :append :local #'org-babel-tangle))
 

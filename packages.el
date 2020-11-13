@@ -78,6 +78,8 @@
            :repo "tecosaur/org-pandoc-import"
            :files ("*.el" "filters" "preprocessors")))
 
+(package! org-ml)
+
 (package! elvish-mode)
 (package! ob-elvish)
 

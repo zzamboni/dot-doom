@@ -42,6 +42,7 @@ This file is written in [[https://leanpub.com/lit-config][literate programming s
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
   - [[#avoiding-non-org-mode-files][Avoiding non-Org mode files]]
   - [[#revealjs-presentations][Reveal.js presentations]]
+  - [[#programming-org][Programming Org]]
 - [[#coding][Coding]]
 - [[#other-tools][Other tools]]
 - [[#experiments][Experiments]]
@@ -1176,6 +1177,17 @@ end repeat\"")))
     ;; Short sleep seems necessary for the file changes to be noticed
     (sleep-for 0.2)
     (call-process-shell-command cmd)))
+#+end_src
+** Programming Org
+
+Trying out [[https://github.com/ndwarshuis/org-ml][org-ml]] for easier access to Org objects.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-ml)
+#+end_src
+#+begin_src emacs-lisp
+(use-package! org-ml
+  :after org)
 #+end_src
 
 * Coding
