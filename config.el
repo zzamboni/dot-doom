@@ -214,6 +214,8 @@
           (and (looking-at org-outline-regexp)
                (looking-back "^\**")))))
 
+(add-hook! org-mode (electric-indent-local-mode -1))
+
 (add-hook! org-mode :append
            #'visual-line-mode
            #'variable-pitch-mode)

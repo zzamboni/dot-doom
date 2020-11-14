@@ -710,6 +710,12 @@ Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows 
                (looking-back "^\**")))))
 #+end_src
 
+Disable [[https://code.orgmode.org/bzg/org-mode/src/master/etc/ORG-NEWS#L323][electric-mode]], which is now respected by Org and which creates some confusing indentation sometimes.
+
+#+begin_src emacs-lisp
+(add-hook! org-mode (electric-indent-local-mode -1))
+#+end_src
+
 ** Org visual settings
 
 Enable variable and visual line mode in Org mode by default.
