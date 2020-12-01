@@ -261,13 +261,54 @@
         "C-c l a y" #'zz/org-download-paste-clipboard
         "C-M-y" #'zz/org-download-paste-clipboard))
 
-(use-package! org-mac-link
-  :after org
-  :config
-  (setq org-mac-grab-Acrobat-app-p nil) ; Disable grabbing from Adobe Acrobat
-  (setq org-mac-grab-devonthink-app-p nil) ; Disable grabbinb from DevonThink
-  (map! :map org-mode-map
-        "C-c g"  #'org-mac-grab-link))
+(after! org-id
+  ;; Do not create ID if a CUSTOM_ID exists
+  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+
+(defun zz/make-id-for-title (title)
+  "Return an ID based on TITLE."
+  (let* ((new-id (replace-regexp-in-string "[^[:alnum:]]" "-" (downcase title))))
+    new-id))
+
+(defun zz/org-custom-id-create ()
+  "Create and store CUSTOM_ID for current heading."
+  (let* ((title (or (nth 4 (org-heading-components)) ""))
+         (new-id (zz/make-id-for-title title)))
+    (org-entry-put nil "CUSTOM_ID" new-id)
+    (org-id-add-location new-id (buffer-file-name (buffer-base-buffer)))
+    new-id))
+
+(defun zz/org-custom-id-get-create (&optional where force)
+"Get or create CUSTOM_ID for heading at WHERE.
+
+If FORCE is t, always recreate the property."
+  (org-with-point-at where
+    (let ((old-id (org-entry-get nil "CUSTOM_ID")))
+      ;; If CUSTOM_ID exists, return it unless FORCE
+      (if (and (not force) old-id (stringp old-id))
+          old-id
+        ;; otherwise, create it
+        (zz/org-custom-id-create)))))
+
+(defun counsel-org-link-action (x)
+  "Insert a link to X.
+
+X is expected to be a cons of the form (title . point), as passed
+by `counsel-org-link'.
+
+If X does not have a CUSTOM_ID, create it based on the headline
+title."
+  (let* ((id (zz/org-custom-id-get-create (cdr x))))
+    (org-insert-link nil (concat "#" id) (car x))))
+
+(when IS-MAC
+  (use-package! org-mac-link
+    :after org
+    :config
+    (setq org-mac-grab-Acrobat-app-p nil) ; Disable grabbing from Adobe Acrobat
+    (setq org-mac-grab-devonthink-app-p nil) ; Disable grabbinb from DevonThink
+    (map! :map org-mode-map
+          "C-c g"  #'org-mac-grab-link)))
 
 (after! org-agenda
   (setq org-agenda-prefix-format
