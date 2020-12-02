@@ -265,6 +265,9 @@
   ;; Do not create ID if a CUSTOM_ID exists
   (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 
+(after! counsel
+  (setq counsel-outline-display-style 'title))
+
 (defun zz/make-id-for-title (title)
   "Return an ID based on TITLE."
   (let* ((new-id (replace-regexp-in-string "[^[:alnum:]]" "-" (downcase title))))
@@ -279,7 +282,7 @@
     new-id))
 
 (defun zz/org-custom-id-get-create (&optional where force)
-"Get or create CUSTOM_ID for heading at WHERE.
+  "Get or create CUSTOM_ID for heading at WHERE.
 
 If FORCE is t, always recreate the property."
   (org-with-point-at where
@@ -290,16 +293,17 @@ If FORCE is t, always recreate the property."
         ;; otherwise, create it
         (zz/org-custom-id-create)))))
 
-(defun counsel-org-link-action (x)
-  "Insert a link to X.
+(after! counsel
+  (defun counsel-org-link-action (x)
+    "Insert a link to X.
 
 X is expected to be a cons of the form (title . point), as passed
 by `counsel-org-link'.
 
 If X does not have a CUSTOM_ID, create it based on the headline
 title."
-  (let* ((id (zz/org-custom-id-get-create (cdr x))))
-    (org-insert-link nil (concat "#" id) (car x))))
+    (let* ((id (zz/org-custom-id-get-create (cdr x))))
+      (org-insert-link nil (concat "#" id) (car x)))))
 
 (when IS-MAC
   (use-package! org-mac-link
