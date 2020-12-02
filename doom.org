@@ -562,6 +562,23 @@ The =counsel-buffer-or-recentf= function by default shows duplicated entries bec
             :override #'zz/counsel-buffer-or-recentf-candidates)
 #+end_src
 
+The =switch-buffer-functions= package allows us to update the =recentf= buffer list as we switch between them, so that the list produced by =counsel-buffer-or-recentf= is shown in the order the buffers have been visited, rather than in the order they were opened. Thanks to [[https://github.com/abo-abo/swiper/issues/1560#issuecomment-729403768][@tau3000]] for the tip.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! switch-buffer-functions)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package! switch-buffer-functions
+  :after recentf
+  :preface
+  (defun my-recentf-track-visited-file (_prev _curr)
+    (and buffer-file-name
+         (recentf-add-file buffer-file-name)))
+  :init
+  (add-hook 'switch-buffer-functions #'my-recentf-track-visited-file))
+#+end_src
+
 Use =+default/search-buffer= for searching by default, I like the Swiper interface.
 
 #+begin_src emacs-lisp

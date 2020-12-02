@@ -55,6 +55,8 @@
 
 (package! spacemacs-theme)
 
+(package! switch-buffer-functions)
+
 (package! pcre2el)
 (package! visual-regexp-steroids)
 

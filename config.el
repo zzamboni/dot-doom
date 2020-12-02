@@ -128,6 +128,15 @@
 (advice-add #'counsel-buffer-or-recentf-candidates
             :override #'zz/counsel-buffer-or-recentf-candidates)
 
+(use-package! switch-buffer-functions
+  :after recentf
+  :preface
+  (defun my-recentf-track-visited-file (_prev _curr)
+    (and buffer-file-name
+         (recentf-add-file buffer-file-name)))
+  :init
+  (add-hook 'switch-buffer-functions #'my-recentf-track-visited-file))
+
 ;;(map! "C-s" #'counsel-grep-or-swiper)
 (map! "C-s" #'+default/search-buffer)
 
