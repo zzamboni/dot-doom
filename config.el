@@ -270,12 +270,15 @@
         "C-c l a y" #'zz/org-download-paste-clipboard
         "C-M-y" #'zz/org-download-paste-clipboard))
 
-(after! org-id
-  ;; Do not create ID if a CUSTOM_ID exists
-  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+(map! :after counsel :map org-mode-map
+      "C-c l l h" #'counsel-org-link)
 
 (after! counsel
   (setq counsel-outline-display-style 'title))
+
+(after! org-id
+  ;; Do not create ID if a CUSTOM_ID exists
+  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 
 (defun zz/make-id-for-title (title)
   "Return an ID based on TITLE."
