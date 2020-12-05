@@ -884,7 +884,7 @@ title."
       (org-insert-link nil (concat "#" id) (car x)))))
 #+end_src
 
-Tada! Now using =counsel-org-link= inserts nice, human-readable links.
+Ta-da! Now using =counsel-org-link= inserts nice, human-readable links.
 
 *** Capturing links to external applications
 
