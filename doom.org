@@ -865,12 +865,13 @@ Second, I override =counsel-org-link-action=, which is the function that actuall
 If FORCE is t, always recreate the property."
   (org-with-point-at where
     (let ((old-id (org-entry-get nil "CUSTOM_ID")))
-      ;; If CUSTOM_ID exists, return it unless FORCE
+      ;; If CUSTOM_ID exists and FORCE is false, return it
       (if (and (not force) old-id (stringp old-id))
           old-id
         ;; otherwise, create it
         (zz/org-custom-id-create)))))
 
+;; Now override counsel-org-link-action
 (after! counsel
   (defun counsel-org-link-action (x)
     "Insert a link to X.
