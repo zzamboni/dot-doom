@@ -1058,6 +1058,8 @@ My =ox-awesomecv= package is [[https://gitlab.com/Titan-C/org-cv/-/merge_request
 #+begin_src emacs-lisp
 (use-package! ox-awesomecv
   :after org)
+(use-package! ox-moderncv
+  :after org)
 #+end_src
 
 ** Publishing to LeanPub
