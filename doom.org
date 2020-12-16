@@ -267,7 +267,7 @@ This code is written to the =init.el= to select which modules to load. Written h
  nav-flash             ; blink cursor line after big motions
  ;;neotree             ; a project drawer, like NERDTree for vim
  ophints               ; highlight the region an operation acts on
- ;;(popup +defaults)   ; tame sudden yet inevitable temporary windows
+ (popup +defaults)   ; tame sudden yet inevitable temporary windows
  ;;tabs                ; a tab bar for Emacs
  ;;treemacs            ; a project drawer, like neotree but cooler
  ;;unicode             ; extended unicode support for various languages
@@ -1461,4 +1461,18 @@ Some experimental code to list functions which are not native-compiled. Sort of 
        (insert "\n"))
      ))
   )
+#+end_src
+
+Make ox-md export src blocks with backticks and the language name.
+
+#+begin_src emacs-lisp :tangle no
+(defun org-md-example-block (example-block _contents info)
+  "Transcode EXAMPLE-BLOCK element into Markdown format.
+CONTENTS is nil.  INFO is a plist used as a communication
+channel."
+  (let ((lang (or (org-element-property :language example-block) "")))
+    (format "```%s\n%s```\n"
+            lang
+            (org-remove-indentation
+             (org-export-format-code-default example-block info)))))
 #+end_src
