@@ -153,6 +153,11 @@
 (after! undo-fu
   (map! :map undo-fu-mode-map "C-?" #'undo-fu-only-redo))
 
+(map! "M-g g" #'avy-goto-line)
+(map! "M-g M-g" #'avy-goto-line)
+
+(map! "M-g o" #'counsel-outline)
+
 (after! smartparens
   (defun zz/goto-match-paren (arg)
     "Go to the matching paren/bracket, otherwise (or if ARG is not
