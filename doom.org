@@ -249,7 +249,7 @@ This code is written to the =init.el= to select which modules to load. Written h
  (company +childframe) ; the ultimate code completion backend
  ;;helm                ; the *other* search engine for love and life
  ;;ido                 ; the other *other* search engine...
- (ivy +prescient +childframe
+ (ivy +prescient -childframe
       -fuzzy +icons)   ; a search engine for love and life
 
  :ui
