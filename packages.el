@@ -91,6 +91,8 @@
 
 (package! graphviz-dot-mode)
 
+(package! package-lint)
+
 (package! iedit)
 
 (package! unfill)

@@ -1388,6 +1388,12 @@ Some other languages I use.
   #+begin_src emacs-lisp :tangle ~/.slynkrc
 (setf slynk:*use-dedicated-output-stream* nil)
   #+end_src
+
+- [[https://github.com/purcell/package-lint][package-lint]] for checking MELPA packages.
+  #+begin_src emacs-lisp :tangle packages.el
+(package! package-lint)
+  #+end_src
+
 * Other tools
 
 - Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using =defadvice!=. I also customize the display to add the =Status= column.
