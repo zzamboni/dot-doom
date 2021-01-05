@@ -551,6 +551,9 @@ end repeat\"")))
     (sleep-for 0.2)
     (call-process-shell-command cmd)))
 
+(use-package! ox-jira
+  :after org)
+
 (use-package! org-ml
   :after org)
 
