@@ -378,6 +378,10 @@ title."
   (setq org-clock-persist t)
   (org-clock-persistence-insinuate))
 
+(use-package! elegant-agenda-mode
+  :after org
+  :hook org-agenda-mode)
+
 (use-package! org-gtd
   :after org
   :config

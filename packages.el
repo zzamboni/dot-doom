@@ -67,6 +67,8 @@
 
 (package! org-super-agenda)
 
+(package! elegant-agenda-mode)
+
 (package! org-gtd)
 
 (package! org-cv

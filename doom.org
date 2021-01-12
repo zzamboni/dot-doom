@@ -990,6 +990,17 @@ I have started using =org-clock= to track time I spend on tasks. Often I restart
   (setq org-clock-persist t)
   (org-clock-persistence-insinuate))
 #+end_src
+
+Testing [[https://github.com/justinbarclay/elegant-agenda-mode][elegant-agenda-mode]].
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! elegant-agenda-mode)
+#+end_src
+#+begin_src emacs-lisp
+(use-package! elegant-agenda-mode
+  :after org
+  :hook org-agenda-mode)
+#+end_src
 ** GTD
 
 I am trying out Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]]. I haven't figured out my perfect workflow for tracking GTD with Org yet, but this looks like a very promising approach.
