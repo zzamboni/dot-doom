@@ -1487,6 +1487,10 @@ Some other languages I use.
 (package! annotate)
   #+end_src
 
+- [[https://github.com/csrhodes/gift-mode][gift-mode]] for editing quizzes in [[https://docs.moodle.org/39/en/GIFT_format][GIFT format]].
+  #+begin_src emacs-lisp :tangle packages.el
+(package! gift-mode)
+  #+end_src
 * Experiments
 
 Some experimental code to list functions which are not native-compiled. Sort of works but its very slow. This does not get tangled to my config.el, I just keep it here for reference.

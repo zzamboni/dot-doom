@@ -100,3 +100,5 @@
 (package! unfill)
 
 (package! annotate)
+
+(package! gift-mode)
