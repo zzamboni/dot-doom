@@ -4,7 +4,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values
-   '((eval add-hook 'after-save-hook
+   '((org-re-reveal-root . "revealjs/")
+     (eval add-hook 'after-save-hook
            (lambda nil
              (org-export-to-file 'awesomecv "zamboni-vita.tex"))
            :append :local)
