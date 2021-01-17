@@ -97,16 +97,6 @@
 ;;(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 (setq initial-frame-alist '((top . 1) (left . 1) (width . 129) (height . 37)))
 
-(setq posframe-arghandler
-      (lambda (buffer-or-name key value)
-        (or (and (eq key :lines-truncate)
-                 (equal ivy-posframe-buffer
-                        (if (stringp buffer-or-name)
-                            buffer-or-name
-                          (buffer-name buffer-or-name)))
-                 t)
-            value)))
-
 (map! "C-x b"   #'counsel-buffer-or-recentf
       "C-x C-b" #'counsel-switch-buffer)
 

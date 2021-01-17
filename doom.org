@@ -513,9 +513,9 @@ Maximize the window upon startup. The =(fullscreen . maximized)= value suggested
 (setq initial-frame-alist '((top . 1) (left . 1) (width . 129) (height . 37)))
 #+end_src
 
-Truncate lines in =ivy= childframes. [[https://discord.com/channels/406534637242810369/484105925733646336/770756709857755187][Thanks Henrik]]!
+Truncate lines in =ivy= childframes. [[https://discord.com/channels/406534637242810369/484105925733646336/770756709857755187][Thanks Henrik]]! (disabled for now)
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (setq posframe-arghandler
       (lambda (buffer-or-name key value)
         (or (and (eq key :lines-truncate)
