@@ -84,6 +84,8 @@
 
 (package! ox-jira)
 
+(package! org-jira)
+
 (package! org-ml)
 
 (package! elvish-mode)

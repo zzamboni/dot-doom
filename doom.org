@@ -1316,6 +1316,17 @@ end repeat\"")))
 (use-package! ox-jira
   :after org)
 #+end_src
+
+[[https://github.com/ahungry/org-jira][org-jira]] for full Jira integration - manage issues from Org mode.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-jira)
+#+end_src
+
+#+begin_src emacs-lisp
+(make-directory "~/.org-jira" 'ignore-if-exists)
+(setq jiralib-url "https://jira.swisscom.com/")
+#+end_src
 ** Programming Org
 
 Trying out [[https://github.com/ndwarshuis/org-ml][org-ml]] for easier access to Org objects.

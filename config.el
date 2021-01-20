@@ -548,6 +548,9 @@ end repeat\"")))
 (use-package! ox-jira
   :after org)
 
+(make-directory "~/.org-jira" 'ignore-if-exists)
+(setq jiralib-url "https://jira.swisscom.com/")
+
 (use-package! org-ml
   :after org)
 
