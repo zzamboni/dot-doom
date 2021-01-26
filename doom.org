@@ -472,11 +472,12 @@ If you want to choose at random among a few different splash images, you can lis
                 (nth (random (length alternatives)) alternatives))))
 #+end_src
 
-Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://edwardtufte.github.io/et-book/][ET Book]].
+Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://www.huertatipografica.com/en/fonts/alegreya-ht-pro][Alegreya]] (another favorite and my previous choice: [[https://edwardtufte.github.io/et-book/][ET Book]]).
 
 #+begin_src emacs-lisp
 (setq doom-font (font-spec :family "Fira Code" :size 18)
-      doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
+      ;;doom-variable-pitch-font (font-spec :family "ETBembo" :size 18)
+      doom-variable-pitch-font (font-spec :family "Alegreya" :size 18))
 #+end_src
 
 Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I can mix source and prose blocks in the same document.

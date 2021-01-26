@@ -83,7 +83,8 @@
                 (nth (random (length alternatives)) alternatives))))
 
 (setq doom-font (font-spec :family "Fira Code" :size 18)
-      doom-variable-pitch-font (font-spec :family "ETBembo" :size 18))
+      ;;doom-variable-pitch-font (font-spec :family "ETBembo" :size 18)
+      doom-variable-pitch-font (font-spec :family "Alegreya" :size 18))
 
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
 (setq mixed-pitch-variable-pitch-cursor nil)
