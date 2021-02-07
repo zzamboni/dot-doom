@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: leanpubquiz
+# condition: t
+# --
+#+attr_leanpub: :random-choice-order true :random-question-order true :attempts 3
+#+caption: Quiz: Domain $1
+#+name: quiz-$2
+#+begin_quiz
+$0
+#+end_quiz
