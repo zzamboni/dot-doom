@@ -749,6 +749,14 @@ Disable [[https://code.orgmode.org/bzg/org-mode/src/master/etc/ORG-NEWS#L323][el
 (add-hook! org-mode (electric-indent-local-mode -1))
 #+end_src
 
+I really dislike completion of words as I type prose (in code it's OK), so I disable it in Org:
+
+#+begin_src emacs-lisp
+(defun zz/adjust-org-company-backends ()
+  (remove-hook 'after-change-major-mode-hook '+company-init-backends-h)
+  (setq-local company-backends nil))
+(add-hook! org-mode (zz/adjust-org-company-backends))
+#+end_src
 ** Org visual settings
 
 Enable variable and visual line mode in Org mode by default.
