@@ -60,6 +60,10 @@
 (package! pcre2el)
 (package! visual-regexp-steroids)
 
+(package! org-appear
+  :recipe (:host github
+           :repo "awth13/org-appear"))
+
 (package! org-download)
 
 (package! mexican-holidays)
