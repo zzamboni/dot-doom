@@ -561,8 +561,11 @@ end repeat\"")))
 (use-package! org-ml
   :after org)
 
-(add-hook! org-mode :append
-  (add-hook! after-save :append :local #'org-babel-tangle))
+(use-package! org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
 
 (defun zz/sp-enclose-next-sexp (num)
   (interactive "p")

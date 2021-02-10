@@ -1359,12 +1359,19 @@ Trying out [[https://github.com/ndwarshuis/org-ml][org-ml]] for easier access to
 
 * Coding
 
-Tangle-on-save has revolutionized my literate programming workflow. It automatically runs =org-babel-tangle= upon saving any org-mode buffer, which means the resulting files will be automatically kept up to date.
+Tangle-on-save has revolutionized my literate programming workflow. It automatically runs =org-babel-tangle= upon saving any org-mode buffer, which means the resulting files will be automatically kept up to date. For a while I did this by manually adding =org-babel-tangle= to the =after-save= hook in Org mode, but now I use the [[https://github.com/yilkalargaw/org-auto-tangle][org-auto-tangle]] package, which does this asynchronously and selectively for each Org file where it is desired.
 
-  #+begin_src emacs-lisp
-(add-hook! org-mode :append
-  (add-hook! after-save :append :local #'org-babel-tangle))
-  #+end_src
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-auto-tangle
+  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-auto-tangle"))
+#+end_src
+#+begin_src emacs-lisp
+(use-package! org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
+#+end_src
 
 Some useful settings for LISP coding - =smartparens-strict-mode= to enforce parenthesis to match. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
 
