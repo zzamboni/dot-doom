@@ -102,6 +102,8 @@
 
 (package! package-lint)
 
+(package! emacs-everywhere :pin nil)
+
 (package! iedit)
 
 (package! unfill)

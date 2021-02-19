@@ -404,6 +404,7 @@ This code is written to the =init.el= to select which modules to load. Written h
 
  :app
  ;;calendar
+ everywhere            ; *leave* Emacs!? You must be joking
  irc                   ; how neckbeards socialize
  ;;(rss +org)          ; emacs as an RSS reader
  ;;twitter             ; twitter client https://twitter.com/vnought
@@ -814,7 +815,7 @@ I'm still trying out =org-roam=, although I have not figured out very well how i
 
 #+begin_src emacs-lisp
 (setq org-roam-directory org-directory)
-(setq +org-roam-open-buffer-on-find-file nil)
+(setq +org-roam-open-buffer-on-find-file t)
 #+end_src
 
 ** Capturing images
@@ -1432,6 +1433,17 @@ Some other languages I use.
   #+end_src
 
 * Other tools
+
+- Use Emacs [[https://github.com/tecosaur/emacs-everywhere][Everywhere]]!
+
+  #+begin_src emacs-lisp :tangle packages.el
+(package! emacs-everywhere :pin nil)
+  #+end_src
+  #+begin_src emacs-lisp
+(use-package! emacs-everywhere
+  :config
+  (setq emacs-everywhere-major-mode-function #'org-mode))
+  #+end_src
 
 - Trying out [[https://magit.vc/manual/magit/Repository-List.html][Magit's multi-repository abilities]]. This stays in sync with the git repo list used by my [[https://github.com/zzamboni/elvish-themes/blob/master/chain.org#bonus-displaying-the-status-of-several-git-repos-at-once][chain:summary-status]] Elvish shell function by reading the file every time =magit-list-repositories= is called, using =defadvice!=. I also customize the display to add the =Status= column.
 

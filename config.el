@@ -249,7 +249,7 @@
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
 
 (setq org-roam-directory org-directory)
-(setq +org-roam-open-buffer-on-find-file nil)
+(setq +org-roam-open-buffer-on-find-file t)
 
 (defun zz/org-download-paste-clipboard (&optional use-default-filename)
   (interactive "P")
@@ -591,6 +591,10 @@ end repeat\"")))
   :mode ("\\.cf\\'" . cfengine3-mode))
 
 (use-package! graphviz-dot-mode)
+
+(use-package! emacs-everywhere
+  :config
+  (setq emacs-everywhere-major-mode-function #'org-mode))
 
 (after! magit
   (setq zz/repolist
