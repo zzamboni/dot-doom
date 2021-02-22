@@ -557,6 +557,27 @@ end repeat\"")))
 (use-package! org-ml
   :after org)
 
+(use-package! org-ql
+  :after org)
+
+(defun zz/headings-with-tags (file tags)
+  (let ((headings (org-ql-select file
+                    `(tags-local ,@tags))))
+    (mapconcat
+     (lambda (l) (format "- %s" l))
+     (mapcar
+      (lambda (h)
+        (let ((title (car (org-element-property :title h))))
+          (org-link-make-string
+           (format "file:%s::*%s"
+                   file title)
+           title)))
+      headings) "\n")))
+
+(defun zz/headings-with-current-tags (file)
+  (let ((tags (s-split ":" (cl-sixth (org-heading-components)) t)))
+    (zz/headings-with-tags file tags)))
+
 (use-package! org-auto-tangle
   :defer t
   :hook (org-mode . org-auto-tangle-mode)
