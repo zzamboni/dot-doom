@@ -92,8 +92,7 @@
 
 (package! org-ql)
 
-(package! org-auto-tangle
-  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-auto-tangle"))
+(package! org-auto-tangle)
 
 (package! elvish-mode)
 (package! ob-elvish)
