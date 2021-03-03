@@ -1336,6 +1336,17 @@ end repeat\"")))
 (make-directory "~/.org-jira" 'ignore-if-exists)
 (setq jiralib-url "https://jira.swisscom.com/")
 #+end_src
+
+[[https://github.com/alhassy/org-special-block-extras][org-special-block-extras]] to enable additional special block types and their corresponding exports.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-special-block-extras)
+#+end_src
+#+begin_src emacs-lisp
+(use-package! org-special-block-extras
+  :after org
+  :hook (org-mode . org-special-block-extras-mode))
+#+end_src
 ** Programming Org
 
 Trying out [[https://github.com/ndwarshuis/org-ml][org-ml]] for easier access to Org objects.

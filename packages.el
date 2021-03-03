@@ -88,6 +88,8 @@
 
 (package! org-jira)
 
+(package! org-special-block-extras)
+
 (package! org-ml)
 
 (package! org-ql)

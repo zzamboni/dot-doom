@@ -554,6 +554,10 @@ end repeat\"")))
 (make-directory "~/.org-jira" 'ignore-if-exists)
 (setq jiralib-url "https://jira.swisscom.com/")
 
+(use-package! org-special-block-extras
+  :after org
+  :hook (org-mode . org-special-block-extras-mode))
+
 (use-package! org-ml
   :after org)
 
