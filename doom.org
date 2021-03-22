@@ -814,7 +814,7 @@ Now I define keybindings to access my commonly-used org files.
 I'm still trying out =org-roam=, although I have not figured out very well how it works for my setup. For now I configure it to include my whole Org directory.
 
 #+begin_src emacs-lisp
-(setq org-roam-directory org-directory)
+(setq org-roam-directory "/Users/taazadi1/Dropbox/Personal/org-roam/")
 (setq +org-roam-open-buffer-on-find-file t)
 #+end_src
 
@@ -1083,11 +1083,11 @@ I set up an advice before =org-capture= to make sure =org-gtd= and =org-capture=
 
 I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].
 
-My =ox-awesomecv= package is [[https://gitlab.com/Titan-C/org-cv/-/merge_requests/3][not yet merged]] into the main Org-CV distribution, so I install from my branch for now.
+My =ox-awesomecv= package is [[https://gitlab.com/Titan-C/org-cv/-/merge_requests/3][not yet merged]] into the main Org-CV distribution, so I install from my local repo for now.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! org-cv
-  :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
+  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-cv"))
 #+end_src
 #+begin_src emacs-lisp
 (use-package! ox-awesomecv

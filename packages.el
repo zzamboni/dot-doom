@@ -74,7 +74,7 @@
 (package! org-gtd)
 
 (package! org-cv
-  :recipe (:host gitlab :repo "zzamboni/org-cv" :branch "awesomecv"))
+  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-cv"))
 
 (package! ox-leanpub
   :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/ox-leanpub"))
