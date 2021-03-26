@@ -1337,12 +1337,12 @@ end repeat\"")))
 (setq jiralib-url "https://jira.swisscom.com/")
 #+end_src
 
-[[https://github.com/alhassy/org-special-block-extras][org-special-block-extras]] to enable additional special block types and their corresponding exports.
+[[https://github.com/alhassy/org-special-block-extras][org-special-block-extras]] to enable additional special block types and their corresponding exports (disabled for now as I haven't used it as I thought I would).
 
-#+begin_src emacs-lisp :tangle packages.el
+#+begin_src emacs-lisp :tangle no
 (package! org-special-block-extras)
 #+end_src
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package! org-special-block-extras
   :after org
   :hook (org-mode . org-special-block-extras-mode))
