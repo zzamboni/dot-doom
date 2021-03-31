@@ -90,8 +90,12 @@
 (setq mixed-pitch-variable-pitch-cursor nil)
 
 (setq doom-theme 'spacemacs-light)
-;;(setq doom-theme 'doom-nord-light)
-;;(setq doom-theme 'doom-solarized-light)
+;;OK (setq doom-theme 'doom-nord-light)
+;;NO (setq doom-theme 'doom-solarized-light)
+;;MAYBE (setq doom-theme 'doom-one-light)
+;;NO (setq doom-theme 'doom-opera-light)
+;;NO (setq doom-theme 'doom-tomorrow-day)
+;;NO (setq doom-theme 'doom-acario-light)
 
 ;;(add-hook 'window-setup-hook #'doom/quickload-session)
 

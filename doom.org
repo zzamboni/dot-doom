@@ -498,8 +498,12 @@ And then from =config.el= we specify the theme to use.
 
 #+begin_src emacs-lisp
 (setq doom-theme 'spacemacs-light)
-;;(setq doom-theme 'doom-nord-light)
-;;(setq doom-theme 'doom-solarized-light)
+;;OK (setq doom-theme 'doom-nord-light)
+;;NO (setq doom-theme 'doom-solarized-light)
+;;MAYBE (setq doom-theme 'doom-one-light)
+;;NO (setq doom-theme 'doom-opera-light)
+;;NO (setq doom-theme 'doom-tomorrow-day)
+;;NO (setq doom-theme 'doom-acario-light)
 #+end_src
 
 In my previous configuration, I used to automatically restore the previous session upon startup. Doom Emacs starts up so fast that it does not feel right to do it automatically. In any case, from the Doom dashboard I can simply press Enter to invoke the first item, which is "Reload Last Session". So this code is commented out now.
