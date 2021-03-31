@@ -473,6 +473,12 @@ If you want to choose at random among a few different splash images, you can lis
                 (nth (random (length alternatives)) alternatives))))
 #+end_src
 
+I eliminate all but the first two items in the dashboard menu, since those are the only ones I still use sometimes.
+
+#+begin_src emacs-lisp
+(setq +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
+#+end_src
+
 Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://www.huertatipografica.com/en/fonts/alegreya-ht-pro][Alegreya]] (another favorite and my previous choice: [[https://edwardtufte.github.io/et-book/][ET Book]]).
 
 #+begin_src emacs-lisp
