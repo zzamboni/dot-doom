@@ -99,6 +99,11 @@
 ;;NO (setq doom-theme 'doom-tomorrow-day)
 ;;NO (setq doom-theme 'doom-acario-light)
 
+(custom-set-faces!
+  '(doom-dashboard-banner :inherit default)
+  '(doom-dashboard-loaded :inherit default))
+;;(setq spacemacs-theme-comment-bg nil)
+
 ;;(add-hook 'window-setup-hook #'doom/quickload-session)
 
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))

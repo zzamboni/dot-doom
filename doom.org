@@ -512,6 +512,15 @@ And then from =config.el= we specify the theme to use.
 ;;NO (setq doom-theme 'doom-acario-light)
 #+end_src
 
+I love the =spacemacs-light= theme, but for some reason, the transparent dashboard images showed up with a light tint, which I eventually tracked to the fact that Doom by default [[https://github.com/hlissner/doom-emacs/blob/ce65645fb87ed1b24fb1a46a33f77cf1dcc1c0d5/modules/ui/doom-dashboard/config.el#L145][uses the =font-lock-comment-face= for the dashboard banner image]], and this this face has a background color in Spacemacs-light. I redefine the =doom-dashboard-banner= face to use the =default= face, which fixes the problem. Another way to fix it (commented out below) is to disable the background tint color in the theme.
+
+#+begin_src emacs-lisp
+(custom-set-faces!
+  '(doom-dashboard-banner :inherit default)
+  '(doom-dashboard-loaded :inherit default))
+;;(setq spacemacs-theme-comment-bg nil)
+#+end_src
+
 In my previous configuration, I used to automatically restore the previous session upon startup. Doom Emacs starts up so fast that it does not feel right to do it automatically. In any case, from the Doom dashboard I can simply press Enter to invoke the first item, which is "Reload Last Session". So this code is commented out now.
 
 #+begin_src emacs-lisp
