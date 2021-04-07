@@ -1366,6 +1366,20 @@ end repeat\"")))
   :after org
   :hook (org-mode . org-special-block-extras-mode))
 #+end_src
+** Other Org stuff
+Testing =org-ol-tree=.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-ol-tree
+  :recipe (:host github
+           :repo "Townk/org-ol-tree"))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package! org-ol-tree
+  :after org)
+#+end_src
+
 ** Programming Org
 
 Trying out [[https://github.com/ndwarshuis/org-ml][org-ml]] for easier access to Org objects.
