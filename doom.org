@@ -719,6 +719,12 @@ Doom's Org module provides a lot of sane configuration settings, so I don't have
 
 ** General Org Configuration
 
+Unpin Org to get around a current bug.
+
+#+begin_src emacs-lisp :tangle packages.el
+(unpin! org-mode)
+#+end_src
+
 Default directory for Org files.
 
 #+begin_src emacs-lisp

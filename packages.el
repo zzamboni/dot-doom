@@ -60,6 +60,8 @@
 (package! pcre2el)
 (package! visual-regexp-steroids)
 
+(unpin! org-mode)
+
 (package! org-appear
   :recipe (:host github
            :repo "awth13/org-appear"))
