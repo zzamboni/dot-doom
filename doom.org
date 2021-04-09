@@ -45,6 +45,7 @@ This file is written in [[https://leanpub.com/lit-config][literate programming s
   - [[#avoiding-non-org-mode-files][Avoiding non-Org mode files]]
   - [[#revealjs-presentations][Reveal.js presentations]]
   - [[#other-exporters][Other exporters]]
+  - [[#other-org-stuff][Other Org stuff]]
   - [[#programming-org][Programming Org]]
 - [[#coding][Coding]]
 - [[#other-tools][Other tools]]
@@ -836,7 +837,7 @@ Now I define keybindings to access my commonly-used org files.
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
 #+end_src
 
-I'm still trying out =org-roam=, although I have not figured out very well how it works for my setup. For now I configure it to include my whole Org directory.
+I'm still trying out =org-roam=, although I have not figured out very well how it works for my setup.
 
 #+begin_src emacs-lisp
 (setq org-roam-directory "/Users/taazadi1/Dropbox/Personal/org-roam/")
@@ -1362,7 +1363,7 @@ end repeat\"")))
 (setq jiralib-url "https://jira.swisscom.com/")
 #+end_src
 
-[[https://github.com/alhassy/org-special-block-extras][org-special-block-extras]] to enable additional special block types and their corresponding exports (disabled for now as I haven't used it as I thought I would).
+[[https://github.com/alhassy/org-special-block-extras][org-special-block-extras]] to enable additional special block types and their corresponding exports (disabled for now).
 
 #+begin_src emacs-lisp :tangle no
 (package! org-special-block-extras)
