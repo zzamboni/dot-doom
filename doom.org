@@ -9,7 +9,7 @@
 #+author: Diego Zamboni
 #+email: diego@zzamboni.org
 
-[[file:splash/slant_out_purple-small.png]]
+[[file:splash/doom-emacs-flugo-slant_out_purple-small.png]]
 
 This is my Doom Emacs configuration. From this org file, all the necessary Doom Emacs config files are generated.
 
@@ -466,9 +466,15 @@ I made a super simple set of Doom-Emacs custom splash screens by combining [[htt
 
 If you want to choose at random among a few different splash images, you can list them in =alternatives=.
 
+You can find other splash images at the [[https://github.com/jeetelongname/doom-banners][jeetelongname/doom-banners]] GitHub repository.
+
 #+begin_src emacs-lisp
-(let ((alternatives '("doom-emacs-flugo-slant_out_purple-small.png")))
-   ;;((alternatives '("doom-emacs-color.png" "doom-emacs-bw-light.svg")))
+(let (
+      ;; (alternatives '("doom-emacs-flugo-slant_out_purple-small.png"))
+      (alternatives '("doom-emacs-bw-light.svg"
+                      "doom-emacs-flugo-slant_out_purple-small.png"
+                      "doom-emacs-flugo-slant_out_bw-small.png"))
+   )
   (setq fancy-splash-image
         (concat doom-private-dir "splash/"
                 (nth (random (length alternatives)) alternatives))))

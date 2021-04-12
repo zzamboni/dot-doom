@@ -76,8 +76,12 @@
 
 (setq confirm-kill-emacs nil)
 
-(let ((alternatives '("doom-emacs-flugo-slant_out_purple-small.png")))
-   ;;((alternatives '("doom-emacs-color.png" "doom-emacs-bw-light.svg")))
+(let (
+      ;; (alternatives '("doom-emacs-flugo-slant_out_purple-small.png"))
+      (alternatives '("doom-emacs-bw-light.svg"
+                      "doom-emacs-flugo-slant_out_purple-small.png"
+                      "doom-emacs-flugo-slant_out_bw-small.png"))
+   )
   (setq fancy-splash-image
         (concat doom-private-dir "splash/"
                 (nth (random (length alternatives)) alternatives))))
