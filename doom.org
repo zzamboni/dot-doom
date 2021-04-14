@@ -9,7 +9,8 @@
 #+author: Diego Zamboni
 #+email: diego@zzamboni.org
 
-[[file:splash/doom-emacs-bw-light.svg]][[file:splash/doom-emacs-flugo-slant_out_purple-small.png]][[file:splash/doom-emacs-color.png]]
+#+attr_html: :width 30%
+[[file:splash/doom-emacs-bw-light.svg]]
 
 This is my Doom Emacs configuration. From this org file, all the necessary Doom Emacs config files are generated.
 
