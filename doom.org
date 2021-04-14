@@ -9,7 +9,7 @@
 #+author: Diego Zamboni
 #+email: diego@zzamboni.org
 
-#+attr_html: :width 30%
+#+attr_html: :style max-width:30%;
 [[file:splash/doom-emacs-bw-light.svg]]
 
 This is my Doom Emacs configuration. From this org file, all the necessary Doom Emacs config files are generated.

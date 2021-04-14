@@ -2,7 +2,7 @@
 #+author: Diego Zamboni
 #+author: diego@zzamboni.org
 
-#+attr_html: :style max-width:30%;
+#+attr_html: :width 30%;
 [[file:splash/doom-emacs-flugo-slant_out_purple-small.png]]
 
 See [[file:doom.org][doom.org]] for the source configuration file with full commentary. From this file, three configuration files are generated: [[file:init.el][init.el]], [[file:packages.el][packages.el]] and [[file:config.el][config.el]]. These are the files read by Doom Emacs.
