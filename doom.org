@@ -470,12 +470,9 @@ If you want to choose at random among a few different splash images, you can lis
 You can find other splash images at the [[https://github.com/jeetelongname/doom-banners][jeetelongname/doom-banners]] GitHub repository.
 
 #+begin_src emacs-lisp
-(let (
-      ;; (alternatives '("doom-emacs-flugo-slant_out_purple-small.png"))
-      (alternatives '("doom-emacs-bw-light.svg"
+(let ((alternatives '("doom-emacs-bw-light.svg"
                       "doom-emacs-flugo-slant_out_purple-small.png"
-                      "doom-emacs-flugo-slant_out_bw-small.png"))
-   )
+                      "doom-emacs-flugo-slant_out_bw-small.png")))
   (setq fancy-splash-image
         (concat doom-private-dir "splash/"
                 (nth (random (length alternatives)) alternatives))))
