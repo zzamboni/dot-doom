@@ -425,13 +425,14 @@ My user information.
       user-mail-address "diego@zzamboni.org")
 #+end_src
 
-Change the Mac modifiers to my liking
+Change the Mac modifiers to my liking. I also disable passing Control characters to the system, to avoid that =C-M-space= launches the Character viewer instead of running =mark-sexp=.
 
 #+begin_src emacs-lisp
 (cond (IS-MAC
-       (setq mac-command-modifier      'meta
-             mac-option-modifier       'alt
-             mac-right-option-modifier 'alt)))
+       (setq mac-command-modifier       'meta
+             mac-option-modifier        'alt
+             mac-right-option-modifier  'alt
+             mac-pass-control-to-system nil)))
 #+end_src
 
 When at the beginning of the line, make =Ctrl-K= remove the whole line, instead of just emptying it.

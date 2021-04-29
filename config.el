@@ -61,9 +61,10 @@
       user-mail-address "diego@zzamboni.org")
 
 (cond (IS-MAC
-       (setq mac-command-modifier      'meta
-             mac-option-modifier       'alt
-             mac-right-option-modifier 'alt)))
+       (setq mac-command-modifier       'meta
+             mac-option-modifier        'alt
+             mac-right-option-modifier  'alt
+             mac-pass-control-to-system nil)))
 
 (setq kill-whole-line t)
 
