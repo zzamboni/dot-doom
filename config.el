@@ -94,9 +94,9 @@
 (setq mixed-pitch-variable-pitch-cursor nil)
 
 (setq doom-theme 'spacemacs-light)
-;;OK (setq doom-theme 'doom-nord-light)
+;;(setq doom-theme 'doom-nord-light) ;;OK
 ;;NO (setq doom-theme 'doom-solarized-light)
-;;MAYBE (setq doom-theme 'doom-one-light)
+;;(setq doom-theme 'doom-one-light) ;;MAYBE
 ;;NO (setq doom-theme 'doom-opera-light)
 ;;NO (setq doom-theme 'doom-tomorrow-day)
 ;;NO (setq doom-theme 'doom-acario-light)
