@@ -62,7 +62,7 @@
 (package! pcre2el)
 (package! visual-regexp-steroids)
 
-(unpin! org-mode)
+;;(unpin! org-mode)
 
 (package! org-appear
   :recipe (:host github
