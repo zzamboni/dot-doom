@@ -1,0 +1,39 @@
+# -*- mode: snippet -*-
+# name: elvish-literate-module
+# uuid:
+# key: trigger-key
+# condition: t
+# --
+#+title: $1 - $2
+#+author: Diego Zamboni
+#+email: diego@zzamboni.org
+
+#+name: module-summary
+$3
+
+This file is written in [[https://leanpub.com/lit-config][literate programming style]], to make it easy to explain. See [[file:$1.elv][$1.elv]] for the generated file.
+
+* Table of Contents                                          :TOC_3:noexport:
+- [[#usage][Usage]]
+- [[#implementation][Implementation]]
+
+* Usage
+
+Install the =elvish-modules= package using [[https://elvish.io/ref/epm.html][epm]] (you can put these statements in your =rc.elv= file as well, to automatically install the package upon startup if needed):
+
+#+begin_src elvish
+  use epm
+  epm:install &silent-if-installed github.com/zzamboni/elvish-modules
+#+end_src
+
+In your =rc.elv=, load this module:
+
+#+begin_src elvish
+  use github.com/zzamboni/elvish-modules/$1
+#+end_src
+
+* Implementation
+:PROPERTIES:
+:header-args:elvish: :tangle (concat (file-name-sans-extension (buffer-file-name)) ".elv")
+:header-args: :mkdirp yes :comments no
+:END:
