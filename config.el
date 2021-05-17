@@ -86,7 +86,7 @@
 
 (setq +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
 
-(setq doom-font (font-spec :family "Fira Code" :size 18)
+(setq doom-font (font-spec :family "FiraCode Nerd Font" :size 18)
       ;;doom-variable-pitch-font (font-spec :family "ETBembo" :size 18)
       doom-variable-pitch-font (font-spec :family "Alegreya" :size 18))
 
@@ -109,6 +109,16 @@
 ;;(add-hook 'window-setup-hook #'doom/quickload-session)
 
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+(plist-put! +ligatures-extra-symbols
+  :true          nil
+  :false         nil
+  :int           nil
+  :float         nil
+  :str           nil
+  :bool          nil
+  :list          nil
+)
 
 (map! "C-x b"   #'counsel-buffer-or-recentf
       "C-x C-b" #'counsel-switch-buffer)

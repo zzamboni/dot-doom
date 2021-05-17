@@ -488,7 +488,7 @@ I eliminate all but the first two items in the dashboard menu, since those are t
 Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://www.huertatipografica.com/en/fonts/alegreya-ht-pro][Alegreya]] (another favorite and my previous choice: [[https://edwardtufte.github.io/et-book/][ET Book]]).
 
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Fira Code" :size 18)
+(setq doom-font (font-spec :family "FiraCode Nerd Font" :size 18)
       ;;doom-variable-pitch-font (font-spec :family "ETBembo" :size 18)
       doom-variable-pitch-font (font-spec :family "Alegreya" :size 18))
 #+end_src
@@ -557,6 +557,20 @@ Truncate lines in =ivy= childframes. [[https://discord.com/channels/406534637242
                           (buffer-name buffer-or-name)))
                  t)
             value)))
+#+end_src
+
+I like ligatures, but some of the ones that get enabled by the =(ligatures +extra)= module don't work in the font I use, or I don't like them, so I disable them.
+
+#+begin_src emacs-lisp
+(plist-put! +ligatures-extra-symbols
+  :true          nil
+  :false         nil
+  :int           nil
+  :float         nil
+  :str           nil
+  :bool          nil
+  :list          nil
+)
 #+end_src
 ** Key bindings
 
