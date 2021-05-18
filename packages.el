@@ -111,6 +111,10 @@
 
 (package! package-lint)
 
+(package! dockerfile-mode)
+
+(package! xterm-color)
+
 (package! emacs-everywhere :pin nil)
 
 (package! iedit)

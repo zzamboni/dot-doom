@@ -1544,6 +1544,30 @@ Some other languages I use.
 
 * Other tools
 
+- [[https://github.com/spotify/dockerfile-mode][Dockerfile mode]]:
+
+  #+begin_src emacs-lisp :tangle packages.el
+(package! dockerfile-mode)
+  #+end_src
+  #+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+(put 'dockerfile-image-name 'safe-local-variable #'stringp)
+  #+end_src
+
+- =xterm-color= mode to understand ANSI sequences in compilation buffers, from https://stackoverflow.com/a/63710493/5562:
+
+  #+begin_src emacs-lisp :tangle packages.el
+(package! xterm-color)
+  #+end_src
+  #+begin_src emacs-lisp
+(use-package! xterm-color
+  :config
+  (setq compilation-environment '("TERM=xterm-256color"))
+  (defun my/advice-compilation-filter (f proc string)
+    (funcall f proc (xterm-color-filter string)))
+  (advice-add 'compilation-filter :around #'my/advice-compilation-filter))
+  #+end_src
+
 - Use Emacs [[https://github.com/tecosaur/emacs-everywhere][Everywhere]]!
 
   #+begin_src emacs-lisp :tangle packages.el

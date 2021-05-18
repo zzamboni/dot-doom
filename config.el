@@ -639,6 +639,16 @@ end repeat\"")))
 
 (use-package! graphviz-dot-mode)
 
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+(put 'dockerfile-image-name 'safe-local-variable #'stringp)
+
+(use-package! xterm-color
+  :config
+  (setq compilation-environment '("TERM=xterm-256color"))
+  (defun my/advice-compilation-filter (f proc string)
+    (funcall f proc (xterm-color-filter string)))
+  (advice-add 'compilation-filter :around #'my/advice-compilation-filter))
+
 (use-package! emacs-everywhere
   :config
   (setq emacs-everywhere-major-mode-function #'org-mode))
