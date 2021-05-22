@@ -642,12 +642,8 @@ end repeat\"")))
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 (put 'dockerfile-image-name 'safe-local-variable #'stringp)
 
-(use-package! xterm-color
-  :config
-  (setq compilation-environment '("TERM=xterm-256color"))
-  (defun my/advice-compilation-filter (f proc string)
-    (funcall f proc (xterm-color-filter string)))
-  (advice-add 'compilation-filter :around #'my/advice-compilation-filter))
+(defun plain-pipe-for-process () (setq-local process-connection-type nil))
+(add-hook 'compilation-mode-hook 'plain-pipe-for-process)
 
 (use-package! emacs-everywhere
   :config
