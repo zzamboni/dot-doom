@@ -572,6 +572,12 @@ I like ligatures, but some of the ones that get enabled by the =(ligatures +extr
   :list          nil
 )
 #+end_src
+
+Enable showing a word count in the modeline. This is only shown for the modes listed in =doom-modeline-continuous-word-count-modes= (Markdown, GFM and Org by default).
+
+#+begin_src emacs-lisp
+(setq doom-modeline-enable-word-count t)
+#+end_src
 ** Key bindings
 
 Doom Emacs has an extensive keybinding system, and most module functions are already bound. I modify some keybindings for simplicity of to match the muscle memory I have from my previous Emacs configuration.
@@ -869,6 +875,11 @@ I'm still trying out =org-roam=, although I have not figured out very well how i
 (setq +org-roam-open-buffer-on-find-file t)
 #+end_src
 
+Configure attachments to be stored together with their Org document.
+
+#+begin_src emacs-lisp
+(setq org-attach-id-dir "attachments/")
+#+end_src
 ** Capturing images
 
 Using =org-download= to make it easier to insert images into my org notes. I don't like the configuration provided by Doom as part of the =(org +dragndrop)= module, so I install the package by hand and configure it to my liking. I also define a new keybinding to paste an image from the clipboard, asking for the filename first.

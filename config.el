@@ -120,6 +120,8 @@
   :list          nil
 )
 
+(setq doom-modeline-enable-word-count t)
+
 (map! "C-x b"   #'counsel-buffer-or-recentf
       "C-x C-b" #'counsel-switch-buffer)
 
@@ -273,6 +275,8 @@
 
 (setq org-roam-directory "/Users/taazadi1/Dropbox/Personal/org-roam/")
 (setq +org-roam-open-buffer-on-find-file t)
+
+(setq org-attach-id-dir "attachments/")
 
 (defun zz/org-download-paste-clipboard (&optional use-default-filename)
   (interactive "P")
