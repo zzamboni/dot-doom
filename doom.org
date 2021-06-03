@@ -493,10 +493,11 @@ Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/
       doom-variable-pitch-font (font-spec :family "Alegreya" :size 18))
 #+end_src
 
-Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I can mix source and prose blocks in the same document.
+Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I can mix source and prose blocks in the same document. I also manually enable =solaire-mode= in Org mode as a workaround for font scaling not working properly.
 
 #+begin_src emacs-lisp
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
+(add-hook! 'org-mode-hook #'solaire-mode)
 (setq mixed-pitch-variable-pitch-cursor nil)
 #+end_src
 

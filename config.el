@@ -91,6 +91,7 @@
       doom-variable-pitch-font (font-spec :family "Alegreya" :size 18))
 
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
+(add-hook! 'org-mode-hook #'solaire-mode)
 (setq mixed-pitch-variable-pitch-cursor nil)
 
 (setq doom-theme 'spacemacs-light)
