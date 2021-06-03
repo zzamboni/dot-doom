@@ -55,8 +55,6 @@
 
 (package! spacemacs-theme)
 
-;;(package! solaire-mode :disable t)
-
 (package! switch-buffer-functions)
 
 (package! pcre2el)
