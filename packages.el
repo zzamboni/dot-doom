@@ -68,7 +68,8 @@
 
 (package! org-download)
 
-(package! mexican-holidays)
+(package! mexican-holidays
+  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/mexican-holidays"))
 (package! swiss-holidays)
 
 (package! org-super-agenda)
