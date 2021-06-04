@@ -112,6 +112,10 @@
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 (plist-put! +ligatures-extra-symbols
+  :and           nil
+  :or            nil
+  :for           nil
+  :not           nil
   :true          nil
   :false         nil
   :int           nil

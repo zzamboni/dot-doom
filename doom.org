@@ -558,6 +558,10 @@ I like ligatures, but some of the ones that get enabled by the =(ligatures +extr
 
 #+begin_src emacs-lisp
 (plist-put! +ligatures-extra-symbols
+  :and           nil
+  :or            nil
+  :for           nil
+  :not           nil
   :true          nil
   :false         nil
   :int           nil
@@ -566,6 +570,12 @@ I like ligatures, but some of the ones that get enabled by the =(ligatures +extr
   :bool          nil
   :list          nil
 )
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(let ((ligatures-to-disable '(:true :false :int :float :str :bool :list :and :or :for :not)))
+  (dolist (sym ligatures-to-disable)
+    (plist-put! +ligatures-extra-symbols sym nil)))
 #+end_src
 
 Enable showing a word count in the modeline. This is only shown for the modes listed in =doom-modeline-continuous-word-count-modes= (Markdown, GFM and Org by default).
