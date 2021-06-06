@@ -462,6 +462,13 @@ Disable exit confirmation.
 (setq confirm-kill-emacs nil)
 #+end_src
 
+Doom configures =auth-sources= by default to include the Keychain on macOS, but it puts it at the beginning of the list. This causes creation of auth items to fail because the macOS Keychain sources do not support creation yet. I reverse it to leave =~/.authinfo.gpg= at the beginning.
+
+#+begin_src emacs-lisp
+(after! auth-source
+  (setq auth-sources (nreverse auth-sources)))
+#+end_src
+
 ** Visual, session and window settings
 
 I made a super simple set of Doom-Emacs custom splash screens by combining [[http://www.thedreamcastjunkyard.co.uk/2018/03/cross-platform-online-multiplayer-added.html][a Doom logo]] with the word "Emacs" rendered in the [[https://fontmeme.com/doom-font/][Doom Font]]. You can see them at https://gitlab.com/zzamboni/dot-doom/-/tree/master/splash (you can also see one of them at the top of this file). I configure it to be used instead of the default splash screen. It took me all of 5 minutes to make, so improvements are welcome!

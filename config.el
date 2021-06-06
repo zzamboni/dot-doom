@@ -77,6 +77,9 @@
 
 (setq confirm-kill-emacs nil)
 
+(after! auth-source
+  (setq auth-sources (nreverse auth-sources)))
+
 (let ((alternatives '("doom-emacs-bw-light.svg"
                       "doom-emacs-flugo-slant_out_purple-small.png"
                       "doom-emacs-flugo-slant_out_bw-small.png")))
