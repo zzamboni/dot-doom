@@ -120,3 +120,6 @@
 (package! annotate)
 
 (package! gift-mode)
+
+(package! 750words-client
+  :recipe (:local-repo "~/Dropbox/Personal/devel/750words-client"))
