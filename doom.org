@@ -546,7 +546,8 @@ In my previous configuration, I used to automatically restore the previous sessi
 Maximize the window upon startup.
 
 #+begin_src emacs-lisp
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(setq initial-frame-alist '((top . 1) (left . 1) (width . 129) (height . 37)))
+;;(add-to-list 'initial-frame-alist '(maximized))
 #+end_src
 
 Truncate lines in =ivy= childframes. [[https://discord.com/channels/406534637242810369/484105925733646336/770756709857755187][Thanks Henrik]]! (disabled for now)
