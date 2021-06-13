@@ -1464,18 +1464,15 @@ This function returns a list of all the headings in the given file which have th
 
 #+begin_src emacs-lisp
 (defun zz/headings-with-tags (file tags)
-  (let ((headings (org-ql-select file
-                    `(tags-local ,@tags))))
-    (mapconcat
-     (lambda (l) (format "- %s" l))
-     (mapcar
-      (lambda (h)
-        (let ((title (car (org-element-property :title h))))
-          (org-link-make-string
-           (format "file:%s::*%s"
-                   file title)
-           title)))
-      headings) "\n")))
+  (string-join
+   (org-ql-select file
+     `(tags-local ,@tags)
+     :action '(let ((title (org-get-heading 'no-tags 'no-todo)))
+                (concat "- "
+                        (org-link-make-string
+                         (format "file:%s::*%s" file title)
+                         title))))
+   "\n"))
 #+end_src
 
 This function returns a list of all the headings in the given file which match the tags of the current heading.
