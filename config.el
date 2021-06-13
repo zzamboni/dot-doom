@@ -704,4 +704,5 @@ end repeat\"")))
   ("M-q" . unfill-toggle)
   ("A-q" . unfill-paragraph))
 
-(use-package! 750words-client)
+(use-package! 750words)
+(use-package! ox-750words)

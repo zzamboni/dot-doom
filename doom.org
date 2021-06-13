@@ -1686,12 +1686,17 @@ This prevents the =docker= command from producing ANSI sequences during the imag
 I use [[https://750words.com/][750words.com]] for recording some writing every day (1464-day streak as of this writing!). I wrote [[https://github.com/zzamboni/750words-client/][750words-client]] to allow posting my words from the command line, and the code below integrates this into Emacs, so I can post text directly from the current buffer.
 
 #+begin_src emacs-lisp :tangle packages.el
-(package! 750words-client
-  :recipe (:local-repo "~/Dropbox/Personal/devel/750words-client"))
+(package! 750words
+  :recipe (:host github
+           :repo "zzamboni/750words-client"
+           :files ("*.el")))
+;;(package! 750words
+;;  :recipe (:local-repo ;;"~/Dropbox/Personal/devel/750words-client"))
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package! 750words-client)
+(use-package! 750words)
+(use-package! ox-750words)
 #+end_src
 
 * Experiments

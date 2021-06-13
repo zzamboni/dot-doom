@@ -121,5 +121,9 @@
 
 (package! gift-mode)
 
-(package! 750words-client
-  :recipe (:local-repo "~/Dropbox/Personal/devel/750words-client"))
+(package! 750words
+  :recipe (:host github
+           :repo "zzamboni/750words-client"
+           :files ("*.el")))
+;;(package! 750words
+;;  :recipe (:local-repo ;;"~/Dropbox/Personal/devel/750words-client"))
