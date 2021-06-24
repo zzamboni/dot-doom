@@ -1536,6 +1536,11 @@ Some other languages I use.
 (package! ob-elvish)
   #+end_src
 
+- Fish shell.
+  #+begin_src emacs-lisp :tangle packages.el
+(package! fish-mode)
+  #+end_src
+
 - [[http://cfengine.com/][CFEngine]] policy files. The =cfengine3-mode= package is included with Emacs, but I also install org-babel support.
   #+begin_src emacs-lisp :tangle packages.el
 (package! ob-cfengine3)
