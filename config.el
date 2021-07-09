@@ -366,12 +366,12 @@ title."
           "C-c g"  #'org-mac-grab-link)))
 
 (after! org-agenda
-  (setq org-agenda-prefix-format
-        '((agenda . " %i %-12:c%?-12t% s")
-          ;; Indent todo items by level to show nesting
-          (todo . " %i %-12:c%l")
-          (tags . " %i %-12:c")
-          (search . " %i %-12:c")))
+  ;; (setq org-agenda-prefix-format
+  ;;       '((agenda . " %i %-12:c%?-12t% s")
+  ;;         ;; Indent todo items by level to show nesting
+  ;;         (todo . " %i %-12:c%l")
+  ;;         (tags . " %i %-12:c")
+  ;;        (search . " %i %-12:c")))
   (setq org-agenda-include-diary t))
 
 (use-package! holidays
@@ -681,7 +681,8 @@ end repeat\"")))
   (set (if EMACS27+
            'epg-pinentry-mode
          'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
-       nil))
+       nil)
+  (setq epa-file-encrypt-to '("diego@zzamboni.org")))
 
 (use-package! iedit
   :defer

@@ -76,7 +76,8 @@
 (package! org-gtd)
 
 (package! org-cv
-  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-cv"))
+  :recipe (:host gitlab
+           :repo "Titan-C/org-cv"))
 
 (package! ox-leanpub
   :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/ox-leanpub"))

@@ -1018,12 +1018,12 @@ Customize the agenda display to indent todo items by level to show nesting, and 
 
 #+begin_src emacs-lisp
 (after! org-agenda
-  (setq org-agenda-prefix-format
-        '((agenda . " %i %-12:c%?-12t% s")
-          ;; Indent todo items by level to show nesting
-          (todo . " %i %-12:c%l")
-          (tags . " %i %-12:c")
-          (search . " %i %-12:c")))
+  ;; (setq org-agenda-prefix-format
+  ;;       '((agenda . " %i %-12:c%?-12t% s")
+  ;;         ;; Indent todo items by level to show nesting
+  ;;         (todo . " %i %-12:c%l")
+  ;;         (tags . " %i %-12:c")
+  ;;        (search . " %i %-12:c")))
   (setq org-agenda-include-diary t))
 #+end_src
 
@@ -1160,12 +1160,21 @@ I set up an advice before =org-capture= to make sure =org-gtd= and =org-capture=
 
 I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].
 
-My =ox-awesomecv= package is [[https://gitlab.com/Titan-C/org-cv/-/merge_requests/3][not yet merged]] into the main Org-CV distribution, so I install from my local repo for now.
+Org-CV is not yet in MELPA, so I install from its repository.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! org-cv
+  :recipe (:host gitlab
+           :repo "Titan-C/org-cv"))
+#+end_src
+
+For when I do development on it (I wrote the =ox-awesomecv= exporter), I check it out from my local repo - this is normally disabled.
+
+#+begin_src emacs-lisp :tangle no
+(package! org-cv
   :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-cv"))
 #+end_src
+
 #+begin_src emacs-lisp
 (use-package! ox-awesomecv
   :after org)
@@ -1631,7 +1640,8 @@ This prevents the =docker= command from producing ANSI sequences during the imag
   (set (if EMACS27+
            'epg-pinentry-mode
          'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
-       nil))
+       nil)
+  (setq epa-file-encrypt-to '("diego@zzamboni.org")))
   #+end_src
 
 - I find =iedit= absolutely indispensable when coding. In short: when you hit =Ctrl-;=, all occurrences of the symbol under the cursor (or the current selection) are highlighted, and any changes you make on one of them will be automatically applied to all others. It's great for renaming variables in code, but it needs to be used with care, as it has no idea of semantics, it's  a plain string replacement, so it can inadvertently modify unintended parts of the code.
