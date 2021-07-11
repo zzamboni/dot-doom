@@ -112,7 +112,7 @@
 
 ;;(add-hook 'window-setup-hook #'doom/quickload-session)
 
-(setq initial-frame-alist '((top . 1) (left . 1) (width . 129) (height . 37)))
+(setq initial-frame-alist '((top . 1) (left . 1) (width . 114) (height . 32)))
 ;;(add-to-list 'initial-frame-alist '(maximized))
 
 (plist-put! +ligatures-extra-symbols
