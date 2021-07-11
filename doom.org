@@ -1637,10 +1637,7 @@ This prevents the =docker= command from producing ANSI sequences during the imag
 
   #+begin_src emacs-lisp
 (after! epa
-  (set (if EMACS27+
-           'epg-pinentry-mode
-         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
-       nil)
+  (set 'epg-pinentry-mode nil)
   (setq epa-file-encrypt-to '("diego@zzamboni.org")))
   #+end_src
 

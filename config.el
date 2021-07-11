@@ -678,10 +678,7 @@ end repeat\"")))
           ("Path" 99 magit-repolist-column-path nil))))
 
 (after! epa
-  (set (if EMACS27+
-           'epg-pinentry-mode
-         'epa-pinentry-mode) ; DEPRECATED `epa-pinentry-mode'
-       nil)
+  (set 'epg-pinentry-mode nil)
   (setq epa-file-encrypt-to '("diego@zzamboni.org")))
 
 (use-package! iedit
