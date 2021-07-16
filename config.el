@@ -282,7 +282,7 @@
 (zz/add-file-keybinding "C-c z p" "~/org/projects.org" "projects.org")
 (zz/add-file-keybinding "C-c z d" "~/org/diary.org" "diary.org")
 
-(setq org-roam-directory "/Users/taazadi1/Dropbox/Personal/org-roam/")
+(setq org-roam-directory "~/Dropbox/Personal/org-roam/")
 (setq +org-roam-open-buffer-on-find-file t)
 
 (setq org-attach-id-dir "attachments/")

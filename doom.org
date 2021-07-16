@@ -886,7 +886,7 @@ Now I define keybindings to access my commonly-used org files.
 I'm still trying out =org-roam=, although I have not figured out very well how it works for my setup.
 
 #+begin_src emacs-lisp
-(setq org-roam-directory "/Users/taazadi1/Dropbox/Personal/org-roam/")
+(setq org-roam-directory "~/Dropbox/Personal/org-roam/")
 (setq +org-roam-open-buffer-on-find-file t)
 #+end_src
 
