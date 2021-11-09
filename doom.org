@@ -1000,7 +1000,10 @@ Ta-da! Now using =counsel-org-link= inserts nice, human-readable links.
 *** Capturing links to external applications
 
 =org-mac-link= implements the ability to grab links from different Mac apps and insert them in the file. Bind =C-c g= to call =org-mac-grab-link= to choose an application and insert a link.
-
+#+begin_src emacs-lisp :tangle packages.el
+(when IS-MAC
+  (package! org-mac-link))
+#+end_src
 #+begin_src emacs-lisp
 (when IS-MAC
   (use-package! org-mac-link

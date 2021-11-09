@@ -68,6 +68,9 @@
 
 (package! org-download)
 
+(when IS-MAC
+  (package! org-mac-link))
+
 (package! mexican-holidays)
 (package! swiss-holidays)
 
