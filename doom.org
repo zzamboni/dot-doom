@@ -506,7 +506,7 @@ Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I ca
 
 #+begin_src emacs-lisp
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
-(add-hook! 'org-mode-hook #'solaire-mode)
+;;(add-hook! 'org-mode-hook #'solaire-mode)
 (setq mixed-pitch-variable-pitch-cursor nil)
 #+end_src
 
@@ -592,6 +592,12 @@ Enable showing a word count in the modeline. This is only shown for the modes li
 
 #+begin_src emacs-lisp
 (setq doom-modeline-enable-word-count t)
+#+end_src
+
+Enable pixel scrolling
+
+#+begin_src emacs-lisp
+(pixel-scroll-precision-mode 1)
 #+end_src
 ** Key bindings
 
@@ -1444,18 +1450,7 @@ end repeat\"")))
   :hook (org-mode . org-special-block-extras-mode))
 #+end_src
 ** Other Org stuff
-Testing =org-ol-tree=.
-
-#+begin_src emacs-lisp :tangle packages.el
-(package! org-ol-tree
-  :recipe (:host github
-           :repo "Townk/org-ol-tree"))
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package! org-ol-tree
-  :after org)
-#+end_src
+Nothing here for now.
 
 ** Programming Org
 
@@ -1717,8 +1712,8 @@ I use [[https://750words.com/][750words.com]] for recording some writing every d
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package! 750words)
-(use-package! ox-750words)
+(use-package! 750words :defer t)
+(use-package! ox-750words :defer t)
 #+end_src
 
 * Experiments

@@ -94,7 +94,7 @@
       doom-variable-pitch-font (font-spec :family "Alegreya" :size 18))
 
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
-(add-hook! 'org-mode-hook #'solaire-mode)
+;;(add-hook! 'org-mode-hook #'solaire-mode)
 (setq mixed-pitch-variable-pitch-cursor nil)
 
 (setq doom-theme 'spacemacs-light)
@@ -130,6 +130,8 @@
 )
 
 (setq doom-modeline-enable-word-count t)
+
+(pixel-scroll-precision-mode 1)
 
 (map! "C-x b"   #'counsel-buffer-or-recentf
       "C-x C-b" #'counsel-switch-buffer)
@@ -597,9 +599,6 @@ end repeat\"")))
 (make-directory "~/.org-jira" 'ignore-if-exists)
 (setq jiralib-url "https://jira.swisscom.com/")
 
-(use-package! org-ol-tree
-  :after org)
-
 (use-package! org-ml
   :after org)
 
@@ -709,5 +708,5 @@ end repeat\"")))
   ("M-q" . unfill-toggle)
   ("A-q" . unfill-paragraph))
 
-(use-package! 750words)
-(use-package! ox-750words)
+(use-package! 750words :defer t)
+(use-package! ox-750words :defer t)
