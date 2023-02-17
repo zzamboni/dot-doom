@@ -260,6 +260,7 @@
   (remove-hook 'after-change-major-mode-hook '+company-init-backends-h)
   (setq-local company-backends nil))
 (add-hook! org-mode (zz/adjust-org-company-backends))
+(add-hook! markdown-mode (zz/adjust-org-company-backends))
 
 (add-hook! org-mode :append
            #'visual-line-mode
