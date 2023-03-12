@@ -1437,7 +1437,7 @@ end repeat\"")))
 
 #+begin_src emacs-lisp
 (make-directory "~/.org-jira" 'ignore-if-exists)
-(setq jiralib-url "https://jira.swisscom.com/")
+(setq jiralib-url "https://jira.example.com/")
 #+end_src
 
 [[https://github.com/alhassy/org-special-block-extras][org-special-block-extras]] to enable additional special block types and their corresponding exports (disabled for now).
@@ -1451,7 +1451,6 @@ end repeat\"")))
   :hook (org-mode . org-special-block-extras-mode))
 #+end_src
 ** Other Org stuff
-Nothing here for now.
 
 ** Programming Org
 

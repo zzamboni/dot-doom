@@ -598,7 +598,7 @@ end repeat\"")))
   :after org)
 
 (make-directory "~/.org-jira" 'ignore-if-exists)
-(setq jiralib-url "https://jira.swisscom.com/")
+(setq jiralib-url "https://jira.example.com/")
 
 (use-package! org-ml
   :after org)
