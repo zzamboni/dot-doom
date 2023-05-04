@@ -597,7 +597,7 @@ Enable showing a word count in the modeline. This is only shown for the modes li
 Enable pixel scrolling
 
 #+begin_src emacs-lisp
-(pixel-scroll-precision-mode 1)
+;;(pixel-scroll-precision-mode 1)
 #+end_src
 ** Key bindings
 

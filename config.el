@@ -131,7 +131,7 @@
 
 (setq doom-modeline-enable-word-count t)
 
-(pixel-scroll-precision-mode 1)
+;;(pixel-scroll-precision-mode 1)
 
 (map! "C-x b"   #'counsel-buffer-or-recentf
       "C-x C-b" #'counsel-switch-buffer)
