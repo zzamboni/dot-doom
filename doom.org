@@ -1172,7 +1172,7 @@ I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to expo
 
 Org-CV is not yet in MELPA, so I install from its repository.
 
-#+begin_src emacs-lisp :tangle packages.el
+#+begin_src emacs-lisp :tangle no
 (package! org-cv
   :recipe (:host gitlab
            :repo "Titan-C/org-cv"))
@@ -1180,7 +1180,7 @@ Org-CV is not yet in MELPA, so I install from its repository.
 
 For when I do development on it (I wrote the =ox-awesomecv= exporter), I check it out from my local repo - this is normally disabled.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle packages.el
 (package! org-cv
   :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-cv"))
 #+end_src
