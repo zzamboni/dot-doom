@@ -301,7 +301,7 @@
            nil)))
     (org-download-clipboard file)))
 
-(after! org
+(after! org-download
   (setq org-download-method 'directory)
   (setq org-download-image-dir "images")
   (setq org-download-heading-lvl nil)

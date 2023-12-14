@@ -110,6 +110,8 @@
 
 (package! package-lint)
 
+(package! zig-mode)
+
 (package! dockerfile-mode)
 
 (package! emacs-everywhere :pin nil)
