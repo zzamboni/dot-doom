@@ -64,7 +64,10 @@
        (setq mac-command-modifier       'meta
              mac-option-modifier        'alt
              mac-right-option-modifier  'alt
-             mac-pass-control-to-system nil)))
+             mac-pass-control-to-system nil))
+      (IS-LINUX
+       (setq x-meta-keysym 'super
+             x-super-keysym 'meta)))
 
 (setq kill-whole-line t)
 
@@ -89,13 +92,17 @@
 
 (setq +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
 
-(setq doom-font (font-spec :family "FiraCode Nerd Font" :size 18)
+(setq doom-font (font-spec :family "Fira Code" :size 24)
       ;;doom-variable-pitch-font (font-spec :family "ETBembo" :size 18)
-      doom-variable-pitch-font (font-spec :family "Alegreya" :size 18))
+      doom-variable-pitch-font (font-spec :family "Alegreya" :size 24))
 
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
 ;;(add-hook! 'org-mode-hook #'solaire-mode)
 (setq mixed-pitch-variable-pitch-cursor nil)
+
+(map! "C-="   #'doom/increase-font-size
+      "C--"   #'doom/decrease-font-size
+      "C-0"   #'doom/reset-font-size)
 
 (setq doom-theme 'spacemacs-light)
 ;;(setq doom-theme 'doom-nord-light) ;;OK
@@ -486,6 +493,35 @@ title."
 (after! ox-hugo
   (setq org-hugo-use-code-for-kbd t))
 
+(after! org-capture
+;; Populates only the EXPORT_FILE_NAME property in the inserted headline.
+  (defun org-hugo-new-subtree-post-capture-template ()
+    "Returns `org-capture' template string for new Hugo post.
+  See `org-capture-templates' for more information."
+    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+           (fname (org-hugo-slug title)))
+      (mapconcat #'identity
+                 `(
+                   ,(concat "* TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":export_hugo_bundle: " (format-time-string "%Y-%m-%d-") fname)
+                   ":export_file_name: index"
+                   ,(concat ":custom_id: " fname)
+                   ":export_hugo_custom_front_matter: :featured_image /images/tram-zurich.jpg :toc false"
+                   ":END:"
+                   "%?\n")          ;Place the cursor here finally
+                 "\n")))
+
+(add-to-list 'org-capture-templates
+               '("h"                ;`org-capture' binding + h
+                 "Hugo post"
+                 entry
+                 ;; It is assumed that below file is present in `org-directory'
+                 ;; and that it has an "Ideas" heading. It can even be a
+                 ;; symlink pointing to the actual location of all-posts.org!
+                 (file+olp "~/Personal/websites/zzamboni.org/content-org/zzamboni.org" "Ideas")
+                 (function org-hugo-new-subtree-post-capture-template))))
+
 (defun zz/org-if-str (str &optional desc)
   (when (org-string-nw-p str)
     (or (org-string-nw-p desc) str)))
@@ -654,7 +690,7 @@ end repeat\"")))
   :commands cfengine3-mode
   :mode ("\\.cf\\'" . cfengine3-mode))
 
-(use-package! graphviz-dot-mode)
+;(use-package! graphviz-dot-mode)
 
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 (put 'dockerfile-image-name 'safe-local-variable #'stringp)

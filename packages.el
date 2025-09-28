@@ -106,7 +106,7 @@
 
 (package! ob-cfengine3)
 
-(package! graphviz-dot-mode)
+;(package! graphviz-dot-mode)
 
 (package! package-lint)
 
