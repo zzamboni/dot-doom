@@ -510,6 +510,14 @@ Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I ca
 (setq mixed-pitch-variable-pitch-cursor nil)
 #+end_src
 
+Keybindings to increase/decrease font size.
+
+#+begin_src emacs-lisp
+(map! "C-="   #'doom/increase-font-size
+      "C--"   #'doom/decrease-font-size
+      "C-0"   #'doom/reset-font-size)
+#+end_src
+
 Set the theme to use. I like the [[https://github.com/nashamri/spacemacs-theme][Spacemacs-Light]], which does not come with Doom, so we need to install it from =package.el=:
 
 #+begin_src emacs-lisp :tangle packages.el
