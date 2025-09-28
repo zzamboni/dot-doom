@@ -1256,6 +1256,40 @@ I set =org-hugo-use-code-for-kbd= so that I can apply a custom style to keyboard
 (after! ox-hugo
   (setq org-hugo-use-code-for-kbd t))
 #+end_src
+
+From [[https://gtpedrosa.github.io/blog/using-org-mode-and-ox-hugo-to-replace-markdown-in-hugo-workflow/][this blog post]] I grabbed the following code to define an =org-capture= template to create a new blog post skeleton automatically.
+
+First a helper function.
+#+begin_src emacs-lisp
+(after! org-capture
+;; Populates only the EXPORT_FILE_NAME property in the inserted headline.
+  (defun org-hugo-new-subtree-post-capture-template ()
+    "Returns `org-capture' template string for new Hugo post.
+  See `org-capture-templates' for more information."
+    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+           (fname (org-hugo-slug title)))
+      (mapconcat #'identity
+                 `(
+                   ,(concat "* TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":export_hugo_bundle: " (format-time-string "%Y-%m-%d-") fname)
+                   ":export_file_name: index"
+                   ,(concat ":custom_id: " fname)
+                   ":export_hugo_custom_front_matter: :featured_image /images/tram-zurich.jpg :toc false"
+                   ":END:"
+                   "%?\n")          ;Place the cursor here finally
+                 "\n")))
+
+(add-to-list 'org-capture-templates
+               '("h"                ;`org-capture' binding + h
+                 "Hugo post"
+                 entry
+                 ;; It is assumed that below file is present in `org-directory'
+                 ;; and that it has an "Ideas" heading. It can even be a
+                 ;; symlink pointing to the actual location of all-posts.org!
+                 (file+olp "~/Personal/websites/zzamboni.org/content-org/zzamboni.org" "Ideas")
+                 (function org-hugo-new-subtree-post-capture-template))))
+#+end_src
 ** Code for org-mode macros
 
 Here I define functions which get used in some of my org-mode macros
