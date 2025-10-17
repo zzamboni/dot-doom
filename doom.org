@@ -1167,6 +1167,8 @@ I am trying out Trevoke's [[https://github.com/Trevoke/org-gtd.el][org-gtd]]. I 
 (package! org-gtd)
 #+end_src
 #+begin_src emacs-lisp
+;; Supress org-gtd update warning
+(setq org-gtd-update-ack "2.1.0")
 (use-package! org-gtd
   :after org
   :config
