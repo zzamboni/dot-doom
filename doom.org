@@ -930,8 +930,9 @@ Using =org-download= to make it easier to insert images into my org notes and bl
 #+end_src
 
 =org-download= implements all the basic machinery for downloading/copying and inserting an image in an org-mode file. However the user experience can be improved. I implemented two wrappers to fit my main use cases:
-- Pasting images from the clipboard; and
-- Inserting images already in my laptop.
+- Pasting images from the clipboard;
+- Inserting images already in my laptop;
+- Images must be inserted as links to themselves.
 
 The first function =zz/org-paste-clipboard= inserts an image from the clipboard using =org-download-clipboard=, but asking for the filename to use for storing it.
 
