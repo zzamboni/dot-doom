@@ -297,7 +297,14 @@
 
 (setq org-attach-id-dir "attachments/")
 
-(defun zz/org-download-paste-clipboard (&optional use-default-filename)
+(after! org-download
+  (setq org-download-method 'directory)
+  (setq org-download-image-dir "images")
+  (setq org-download-heading-lvl nil)
+  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
+  (setq org-image-actual-width 300))
+
+(defun zz/org-paste-clipboard (&optional use-default-filename)
   (interactive "P")
   (require 'org-download)
   (let ((file
@@ -308,15 +315,39 @@
            nil)))
     (org-download-clipboard file)))
 
-(after! org-download
-  (setq org-download-method 'directory)
-  (setq org-download-image-dir "images")
-  (setq org-download-heading-lvl nil)
-  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
-  (setq org-image-actual-width 300)
-  (map! :map org-mode-map
-        "C-c l a y" #'zz/org-download-paste-clipboard
-        "C-M-y" #'zz/org-download-paste-clipboard))
+(defun zz/org-attach-file (&optional file)
+  (interactive (list (read-file-name "File to insert: "
+                                (or (progn
+                                      (require 'dired-aux)
+                                      (dired-dwim-target-directory))
+                                    default-directory))))
+  (require 'org-download)
+  (if (file-in-directory-p file org-download-image-dir)
+      (org-download-insert-link (concat "file:" (file-relative-name file (org-attach-dir))) file)
+      (let ((file-url (concat "file://" file)))
+        (org-download-image file-url))))
+
+(map! :map org-mode-map
+        "C-c l a y" #'zz/org-paste-clipboard
+        "C-M-y" #'zz/org-paste-clipboard
+        "C-c l a z" #'zz/org-attach-file
+        "C-M-z" #'zz/org-attach-file)
+
+(defun zz/org-download-link-format-function-link-to-file (filename)
+  "Insert the file as a link to itself."
+  (if (and (>= (string-to-number org-version) 9.3)
+           (eq org-download-method 'attach))
+      ;; Respect the default behavior if org-download-method is 'attach
+      (format "[[attachment:%s]]\n"
+              (org-link-escape
+               (file-relative-name filename (org-attach-dir))))
+    (let ((formatted-filename (org-link-escape
+                               (funcall org-download-abbreviate-filename-function filename))))
+      ;; Here we use the correct link format so that the image is a link to itself
+      (format "[[file:%s][file:%s]]\n"
+             formatted-filename formatted-filename))))
+
+(setq! org-download-link-format-function #'zz/org-download-link-format-function-link-to-file)
 
 (map! :after counsel :map org-mode-map
       "C-c l l h" #'counsel-org-link)
@@ -421,6 +452,8 @@ title."
   (setq org-clock-persist t)
   (org-clock-persistence-insinuate))
 
+;; Supress org-gtd update warning
+(setq org-gtd-update-ack "2.1.0")
 (use-package! org-gtd
   :after org
   :config
@@ -494,7 +527,6 @@ title."
   (setq org-hugo-use-code-for-kbd t))
 
 (after! org-capture
-;; Populates only the EXPORT_FILE_NAME property in the inserted headline.
   (defun org-hugo-new-subtree-post-capture-template ()
     "Returns `org-capture' template string for new Hugo post.
   See `org-capture-templates' for more information."
@@ -509,7 +541,7 @@ title."
                    ,(concat ":custom_id: " fname)
                    ":export_hugo_custom_front_matter: :featured_image /images/tram-zurich.jpg :toc false"
                    ":END:"
-                   "%?\n")          ;Place the cursor here finally
+                   "\n%?\n")          ;Place the cursor here finally
                  "\n")))
 
 (add-to-list 'org-capture-templates
@@ -520,7 +552,8 @@ title."
                  ;; and that it has an "Ideas" heading. It can even be a
                  ;; symlink pointing to the actual location of all-posts.org!
                  (file+olp "~/Personal/websites/zzamboni.org/content-org/zzamboni.org" "Ideas")
-                 (function org-hugo-new-subtree-post-capture-template))))
+                 (function org-hugo-new-subtree-post-capture-template)
+                 :jump-to-captured t)))
 
 (defun zz/org-if-str (str &optional desc)
   (when (org-string-nw-p str)
