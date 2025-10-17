@@ -1310,12 +1310,10 @@ I set =org-hugo-use-code-for-kbd= so that I can apply a custom style to keyboard
   (setq org-hugo-use-code-for-kbd t))
 #+end_src
 
-From [[https://gtpedrosa.github.io/blog/using-org-mode-and-ox-hugo-to-replace-markdown-in-hugo-workflow/][this blog post]] I grabbed the following code to define an =org-capture= template to create a new blog post skeleton automatically.
+Define an =org-capture= template to create a new blog post skeleton automatically. Based on https://ox-hugo.scripter.co/doc/org-capture-setup/, with some customizations for my blog's setup (like a default value for =:featured_image=). I also add =:jump-to-captured t= in the =org-capture-templates= definition so that when I create a new blog post snippet, I get automatically taken to that location so I can continue writing.
 
-First a helper function.
 #+begin_src emacs-lisp
 (after! org-capture
-;; Populates only the EXPORT_FILE_NAME property in the inserted headline.
   (defun org-hugo-new-subtree-post-capture-template ()
     "Returns `org-capture' template string for new Hugo post.
   See `org-capture-templates' for more information."
@@ -1330,7 +1328,7 @@ First a helper function.
                    ,(concat ":custom_id: " fname)
                    ":export_hugo_custom_front_matter: :featured_image /images/tram-zurich.jpg :toc false"
                    ":END:"
-                   "%?\n")          ;Place the cursor here finally
+                   "\n%?\n")          ;Place the cursor here finally
                  "\n")))
 
 (add-to-list 'org-capture-templates
@@ -1341,7 +1339,8 @@ First a helper function.
                  ;; and that it has an "Ideas" heading. It can even be a
                  ;; symlink pointing to the actual location of all-posts.org!
                  (file+olp "~/Personal/websites/zzamboni.org/content-org/zzamboni.org" "Ideas")
-                 (function org-hugo-new-subtree-post-capture-template))))
+                 (function org-hugo-new-subtree-post-capture-template)
+                 :jump-to-captured t)))
 #+end_src
 ** Code for org-mode macros
 
