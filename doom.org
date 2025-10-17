@@ -377,7 +377,7 @@ This code is written to the =init.el= to select which modules to load. Written h
  ;;nim                 ; python + lisp at the speed of c
  ;;nix                 ; I hereby declare "nix geht mehr!"
  ;;ocaml               ; an objective camel
- (org +pretty +journal -dragndrop
+ (org +pretty +journal ;-dragndrop
       +hugo +roam +pandoc
       +present)        ; organize your plain life in plain text
  ;;php                 ; perl's insecure younger brother
@@ -915,13 +915,28 @@ Configure attachments to be stored together with their Org document.
 #+end_src
 ** Capturing images
 
-Using =org-download= to make it easier to insert images into my org notes. I don't like the configuration provided by Doom as part of the =(org +dragndrop)= module, so I install the package by hand and configure it to my liking. I also define a new keybinding to paste an image from the clipboard, asking for the filename first.
+Using =org-download= to make it easier to insert images into my org notes and blog posts. I don't like the configuration provided by Doom as part of the =(org +dragndrop)= module, so I install the package by hand and configure it to my liking. 
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! org-download)
 #+end_src
 #+begin_src emacs-lisp
-(defun zz/org-download-paste-clipboard (&optional use-default-filename)
+(after! org-download
+  (setq org-download-method 'directory)
+  (setq org-download-image-dir "images")
+  (setq org-download-heading-lvl nil)
+  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
+  (setq org-image-actual-width 300))
+#+end_src
+
+=org-download= implements all the basic machinery for downloading/copying and inserting an image in an org-mode file. However the user experience can be improved. I implemented two wrappers to fit my main use cases:
+- Pasting images from the clipboard; and
+- Inserting images already in my laptop.
+
+The first function =zz/org-paste-clipboard= inserts an image from the clipboard using =org-download-clipboard=, but asking for the filename to use for storing it.
+
+#+begin_src emacs-lisp 
+(defun zz/org-paste-clipboard (&optional use-default-filename)
   (interactive "P")
   (require 'org-download)
   (let ((file
@@ -931,16 +946,52 @@ Using =org-download= to make it easier to insert images into my org notes. I don
                           nil nil org-download-screenshot-basename)
            nil)))
     (org-download-clipboard file)))
+#+end_src
 
-(after! org-download
-  (setq org-download-method 'directory)
-  (setq org-download-image-dir "images")
-  (setq org-download-heading-lvl nil)
-  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
-  (setq org-image-actual-width 300)
-  (map! :map org-mode-map
-        "C-c l a y" #'zz/org-download-paste-clipboard
-        "C-M-y" #'zz/org-download-paste-clipboard))
+The second function =zz/org-attach-file= allows me to choose a file to attach. The file is copied with the same name to the =org-download-image-dir= directory. If the chosen image is already from that directory, it only inserts the link without copying the file again.
+
+#+begin_src emacs-lisp 
+(defun zz/org-attach-file (&optional file)
+  (interactive (list (read-file-name "File to insert: "
+                                (or (progn
+                                      (require 'dired-aux)
+                                      (dired-dwim-target-directory))
+                                    default-directory))))
+  (require 'org-download)
+  (if (file-in-directory-p file org-download-image-dir)
+      (org-download-insert-link (concat "file:" (file-relative-name file (org-attach-dir))) file)
+      (let ((file-url (concat "file://" file)))
+        (org-download-image file-url))))
+#+end_src
+
+I create keybindings for the two functions above.
+
+#+begin_src emacs-lisp
+(map! :map org-mode-map
+        "C-c l a y" #'zz/org-paste-clipboard
+        "C-M-y" #'zz/org-paste-clipboard
+        "C-c l a z" #'zz/org-attach-file
+        "C-M-z" #'zz/org-attach-file)
+#+end_src
+
+Finally, I like the images to be links to the image itself, so that in blog posts, for example, a thumbnail is shown, and clicking on it takes you to the full image. To this effect I define a variant of =org-download-link-format-function= which does this, and assign it to =org-download-link-format-function=.
+
+#+begin_src emacs-lisp
+(defun zz/org-download-link-format-function-link-to-file (filename)
+  "Insert the file as a link to itself."
+  (if (and (>= (string-to-number org-version) 9.3)
+           (eq org-download-method 'attach))
+      ;; Respect the default behavior if org-download-method is 'attach
+      (format "[[attachment:%s]]\n"
+              (org-link-escape
+               (file-relative-name filename (org-attach-dir))))
+    (let ((formatted-filename (org-link-escape
+                               (funcall org-download-abbreviate-filename-function filename))))
+      ;; Here we use the correct link format so that the image is a link to itself
+      (format "[[file:%s][file:%s]]\n"
+             formatted-filename formatted-filename))))
+
+(setq! org-download-link-format-function #'zz/org-download-link-format-function-link-to-file)
 #+end_src
 
 ** Capturing links
