@@ -54,6 +54,8 @@
 ;;(unpin! t)
 
 (package! spacemacs-theme)
+;; Trying https://github.com/agraul/doom-alabaster-theme
+;;(package! doom-alabaster-theme :recipe (:host github :repo "agraul/doom-alabaster-theme"))
 
 (package! switch-buffer-functions)
 

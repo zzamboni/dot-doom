@@ -525,11 +525,14 @@ Set the theme to use. I like the [[https://github.com/nashamri/spacemacs-theme][
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! spacemacs-theme)
+;; Trying https://github.com/agraul/doom-alabaster-theme
+;;(package! doom-alabaster-theme :recipe (:host github :repo "agraul/doom-alabaster-theme"))
 #+end_src
 
 And then from =config.el= we specify the theme to use.
 
 #+begin_src emacs-lisp
+;;(setq doom-theme 'doom-alabaster)
 (setq doom-theme 'spacemacs-light)
 ;;(setq doom-theme 'doom-nord-light) ;;OK
 ;;NO (setq doom-theme 'doom-solarized-light)
@@ -557,7 +560,7 @@ In my previous configuration, I used to automatically restore the previous sessi
 Maximize the window upon startup.
 
 #+begin_src emacs-lisp
-(setq initial-frame-alist '((top . 1) (left . 1) (width . 114) (height . 32)))
+;;(setq initial-frame-alist '((top . 1) (left . 1) (width . 114) (height . 32)))
 ;;(add-to-list 'initial-frame-alist '(maximized))
 #+end_src
 
@@ -927,6 +930,7 @@ Using =org-download= to make it easier to insert images into my org notes and bl
   (setq org-download-heading-lvl nil)
   (setq org-download-timestamp "%Y%m%d-%H%M%S_")
   (setq org-image-actual-width 300))
+(require 'org-download)
 #+end_src
 
 =org-download= implements all the basic machinery for downloading/copying and inserting an image in an org-mode file. However the user experience can be improved. I implemented two wrappers to fit my main use cases:
@@ -1329,7 +1333,8 @@ Define an =org-capture= template to create a new blog post skeleton automaticall
                    ,(concat ":custom_id: " fname)
                    ":export_hugo_custom_front_matter: :featured_image /images/tram-zurich.jpg :toc false"
                    ":END:"
-                   "\n%?\n")          ;Place the cursor here finally
+                   "#+BEGIN_DESCRIPTION\n%?\n#+END_DESCRIPTION"       ;Place the cursor here at the end
+                   "\n<write here>")
                  "\n")))
 
 (add-to-list 'org-capture-templates
