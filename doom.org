@@ -474,6 +474,11 @@ Doom configures =auth-sources= by default to include the Keychain on macOS, but 
   (setq auth-sources (nreverse auth-sources)))
 #+end_src
 
+Auto-save the desktop setup (open buffers, etc.)
+
+#+begin_src emacs-lisp
+(desktop-save-mode 1)
+#+end_src
 ** Visual, session and window settings
 
 I made a super simple set of Doom-Emacs custom splash screens by combining [[http://www.thedreamcastjunkyard.co.uk/2018/03/cross-platform-online-multiplayer-added.html][a Doom logo]] with the word "Emacs" rendered in the [[https://fontmeme.com/doom-font/][Doom Font]]. You can see them at https://gitlab.com/zzamboni/dot-doom/-/tree/master/splash (you can also see one of them at the top of this file). I configure it to be used instead of the default splash screen. It took me all of 5 minutes to make, so improvements are welcome!
@@ -500,9 +505,9 @@ I eliminate all but the first two items in the dashboard menu, since those are t
 Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://www.huertatipografica.com/en/fonts/alegreya-ht-pro][Alegreya]] (another favorite and my previous choice: [[https://edwardtufte.github.io/et-book/][ET Book]]).
 
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Fira Code" :size 24)
+(setq doom-font (font-spec :family "Fira Code Nerd Font" :size 16)
       ;;doom-variable-pitch-font (font-spec :family "ETBembo" :size 18)
-      doom-variable-pitch-font (font-spec :family "Alegreya" :size 24))
+      doom-variable-pitch-font (font-spec :family "Alegreya" :size 16))
 #+end_src
 
 Allow mixed fonts in a buffer. This is particularly useful for Org mode, so I can mix source and prose blocks in the same document. I also manually enable =solaire-mode= in Org mode as a workaround for font scaling not working properly.
@@ -1695,6 +1700,12 @@ Some other languages I use.
 
 ** Miscellaneous packages
 
+- [[https://codeberg.org/meow_king/typst-ts-mode/wiki/Installation.md][Typst mode]]:
+
+  #+begin_src emacs-lisp :tangle packages.el
+(package! typst-ts-mode :recipe (:host codeberg :repo "meow_king/typst-ts-mode"))
+  #+end_src
+
 - [[https://github.com/spotify/dockerfile-mode][Dockerfile mode]]:
 
   #+begin_src emacs-lisp :tangle packages.el
@@ -1804,6 +1815,23 @@ This prevents the =docker= command from producing ANSI sequences during the imag
 - [[https://github.com/csrhodes/gift-mode][gift-mode]] for editing quizzes in [[https://docs.moodle.org/39/en/GIFT_format][GIFT format]].
   #+begin_src emacs-lisp :tangle packages.el
 (package! gift-mode)
+  #+end_src
+
+- [[https://github.com/leon-barrett/just-mode.el][just-mode]] for editing [[https://just.systems/][Just]] files.
+
+  #+begin_src emacs-lisp :tangle packages.el
+(package! just-mode)
+  #+end_src
+
+- [[https://github.com/tuh8888/chezmoi.el][chezmoi.el]] for interacting with [[https://www.chezmoi.io/][chezmoi]].
+
+  #+begin_src emacs-lisp :tangle packages.el
+(package! chezmoi)
+  #+end_src
+  #+begin_src emacs-lisp
+(use-package! chezmoi
+  :config
+  (load-file "~/.emacs.d/.local/straight/repos/chezmoi.el/extensions/chezmoi-magit.el"))
   #+end_src
 ** Posting to 750words.com
 

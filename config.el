@@ -83,6 +83,8 @@
 (after! auth-source
   (setq auth-sources (nreverse auth-sources)))
 
+(desktop-save-mode 1)
+
 (let ((alternatives '("doom-emacs-bw-light.svg"
                       "doom-emacs-flugo-slant_out_purple-small.png"
                       "doom-emacs-flugo-slant_out_bw-small.png")))
@@ -92,9 +94,9 @@
 
 (setq +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
 
-(setq doom-font (font-spec :family "Fira Code" :size 24)
+(setq doom-font (font-spec :family "Fira Code Nerd Font" :size 16)
       ;;doom-variable-pitch-font (font-spec :family "ETBembo" :size 18)
-      doom-variable-pitch-font (font-spec :family "Alegreya" :size 24))
+      doom-variable-pitch-font (font-spec :family "Alegreya" :size 16))
 
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
 ;;(add-hook! 'org-mode-hook #'solaire-mode)
@@ -104,6 +106,7 @@
       "C--"   #'doom/decrease-font-size
       "C-0"   #'doom/reset-font-size)
 
+;;(setq doom-theme 'doom-alabaster)
 (setq doom-theme 'spacemacs-light)
 ;;(setq doom-theme 'doom-nord-light) ;;OK
 ;;NO (setq doom-theme 'doom-solarized-light)
@@ -119,7 +122,7 @@
 
 ;;(add-hook 'window-setup-hook #'doom/quickload-session)
 
-(setq initial-frame-alist '((top . 1) (left . 1) (width . 114) (height . 32)))
+;;(setq initial-frame-alist '((top . 1) (left . 1) (width . 114) (height . 32)))
 ;;(add-to-list 'initial-frame-alist '(maximized))
 
 (plist-put! +ligatures-extra-symbols
@@ -303,6 +306,7 @@
   (setq org-download-heading-lvl nil)
   (setq org-download-timestamp "%Y%m%d-%H%M%S_")
   (setq org-image-actual-width 300))
+(require 'org-download)
 
 (defun zz/org-paste-clipboard (&optional use-default-filename)
   (interactive "P")
@@ -541,7 +545,8 @@ title."
                    ,(concat ":custom_id: " fname)
                    ":export_hugo_custom_front_matter: :featured_image /images/tram-zurich.jpg :toc false"
                    ":END:"
-                   "\n%?\n")          ;Place the cursor here finally
+                   "#+BEGIN_DESCRIPTION\n%?\n#+END_DESCRIPTION"       ;Place the cursor here at the end
+                   "\n<write here>")
                  "\n")))
 
 (add-to-list 'org-capture-templates
@@ -777,6 +782,10 @@ end repeat\"")))
   :bind
   ("M-q" . unfill-toggle)
   ("A-q" . unfill-paragraph))
+
+(use-package! chezmoi
+  :config
+  (load-file "~/.emacs.d/.local/straight/repos/chezmoi.el/extensions/chezmoi-magit.el"))
 
 (use-package! 750words :defer t)
 (use-package! ox-750words :defer t)

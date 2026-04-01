@@ -114,6 +114,8 @@
 
 (package! zig-mode)
 
+(package! typst-ts-mode :recipe (:host codeberg :repo "meow_king/typst-ts-mode"))
+
 (package! dockerfile-mode)
 
 (package! emacs-everywhere :pin nil)
@@ -125,6 +127,10 @@
 (package! annotate)
 
 (package! gift-mode)
+
+(package! just-mode)
+
+(package! chezmoi)
 
 (package! 750words
   :recipe (:host github
