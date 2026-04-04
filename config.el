@@ -84,6 +84,7 @@
   (setq auth-sources (nreverse auth-sources)))
 
 (desktop-save-mode 1)
+(setq! desktop-load-locked-desktop t)
 
 (let ((alternatives '("doom-emacs-bw-light.svg"
                       "doom-emacs-flugo-slant_out_purple-small.png"
