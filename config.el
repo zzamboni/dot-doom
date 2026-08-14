@@ -731,6 +731,9 @@ end repeat\"")))
   :mode ("\\.cf\\'" . cfengine3-mode))
 
 ;(use-package! graphviz-dot-mode)
+(use-package! d2-mode)
+(after! d2-mode
+  (setq d2-tmp-dir "."))
 
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 (put 'dockerfile-image-name 'safe-local-variable #'stringp)

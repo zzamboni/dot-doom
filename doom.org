@@ -1676,12 +1676,16 @@ Some other languages I use.
   :mode ("\\.cf\\'" . cfengine3-mode))
   #+end_src
 
-- [[https://graphviz.org/][Graphviz]] for graph generation.
+- [[https://graphviz.org/][Graphviz]] and [[https://github.com/andorsk/d2-mode][d2]] for graph generation.
   #+begin_src emacs-lisp :tangle packages.el
 ;(package! graphviz-dot-mode)
+(package! d2-mode)
   #+end_src
   #+begin_src emacs-lisp
 ;(use-package! graphviz-dot-mode)
+(use-package! d2-mode)
+(after! d2-mode
+  (setq d2-tmp-dir "."))
   #+end_src
 
 - I am learning [[http://www.gigamonkeys.com/book/][Common LISP]], which is well supported through the =common-lisp= Doom module, but I need to configure this in the =~/.slynkrc= file for I/O in the Sly REPL to work fine ([[https://github.com/joaotavora/sly/issues/347#issuecomment-717065056][source]]).
