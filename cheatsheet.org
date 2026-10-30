@@ -5,7 +5,7 @@
 # cram-snap renders both; keep its subtitle below in sync with #+subtitle above.
 # Package: https://typst.app/universe/package/cram-snap/ (pinned for reproducibility).
 #+typst_header: #import "@preview/cram-snap:0.2.2": cram-snap
-#+typst_header: #set page(paper: "a4", margin: 14mm)
+#+typst_header: #set page(paper: "a4", margin: (top: 14mm, bottom: 20mm, x: 14mm), footer: align(center, text(size: 8pt, fill: rgb("61747C"))[This layout uses cram-snap 0.2.2, Source Sans 3, and Cascadia Code.]))
 #+typst_header: #set text(font: "Source Sans 3", size: 10pt, fill: rgb("24343D"))
 #+typst_header: #set par(leading: 0.45em, spacing: 7pt)
 #+typst_header: #show: doc => context cram-snap(title: text(fill: rgb("176B73"), weight: "bold", document.title), column-number: 1, fill-color: "F0F6F6", stroke-color: "176B73", doc)
@@ -22,27 +22,21 @@
 
 * Create a Hugo blog post
 
-| Action              | Shortcut      | Command / next step                                       |
-|---------------------+---------------+-----------------------------------------------------------|
+| Action              | Shortcut    | Command / next step                                   |
+|---------------------+-------------+-------------------------------------------------------|
 | New post            | =C-c n n h=   | =org-capture= → =h= — enter a title.                      |
-| Finish capture      | =C-c C-c=     | =org-capture-finalize= — jump to the new post.            |
-| Cancel capture      | =C-c C-k=     | =org-capture-kill=                                        |
+| Finish capture      | =C-c C-c=     | =org-capture-finalize= — jump to the new post.          |
+| Cancel capture      | =C-c C-k=     | =org-capture-kill=                                      |
 | Export current post | =C-x C-s=     | =save-buffer= (=org-hugo-auto-export= is enabled).        |
-|                     | =C-c C-e H H= | =org-hugo-export-wim-to-md=                               |
-| Export all posts    | =C-c C-e H A= | Review changes before committing!                         |
+|                     | =C-c C-e H H= | =org-hugo-export-wim-to-md=                             |
+| Export all posts    | =C-c C-e H A= | Review changes before committing!                     |
 | Change status       | =C-c C-t=     | =org-todo= — choose =DONE= when ready, then export again. |
 
-Fill in the description before finishing capture; replace =<write here>= with
-the body afterward. Export with point inside the post. =TODO= / =DRAFT= mean
-draft; =DONE= means non-draft. Export writes Markdown; it does not deploy.
+Fill in the description before finishing capture; replace =<write here>= with the body afterward. Export with point inside the post. =TODO= / =DRAFT= mean draft; =DONE= means non-draft. Export writes Markdown; it does not deploy.
 
-*Source:* under =Ideas= in
-=~/Personal/websites/zzamboni.org/content-org/zzamboni.org=.
-The template supplies an ID and a =YYYY-MM-DD-title-slug= bundle, exporting to
-=content/post/<bundle>/index.md=.
+*Source:* under =Ideas= in =~/Personal/websites/zzamboni.org/content-org/zzamboni.org=. The template supplies an ID and a =YYYY-MM-DD-title-slug= bundle, exporting to =content/post/<bundle>/index.md=.
 
-*Check the property drawer:* =EXPORT_HUGO_CUSTOM_FRONT_MATTER= defaults to
-=:featured_image /images/tram-zurich.jpg :toc false= — adjust for the post.
+*Check the property drawer:* =EXPORT_HUGO_CUSTOM_FRONT_MATTER= defaults to =:featured_image /images/tram-zurich.jpg :toc false= — adjust for the post.
 
 * Insert images into posts or Org documents
 
@@ -59,17 +53,11 @@ Place point beneath the appropriate heading, inside the post for Hugo.
 |                 | =C-c TAB=     |                                                 |
 |                 | =C-c C-x C-v= |                                                 |
 
-*Clipboard:* copy the image itself. In graphical Emacs, smart yank uses
-=yank-media= for PNG/JPEG/WebP/GIF; otherwise it uses =org-yank=.
-Use =M-x yank-media= to invoke media paste explicitly.
+*Clipboard:* copy the image itself. In graphical Emacs, smart yank uses =yank-media= for PNG/JPEG/WebP/GIF; otherwise it uses =org-yank=. Use =M-x yank-media= to invoke media paste explicitly.
 
-*File or URL:* after attaching, insert the stored link with =C-c C-l=.
-Leave the description empty to display the image. Dragging an image file
-into the buffer also attaches it automatically.
+*File or URL:* after attaching, insert the stored link with =C-c C-l=. Leave the description empty to display the image. Dragging an image file into the buffer also attaches it automatically.
 
-*Storage:* =attachments/= beside the Org file, partitioned by ID; child
-headings inherit the post's ID. Keep attachments with the source. Links
-look like =[[attachment:photo.png]]=. Export the post again after changes.
+*Storage:* =attachments/= beside the Org file, partitioned by ID; child headings inherit the post's ID. Keep attachments with the source. Links look like =[[attachment:photo.png]]=. Export the post again after changes.
 
 *Image Previews:* The 300-pixel buffer preview limit does not set the exported image size.
 
@@ -78,29 +66,22 @@ look like =[[attachment:photo.png]]=. Export the post again after changes.
 Use a sparse tree to find draft posts in the current Org file, then narrow
 to one post for distraction-free editing.
 
-| Action                  | Shortcut    | Command / next step                                         |
-|-------------------------+-------------+-------------------------------------------------------------|
-| Show draft headings     | =C-c / t=   | =org-show-todo-tree= — enter =DRAFT=; ancestors remain visible. |
-| Search agenda files     | =C-c a m=   | Match =TODO="DRAFT"=; searches configured agenda files.     |
-| Narrow to one subtree   | =C-x n s=   | =org-narrow-to-subtree= — show only the current heading and children. |
-| Restore entire buffer   | =C-x n w=   | =widen= — remove narrowing.                                 |
-| Edit in separate buffer | =C-c C-x b= | =org-tree-to-indirect-buffer= — edit subtree in an indirect buffer. |
-| Reset outline visibility | =S-TAB=    | =org-shifttab= — cycle global visibility after sparse-tree filtering. |
+| Action                   | Shortcut  | Command / next step                                                 |
+|--------------------------+-----------+---------------------------------------------------------------------|
+| Show draft headings      | =C-c / t=   | =org-show-todo-tree= — enter =DRAFT=; ancestors remain visible.         |
+| Narrow to one subtree    | =C-x n s=   | =org-narrow-to-subtree= — show only the current heading and children. |
+| Restore entire buffer    | =C-x n w=   | =widen= — remove narrowing.                                           |
+| Edit in separate buffer  | =C-c C-x b= | =org-tree-to-indirect-buffer= — edit subtree in an indirect buffer.   |
+| Reset outline visibility | =S-TAB=     | =org-shifttab= — cycle global visibility after sparse-tree filtering. |
 
-*Workflow:* use =C-c / t= to find =DRAFT= headings; move to the desired
-heading and use =C-x n s= to focus on its subtree. Use =C-x n w= afterward.
-Alternatively, =C-c C-x b= opens an indirect buffer that shares the original
-text, so edits also update the source buffer.
+*Workflow:* use =C-c / t= to find =DRAFT= headings; move to the desired heading and use =C-x n s= to focus on its subtree. Use =C-x n w= afterward. Alternatively, =C-c C-x b= opens an indirect buffer that shares the original text, so edits also update the source buffer.
 
 * Others
 
-| Action          | Shortcut      | Command / next step                                 |
-|-----------------+---------------+-----------------------------------------------------|
-| Reveal / hide   | =C-c t v=     | =visible-mode= — toggle hidden text in this buffer. |
-| Export PDF      | =C-c C-e y p= | =org-typst-export-to-pdf=                           |
-| Export and open | =C-c C-e y o= | Export PDF, then open it.                           |
+| Action          | Shortcut | Command / next step                               |
+|-----------------+----------+---------------------------------------------------|
+| Reveal / hide   | =C-c t v=  | =visible-mode= — toggle hidden text in this buffer. |
+| Export PDF      | =C-c e y=  | =org-typst-export-to-pdf=                           |
+| Export and open | =C-c e Y=  | Export PDF, then open it.                         |
 
-PDF export uses Typst via =ox-typst= (=M-x org-typst-export-to-pdf=).
-This layout uses =cram-snap= 0.2.2, Source Sans 3, and Cascadia Code.
-Typst downloads the package on first use; subsequent exports use its cache.
-Add new use cases as top-level headings with shortcuts and command names.
+PDF export uses Typst via =ox-typst= (=M-x org-typst-export-to-pdf=). Typst downloads the package on first use; subsequent exports use its cache. Add new use cases as top-level headings with shortcuts and command names.
