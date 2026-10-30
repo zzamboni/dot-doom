@@ -1,69 +1,90 @@
 #+title: Doom Emacs Cheat Sheet
-#+subtitle: Blogging and images
+#+subtitle: Blogging, images & everyday operations
 #+options: toc:nil num:nil author:nil date:nil
 #+latex_class: article
 #+latex_class_options: [10pt,a4paper]
-#+latex_header: \usepackage[margin=1.5cm]{geometry}
+#+latex_compiler: xelatex
+#+latex_header: \usepackage[margin=14mm]{geometry}
+#+latex_header: \usepackage{fontspec,xcolor,booktabs,array}
+#+latex_header: \setmainfont{Source Sans 3}
+#+latex_header: \setsansfont{Source Sans 3}
+#+latex_header: \setmonofont{Cascadia Code}[Scale=0.82]
+#+latex_header: \definecolor{accent}{HTML}{176B73}
+#+latex_header: \definecolor{ink}{HTML}{24343D}
+#+latex_header: \AtBeginDocument{\color{ink}}
 #+latex_header: \usepackage{parskip}
+#+latex_header: \setlength{\parskip}{4pt}
+#+latex_header: \setlength{\tabcolsep}{5pt}
+#+latex_header: \renewcommand{\arraystretch}{1.15}
+#+latex_header: \setlength{\emergencystretch}{2em}
+#+latex_header: \pagestyle{empty}
+#+latex_header: \makeatletter
+#+latex_header: \renewcommand{\maketitle}{\noindent{\fontsize{24}{28}\selectfont\bfseries\color{accent} Doom Emacs}\par\vspace{2pt}\noindent{\large Cheat sheet\enspace/\enspace Blogging, images \& everyday operations}\par\vspace{5pt}\hrule\vspace{5pt}}
+#+latex_header: \renewcommand{\section}{\@startsection{section}{1}{0pt}{10pt}{4pt}{\large\bfseries\color{accent}}}
+#+latex_header: \makeatother
 
-Shortcuts follow this configuration's *non-Evil* bindings. =C-= means Ctrl;
-=M-= means Alt/Meta. Run named commands with =M-x=.
+*Non-Evil bindings.* =C-= Ctrl · =M-= Alt/Meta. Run commands with =M-x=.
 
 * Create a Hugo blog post
 
-1. Press =C-c n n h= (=org-capture=, then template =h=) and enter a title.
-2. Fill in the description, then =C-c C-c= (=org-capture-finalize=).
-   Capture takes you to the new entry; replace =<write here>= with the body.
-   To cancel capture instead: =C-c C-k= (=org-capture-kill=).
-3. With point inside the post, export with =C-c C-e H H=
-   (=org-hugo-export-wim-to-md=). Both H keys are uppercase.
-4. Keep =TODO= or =DRAFT= while writing. When ready, use =C-c C-t=
-   (=org-todo=) to select =DONE=, then export again. Export creates Markdown;
-   it does not deploy the site.
+#+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
+| Action          | Shortcut        | Command / next step                                      |
+|-----------------+-----------------+----------------------------------------------------------|
+| New post        | =C-c n n h=     | =org-capture= → =h=; enter a title.                        |
+| Finish capture  | =C-c C-c=       | =org-capture-finalize=; jump to the new post.              |
+| Cancel capture  | =C-c C-k=       | =org-capture-kill=                                        |
+| Export this post | =C-c C-e H H=  | =org-hugo-export-wim-to-md= (uppercase H).                 |
+| Change status   | =C-c C-t=       | =org-todo=; choose =DONE= when ready, then export again.   |
 
-*Where it goes:* under =Ideas= in
+Fill in the description before finishing capture; replace =<write here>= with
+the body afterward. Export with point inside the post. =TODO= / =DRAFT= mean
+draft; =DONE= means non-draft. Export writes Markdown; it does not deploy.
+
+*Source:* under =Ideas= in
 =~/Personal/websites/zzamboni.org/content-org/zzamboni.org=.
-The template creates an ID, a dated bundle (=YYYY-MM-DD-title-slug=), and
-=EXPORT_FILE_NAME: index=. The inherited section is =post=, so output goes
-to =content/post/<bundle>/index.md= in the Hugo site.
+The template supplies an ID and a =YYYY-MM-DD-title-slug= bundle, exporting to
+=content/post/<bundle>/index.md=.
 
-*Before exporting:* review =EXPORT_HUGO_CUSTOM_FRONT_MATTER= in the property
-drawer: the template defaults to =:featured_image /images/tram-zurich.jpg=
-and =:toc false=. Edit these for the post. =TODO= / =DRAFT= export as drafts;
-=DONE= exports as non-draft.
+*Check the property drawer:* =EXPORT_HUGO_CUSTOM_FRONT_MATTER= defaults to
+=:featured_image /images/tram-zurich.jpg :toc false=; adjust for the post.
 
 * Insert images into posts or Org documents
 
-Place point beneath the appropriate heading (inside the post for Hugo).
+Place point beneath the appropriate heading, inside the post for Hugo.
 
-- *Clipboard image:* copy the image itself, then =C-y=
-  (=zz/org-smart-yank=) and supply a filename. In graphical Emacs this
-  calls =yank-media= for PNG/JPEG/WebP/GIF; otherwise it uses =org-yank=.
-  =M-x yank-media= explicitly invokes media paste. =C-u C-y= forces normal
-  Org yank when the clipboard also contains an image.
-- *Existing file:* =C-c C-a c= (=org-attach=, then copy), select the image,
-  then =C-c C-l= (=org-insert-link=) and select the stored attachment link.
-  Leave its description empty to display the image rather than link text.
-- *Image URL:* =C-c C-a u= (=org-attach-url= via the attachment menu),
-  enter the direct image URL, then insert the stored link with =C-c C-l=.
-- *Drag and drop:* drop an image file into the Org buffer; your setup
-  attaches it automatically.
-- *Show/hide previews:* =C-c C-i= (=org-toggle-inline-images=) (also =C-c TAB= or =C-c C-x C-v=).
-  Buffer previews are capped at 300 pixels; this is not an export size setting.
+#+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
+| Action          | Shortcut        | Command / next step                                      |
+|-----------------+-----------------+----------------------------------------------------------|
+| Paste image     | =C-y=           | =zz/org-smart-yank=; enter a filename.                     |
+| Force text yank | =C-u C-y=       | =org-yank= via the smart-yank helper.                     |
+| Copy image file | =C-c C-a c=     | =org-attach= → copy; select the file.                     |
+| Download image  | =C-c C-a u=     | =org-attach-url=; enter the direct image URL.              |
+| Insert link     | =C-c C-l=       | =org-insert-link=; select the stored attachment.           |
+| Toggle previews | =C-c C-i=       | =org-toggle-inline-images=                               |
 
-Attachments live in =attachments/= beside the Org file, partitioned by ID.
-Child headings inherit the post's ID. Keep this directory with the source;
-inserted links look like =[[attachment:photo.png]]=. Export the Hugo post
-again after adding images.
+*Clipboard:* copy the image itself. In graphical Emacs, smart yank uses
+=yank-media= for PNG/JPEG/WebP/GIF; otherwise it uses =org-yank=.
+Use =M-x yank-media= to invoke media paste explicitly.
 
-* Show or hide invisible text
+*File or URL:* after attaching, insert the stored link with =C-c C-l=.
+Leave the description empty to display the image. Dragging an image file
+into the buffer also attaches it automatically.
 
-=C-c t v= (=M-x visible-mode=) toggles visible mode in the current buffer.
-Enable it to reveal normally hidden text; press it again to restore hiding.
+*Storage:* =attachments/= beside the Org file, partitioned by ID; child
+headings inherit the post's ID. Keep attachments with the source. Links
+look like =[[attachment:photo.png]]=. Export the post again after changes.
 
-* Print this sheet / extend it
+*Previews:* also =C-c TAB= or =C-c C-x C-v=. The 300-pixel buffer preview
+limit does not set the exported image size.
 
-=C-c C-e l o= exports to PDF and opens it
-(=org-latex-export-to-pdf= exports without opening). A working LaTeX
-installation is required. Add each new use case as a top-level heading,
-with a short procedure and both shortcuts and command names.
+* Show hidden text · print this sheet
+
+#+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
+| Action          | Shortcut        | Command / next step                                      |
+|-----------------+-----------------+----------------------------------------------------------|
+| Reveal / hide   | =C-c t v=       | =visible-mode=; toggle hidden text in this buffer.        |
+| Export PDF      | =C-c C-e l p=   | =org-latex-export-to-pdf=                                 |
+| Export and open | =C-c C-e l o=   | Export PDF, then open it.                                 |
+
+PDF export uses Tectonic. This layout needs Source Sans 3 and Cascadia Code.
+Add new use cases as top-level headings with shortcuts and command names.
