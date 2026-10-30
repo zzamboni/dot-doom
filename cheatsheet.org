@@ -73,6 +73,25 @@ look like =[[attachment:photo.png]]=. Export the post again after changes.
 
 *Image Previews:* The 300-pixel buffer preview limit does not set the exported image size.
 
+* Filter and focus on Org headings
+
+Use a sparse tree to find draft posts in the current Org file, then narrow
+to one post for distraction-free editing.
+
+| Action                  | Shortcut    | Command / next step                                         |
+|-------------------------+-------------+-------------------------------------------------------------|
+| Show draft headings     | =C-c / t=   | =org-show-todo-tree= — enter =DRAFT=; ancestors remain visible. |
+| Search agenda files     | =C-c a m=   | Match =TODO="DRAFT"=; searches configured agenda files.     |
+| Narrow to one subtree   | =C-x n s=   | =org-narrow-to-subtree= — show only the current heading and children. |
+| Restore entire buffer   | =C-x n w=   | =widen= — remove narrowing.                                 |
+| Edit in separate buffer | =C-c C-x b= | =org-tree-to-indirect-buffer= — edit subtree in an indirect buffer. |
+| Reset outline visibility | =S-TAB=    | =org-shifttab= — cycle global visibility after sparse-tree filtering. |
+
+*Workflow:* use =C-c / t= to find =DRAFT= headings; move to the desired
+heading and use =C-x n s= to focus on its subtree. Use =C-x n w= afterward.
+Alternatively, =C-c C-x b= opens an indirect buffer that shares the original
+text, so edits also update the source buffer.
+
 * Others
 
 | Action          | Shortcut      | Command / next step                                 |
