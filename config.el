@@ -93,7 +93,7 @@
         (concat doom-private-dir "splash/"
                 (nth (random (length alternatives)) alternatives))))
 
-(setq +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
+;(setq +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
 
 (setq doom-font (font-spec :family "Fira Code Nerd Font" :size 16)
       ;;doom-variable-pitch-font (font-spec :family "ETBembo" :size 18)
@@ -485,6 +485,69 @@ title."
     (require 'org-capture)
     (require 'org-gtd))
 
+(after! ox-org
+  (eval '(setf (org-export-backend-menu
+                (org-export-get-backend 'org))
+               nil)))
+
+(after! ox-icalendar
+  (eval '(setf (org-export-backend-menu
+                (org-export-get-backend 'icalendar))
+               nil)))
+
+(after! ox-odt
+  (eval '(setf (org-export-backend-menu
+                (org-export-get-backend 'odt))
+               nil)))
+
+(after! transient
+  (defun zz/org-export-run (format &optional open)
+    "Export FORMAT with this menu's options, optionally OPEN the result."
+    (let* ((args (transient-args 'zz/org-export-menu))
+           (subtree (and (member "--subtree" args) t))
+           (visible (and (member "--visible" args) t))
+           (body (and (member "--body" args) t))
+           (backend (pcase format
+                      ('typst 'ox-typst) ('latex 'ox-latex) ('html 'ox-html)))
+           (command (pcase format
+                      ('typst #'org-typst-export-to-pdf)
+                      ('latex #'org-latex-export-to-pdf)
+                      ('html #'org-html-export-to-html))))
+      (require backend)
+      (let ((file (funcall command nil subtree visible body)))
+        (when (and open file) (org-open-file file)))))
+
+  (transient-define-prefix zz/org-export-menu ()
+    "Export this Org document or Hugo post."
+    ["Document options"
+     ("-s" "Subtree only" "--subtree")
+     ("-v" "Visible only" "--visible")
+     ("-b" "Body only" "--body")]
+    [["Documents"
+      ("y" "Typst PDF" (lambda () (interactive) (zz/org-export-run 'typst)))
+      ("Y" "Typst PDF and open" (lambda () (interactive) (zz/org-export-run 'typst t)))
+      ("l" "LaTeX PDF" (lambda () (interactive) (zz/org-export-run 'latex)))
+      ("h" "HTML" (lambda () (interactive) (zz/org-export-run 'html)))]
+     ["Hugo (own scope)"
+      ("H" "Current post" (lambda () (interactive)
+                            (require 'ox-hugo) (org-hugo-export-wim-to-md)))
+      ("A" "All posts" (lambda () (interactive)
+                         (require 'ox-hugo) (org-hugo-export-wim-to-md t)))]
+     ["Other"
+      ("e" "Standard dispatcher" org-export-dispatch)
+      ("q" "Quit" transient-quit-one)]]))
+
+;; Doom's leader map takes precedence over major-mode bindings for C-c e.
+;; Dispatch by mode so evaluation remains available outside Org buffers.
+(defun zz/org-export-or-eval ()
+  "Open the export menu in Org, otherwise evaluate the line or region."
+  (interactive)
+  (if (derived-mode-p 'org-mode)
+      (progn (require 'transient) (zz/org-export-menu))
+    (call-interactively #'+eval/line-or-region)))
+
+(map! :leader :desc "Export (Org) / evaluate" "e" #'zz/org-export-or-eval)
+
 (after! ox-latex
   (setq org-latex-compiler "xelatex"
         org-latex-pdf-process
@@ -504,9 +567,10 @@ title."
 
 (use-package! ox-leanpub
   :after org
-  :config
-  (require 'ox-leanpub-markdown)
-  (org-leanpub-book-setup-menu-markdown))
+  ;;:config
+  ;;(require 'ox-leanpub-markdown)
+  ;;(org-leanpub-book-setup-menu-markdown)
+)
 
 (after! ox-hugo
   (setq org-hugo-use-code-for-kbd t))
@@ -650,11 +714,11 @@ end repeat\"")))
     (sleep-for 0.2)
     (call-process-shell-command cmd)))
 
-(use-package! ox-jira
-  :after org)
-
 (make-directory "~/.org-jira" 'ignore-if-exists)
 (setq jiralib-url "https://jira.example.com/")
+
+(use-package! ox-typst
+  :after org)
 
 (use-package! org-ml
   :after org)

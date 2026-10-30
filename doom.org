@@ -37,6 +37,8 @@ This file is written in [[https://leanpub.com/lit-config][literate programming s
   - [[#tasks-and-agenda][Tasks and agenda]]
   - [[#gtd][GTD]]
     - [[#capture-templates][Capture templates]]
+  - [[#export-menu][Export menu]]
+    - [[#export-with-transient][Export with Transient]]
   - [[#exporting-to-pdf][Exporting to PDF]]
   - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
   - [[#publishing-to-leanpub][Publishing to LeanPub]]
@@ -260,7 +262,7 @@ This code is written to the =init.el= to select which modules to load. Written h
  :ui
  ;;deft                ; notational velocity for Emacs
  doom                  ; what makes DOOM look the way it does
- doom-dashboard        ; a nifty splash screen for Emacs
+ dashboard        ; a nifty splash screen for Emacs
  ;;doom-quit           ; DOOM quit-message prompts when you quit Emacs
  ;;fill-column         ; a `fill-column' indicator
  hl-todo               ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
@@ -378,7 +380,7 @@ This code is written to the =init.el= to select which modules to load. Written h
  ;;nix                 ; I hereby declare "nix geht mehr!"
  ;;ocaml               ; an objective camel
  (org +pretty +journal ;-dragndrop
-      +hugo +roam +pandoc
+      +hugo +roam ;; +pandoc
       +present)        ; organize your plain life in plain text
  ;;php                 ; perl's insecure younger brother
  plantuml              ; diagrams for confusing people more
@@ -500,7 +502,7 @@ You can find other splash images at the [[https://github.com/jeetelongname/doom-
 I eliminate all but the first two items in the dashboard menu, since those are the only ones I still use sometimes.
 
 #+begin_src emacs-lisp
-(setq +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
+;(setq +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
 #+end_src
 
 Set base and variable-pitch fonts. I currently like [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://www.huertatipografica.com/en/fonts/alegreya-ht-pro][Alegreya]] (another favorite and my previous choice: [[https://edwardtufte.github.io/et-book/][ET Book]]).
@@ -620,6 +622,7 @@ Enable pixel scrolling
 ;;(pixel-scroll-precision-mode 1)
 #+end_src
 ** Key bindings
+
 
 Doom Emacs has an extensive keybinding system, and most module functions are already bound. I modify some keybindings for simplicity of to match the muscle memory I have from my previous Emacs configuration.
 
@@ -1294,6 +1297,91 @@ I set up an advice before =org-capture= to make sure =org-gtd= and =org-capture=
     (require 'org-capture)
     (require 'org-gtd))
 #+end_src
+** Export menu
+
+Hide the Org and iCalendar entries from =C-c C-e= without disabling their
+exporters. Other packages can still use them, and their export commands remain
+available through =M-x=.
+
+Defer expansion of =setf= as well as its execution: Org defines this structure's
+setter in =ox=, which may not be loaded when Emacs expands the deferred callbacks
+during startup.
+
+#+begin_src emacs-lisp
+(after! ox-org
+  (eval '(setf (org-export-backend-menu
+                (org-export-get-backend 'org))
+               nil)))
+
+(after! ox-icalendar
+  (eval '(setf (org-export-backend-menu
+                (org-export-get-backend 'icalendar))
+               nil)))
+
+(after! ox-odt
+  (eval '(setf (org-export-backend-menu
+                (org-export-get-backend 'odt))
+               nil)))
+
+#+end_src
+
+*** Export with Transient
+
+=C-c e= opens a compact export menu (=M-x zz/org-export-menu=). Toggle
+subtree, visible-only, and body-only output before choosing a document exporter.
+Hugo actions use their own post/all-posts scope and ignore these toggles.
+=C-c C-e= remains the standard dispatcher; =e= also opens it from this menu.
+
+#+begin_src emacs-lisp
+(after! transient
+  (defun zz/org-export-run (format &optional open)
+    "Export FORMAT with this menu's options, optionally OPEN the result."
+    (let* ((args (transient-args 'zz/org-export-menu))
+           (subtree (and (member "--subtree" args) t))
+           (visible (and (member "--visible" args) t))
+           (body (and (member "--body" args) t))
+           (backend (pcase format
+                      ('typst 'ox-typst) ('latex 'ox-latex) ('html 'ox-html)))
+           (command (pcase format
+                      ('typst #'org-typst-export-to-pdf)
+                      ('latex #'org-latex-export-to-pdf)
+                      ('html #'org-html-export-to-html))))
+      (require backend)
+      (let ((file (funcall command nil subtree visible body)))
+        (when (and open file) (org-open-file file)))))
+
+  (transient-define-prefix zz/org-export-menu ()
+    "Export this Org document or Hugo post."
+    ["Document options"
+     ("-s" "Subtree only" "--subtree")
+     ("-v" "Visible only" "--visible")
+     ("-b" "Body only" "--body")]
+    [["Documents"
+      ("y" "Typst PDF" (lambda () (interactive) (zz/org-export-run 'typst)))
+      ("Y" "Typst PDF and open" (lambda () (interactive) (zz/org-export-run 'typst t)))
+      ("l" "LaTeX PDF" (lambda () (interactive) (zz/org-export-run 'latex)))
+      ("h" "HTML" (lambda () (interactive) (zz/org-export-run 'html)))]
+     ["Hugo (own scope)"
+      ("H" "Current post" (lambda () (interactive)
+                            (require 'ox-hugo) (org-hugo-export-wim-to-md)))
+      ("A" "All posts" (lambda () (interactive)
+                         (require 'ox-hugo) (org-hugo-export-wim-to-md t)))]
+     ["Other"
+      ("e" "Standard dispatcher" org-export-dispatch)
+      ("q" "Quit" transient-quit-one)]]))
+
+;; Doom's leader map takes precedence over major-mode bindings for C-c e.
+;; Dispatch by mode so evaluation remains available outside Org buffers.
+(defun zz/org-export-or-eval ()
+  "Open the export menu in Org, otherwise evaluate the line or region."
+  (interactive)
+  (if (derived-mode-p 'org-mode)
+      (progn (require 'transient) (zz/org-export-menu))
+    (call-interactively #'+eval/line-or-region)))
+
+(map! :leader :desc "Export (Org) / evaluate" "e" #'zz/org-export-or-eval)
+#+end_src
+
 ** Exporting to PDF
 
 Use =tectonic= for Org's LaTeX-to-PDF compilation (=C-c C-e l p=, or
@@ -1353,18 +1441,20 @@ When I decided to use org-mode to write my books, I looked around for existing m
 
 Building upon these, I developed a new =ox-leanpub= package which you can find in MELPA (source at [[https://github.com/zzamboni/ox-leanpub]]), and which I load and configure below.
 
-The =ox-leanpub= module sets up Markua export automatically. I add the code for setting up the Markdown exporter too (I don't use it, but just to keep an eye on any breakage):
-
 #+begin_src emacs-lisp :tangle packages.el
 (package! ox-leanpub
   :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/ox-leanpub"))
 #+end_src
-#+begin_src emacs-lisp
+
+The =ox-leanpub= module sets up Markua export automatically. The code below (disabled) sets up the Markdown exporter too (I don't use it, but just as reference).
+
+#+begin_src emacs-lisp 
 (use-package! ox-leanpub
   :after org
-  :config
-  (require 'ox-leanpub-markdown)
-  (org-leanpub-book-setup-menu-markdown))
+  ;;:config
+  ;;(require 'ox-leanpub-markdown)
+  ;;(org-leanpub-book-setup-menu-markdown)
+)
 #+end_src
 
 I highly recommend using Markua rather than Markdown, as it is the format that Leanpub is guaranteed to support in the future, and where most of the new features are being developed.
@@ -1597,13 +1687,13 @@ end repeat\"")))
 
 ** Other exporters
 
-[[https://github.com/stig/ox-jira.el][ox-jira]] to export in Jira markup format.
+[[https://github.com/stig/ox-jira.el][ox-jira]] to export in Jira markup format (disabled).
 
-#+begin_src emacs-lisp :tangle packages.el
+#+begin_src emacs-lisp :tangle no
 (package! ox-jira)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package! ox-jira
   :after org)
 #+end_src
@@ -1634,6 +1724,10 @@ end repeat\"")))
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! ox-typst)
+#+end_src
+#+begin_src emacs-lisp
+(use-package! ox-typst
+  :after org)
 #+end_src
 
 ** Other Org stuff

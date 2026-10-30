@@ -89,8 +89,6 @@
            :repo "tecosaur/org-pandoc-import"
            :files ("*.el" "filters" "preprocessors")))
 
-(package! ox-jira)
-
 (package! org-jira)
 
 (package! ox-typst)
