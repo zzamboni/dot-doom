@@ -28,13 +28,15 @@
 * Create a Hugo blog post
 
 #+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
-| Action          | Shortcut        | Command / next step                                      |
-|-----------------+-----------------+----------------------------------------------------------|
-| New post        | =C-c n n h=     | =org-capture= → =h=; enter a title.                        |
-| Finish capture  | =C-c C-c=       | =org-capture-finalize=; jump to the new post.              |
-| Cancel capture  | =C-c C-k=       | =org-capture-kill=                                        |
-| Export this post | =C-c C-e H H=  | =org-hugo-export-wim-to-md= (uppercase H).                 |
-| Change status   | =C-c C-t=       | =org-todo=; choose =DONE= when ready, then export again.   |
+| Action              | Shortcut    | Command / next step                                  |
+|---------------------+-------------+------------------------------------------------------|
+| New post            | =C-c n n h=   | =org-capture= → =h=; enter a title.                      |
+| Finish capture      | =C-c C-c=     | =org-capture-finalize=; jump to the new post.          |
+| Cancel capture      | =C-c C-k=     | =org-capture-kill=                                     |
+| Export current post | =C-x C-s=     | =save-buffer= (=org-hugo-auto-export= is enabled).       |
+|                     | =C-c C-e H H= | =org-hugo-export-wim-to-md=                            |
+| Export all posts    | =C-c C-e H A= | Review changes before committing!                    |
+| Change status       | =C-c C-t=     | =org-todo=; choose =DONE= when ready, then export again. |
 
 Fill in the description before finishing capture; replace =<write here>= with
 the body afterward. Export with point inside the post. =TODO= / =DRAFT= mean
@@ -53,14 +55,14 @@ The template supplies an ID and a =YYYY-MM-DD-title-slug= bundle, exporting to
 Place point beneath the appropriate heading, inside the post for Hugo.
 
 #+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
-| Action          | Shortcut        | Command / next step                                      |
-|-----------------+-----------------+----------------------------------------------------------|
-| Paste image     | =C-y=           | =zz/org-smart-yank=; enter a filename.                     |
-| Force text yank | =C-u C-y=       | =org-yank= via the smart-yank helper.                     |
-| Copy image file | =C-c C-a c=     | =org-attach= → copy; select the file.                     |
-| Download image  | =C-c C-a u=     | =org-attach-url=; enter the direct image URL.              |
-| Insert link     | =C-c C-l=       | =org-insert-link=; select the stored attachment.           |
-| Toggle previews | =C-c C-i=       | =org-toggle-inline-images=                               |
+| Action          | Shortcut  | Command / next step                            |
+|-----------------+-----------+------------------------------------------------|
+| Paste image     | =C-y=       | =zz/org-smart-yank=; enter a filename.           |
+| Force text yank | =C-u C-y=   | =org-yank= via the smart-yank helper.            |
+| Copy image file | =C-c C-a c= | =org-attach= → copy; select the file.            |
+| Download image  | =C-c C-a u= | =org-attach-url=; enter the direct image URL.    |
+| Insert link     | =C-c C-l=   | =org-insert-link=; select the stored attachment. |
+| Toggle previews | =C-c C-i=   | =org-toggle-inline-images=                       |
 
 *Clipboard:* copy the image itself. In graphical Emacs, smart yank uses
 =yank-media= for PNG/JPEG/WebP/GIF; otherwise it uses =org-yank=.
@@ -77,14 +79,14 @@ look like =[[attachment:photo.png]]=. Export the post again after changes.
 *Previews:* also =C-c TAB= or =C-c C-x C-v=. The 300-pixel buffer preview
 limit does not set the exported image size.
 
-* Show hidden text · print this sheet
+* Others
 
 #+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
-| Action          | Shortcut        | Command / next step                                      |
-|-----------------+-----------------+----------------------------------------------------------|
-| Reveal / hide   | =C-c t v=       | =visible-mode=; toggle hidden text in this buffer.        |
-| Export PDF      | =C-c C-e l p=   | =org-latex-export-to-pdf=                                 |
-| Export and open | =C-c C-e l o=   | Export PDF, then open it.                                 |
+| Action          | Shortcut    | Command / next step                              |
+|-----------------+-------------+--------------------------------------------------|
+| Reveal / hide   | =C-c t v=   | =visible-mode=; toggle hidden text in this buffer. |
+| Export PDF      | =C-c C-e l p= | =org-latex-export-to-pdf=                          |
+| Export and open | =C-c C-e l o= | Export PDF, then open it.                        |
 
 PDF export uses Tectonic. This layout needs Source Sans 3 and Cascadia Code.
 Add new use cases as top-level headings with shortcuts and command names.
