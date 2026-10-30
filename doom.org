@@ -37,6 +37,7 @@ This file is written in [[https://leanpub.com/lit-config][literate programming s
   - [[#tasks-and-agenda][Tasks and agenda]]
   - [[#gtd][GTD]]
     - [[#capture-templates][Capture templates]]
+  - [[#exporting-to-pdf][Exporting to PDF]]
   - [[#exporting-a-curriculum-vitae][Exporting a Curriculum Vitae]]
   - [[#publishing-to-leanpub][Publishing to LeanPub]]
   - [[#blogging-with-hugo][Blogging with Hugo]]
@@ -1293,6 +1294,21 @@ I set up an advice before =org-capture= to make sure =org-gtd= and =org-capture=
     (require 'org-capture)
     (require 'org-gtd))
 #+end_src
+** Exporting to PDF
+
+Use =tectonic= for Org's LaTeX-to-PDF compilation (=C-c C-e l p=, or
+=C-c C-e l o= to also open the PDF). Tectonic must be available on Emacs'
+=exec-path=; it downloads missing TeX resources on demand and handles reruns
+automatically. Select =xelatex= for Org's engine-specific LaTeX output because
+Tectonic uses an XeTeX-based engine.
+
+#+begin_src emacs-lisp
+(after! ox-latex
+  (setq org-latex-compiler "xelatex"
+        org-latex-pdf-process
+        '("tectonic --keep-logs --outdir %o %f")))
+#+end_src
+
 ** Exporting a Curriculum Vitae
 
 I use =ox-awesomecv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].

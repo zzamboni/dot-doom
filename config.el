@@ -485,6 +485,11 @@ title."
     (require 'org-capture)
     (require 'org-gtd))
 
+(after! ox-latex
+  (setq org-latex-compiler "xelatex"
+        org-latex-pdf-process
+        '("tectonic --keep-logs --outdir %o %f")))
+
 (use-package! ox-awesomecv
   :after org
   :config
