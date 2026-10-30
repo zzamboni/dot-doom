@@ -267,11 +267,9 @@
 
 (add-hook! org-mode (electric-indent-local-mode -1))
 
-(defun zz/adjust-org-company-backends ()
-  (remove-hook 'after-change-major-mode-hook '+company-init-backends-h)
-  (setq-local company-backends nil))
-(add-hook! org-mode (zz/adjust-org-company-backends))
-(add-hook! markdown-mode (zz/adjust-org-company-backends))
+;; Disable automatic Company completion in prose modes.
+(after! company
+  (setq company-global-modes '(not org-mode markdown-mode)))
 
 (add-hook! org-mode :append
            #'visual-line-mode

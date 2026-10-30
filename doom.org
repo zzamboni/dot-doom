@@ -2,7 +2,6 @@
 # Tangle by default to config.el, which is the most common case
 #+property: header-args:emacs-lisp :tangle config.el
 #+property: header-args :mkdirp yes :comments no
-#+startup: fold
 :END:
 
 #+title: Doom Emacs configuration
@@ -851,11 +850,9 @@ Disable [[https://code.orgmode.org/bzg/org-mode/src/master/etc/ORG-NEWS#L323][el
 I really dislike completion of words as I type prose (in code it's OK), so I disable it in Org and Markdown modes.
 
 #+begin_src emacs-lisp
-(defun zz/adjust-org-company-backends ()
-  (remove-hook 'after-change-major-mode-hook '+company-init-backends-h)
-  (setq-local company-backends nil))
-(add-hook! org-mode (zz/adjust-org-company-backends))
-(add-hook! markdown-mode (zz/adjust-org-company-backends))
+;; Disable automatic Company completion in prose modes.
+(after! company
+  (setq company-global-modes '(not org-mode markdown-mode)))
 #+end_src
 ** Org visual settings
 
