@@ -1,0 +1,37 @@
+# LaTeX sources generated from Org documents (keep PDFs).
+*.tex
+
+# LaTeX compilation, bibliography, index, and presentation byproducts.
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.lol
+*.loa
+*.fls
+*.fdb_latexmk
+*.synctex
+*.synctex.gz
+*.xdv
+*.dvi
+*.bcf
+*.bbl
+*.blg
+*.run.xml
+*.idx
+*.ind
+*.ilg
+*.glo
+*.gls
+*.glg
+*.acn
+*.acr
+*.alg
+*.ist
+*.nav
+*.snm
+*.vrb
+*.figlist
+*.ptc

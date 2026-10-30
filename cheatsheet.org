@@ -1,0 +1,69 @@
+#+title: Doom Emacs Cheat Sheet
+#+subtitle: Blogging and images
+#+options: toc:nil num:nil author:nil date:nil
+#+latex_class: article
+#+latex_class_options: [10pt,a4paper]
+#+latex_header: \usepackage[margin=1.5cm]{geometry}
+#+latex_header: \usepackage{parskip}
+
+Shortcuts follow this configuration's *non-Evil* bindings. =C-= means Ctrl;
+=M-= means Alt/Meta. Run named commands with =M-x=.
+
+* Create a Hugo blog post
+
+1. Press =C-c n n h= (=org-capture=, then template =h=) and enter a title.
+2. Fill in the description, then =C-c C-c= (=org-capture-finalize=).
+   Capture takes you to the new entry; replace =<write here>= with the body.
+   To cancel capture instead: =C-c C-k= (=org-capture-kill=).
+3. With point inside the post, export with =C-c C-e H H=
+   (=org-hugo-export-wim-to-md=). Both H keys are uppercase.
+4. Keep =TODO= or =DRAFT= while writing. When ready, use =C-c C-t=
+   (=org-todo=) to select =DONE=, then export again. Export creates Markdown;
+   it does not deploy the site.
+
+*Where it goes:* under =Ideas= in
+=~/Personal/websites/zzamboni.org/content-org/zzamboni.org=.
+The template creates an ID, a dated bundle (=YYYY-MM-DD-title-slug=), and
+=EXPORT_FILE_NAME: index=. The inherited section is =post=, so output goes
+to =content/post/<bundle>/index.md= in the Hugo site.
+
+*Before exporting:* review =EXPORT_HUGO_CUSTOM_FRONT_MATTER= in the property
+drawer: the template defaults to =:featured_image /images/tram-zurich.jpg=
+and =:toc false=. Edit these for the post. =TODO= / =DRAFT= export as drafts;
+=DONE= exports as non-draft.
+
+* Insert images into posts or Org documents
+
+Place point beneath the appropriate heading (inside the post for Hugo).
+
+- *Clipboard image:* copy the image itself, then =C-y=
+  (=zz/org-smart-yank=) and supply a filename. In graphical Emacs this
+  calls =yank-media= for PNG/JPEG/WebP/GIF; otherwise it uses =org-yank=.
+  =M-x yank-media= explicitly invokes media paste. =C-u C-y= forces normal
+  Org yank when the clipboard also contains an image.
+- *Existing file:* =C-c C-a c= (=org-attach=, then copy), select the image,
+  then =C-c C-l= (=org-insert-link=) and select the stored attachment link.
+  Leave its description empty to display the image rather than link text.
+- *Image URL:* =C-c C-a u= (=org-attach-url= via the attachment menu),
+  enter the direct image URL, then insert the stored link with =C-c C-l=.
+- *Drag and drop:* drop an image file into the Org buffer; your setup
+  attaches it automatically.
+- *Show/hide previews:* =C-c C-i= (=org-toggle-inline-images=) (also =C-c TAB= or =C-c C-x C-v=).
+  Buffer previews are capped at 300 pixels; this is not an export size setting.
+
+Attachments live in =attachments/= beside the Org file, partitioned by ID.
+Child headings inherit the post's ID. Keep this directory with the source;
+inserted links look like =[[attachment:photo.png]]=. Export the Hugo post
+again after adding images.
+
+* Show or hide invisible text
+
+=C-c t v= (=M-x visible-mode=) toggles visible mode in the current buffer.
+Enable it to reveal normally hidden text; press it again to restore hiding.
+
+* Print this sheet / extend it
+
+=C-c C-e l o= exports to PDF and opens it
+(=org-latex-export-to-pdf= exports without opening). A working LaTeX
+installation is required. Add each new use case as a top-level heading,
+with a short procedure and both shortcuts and command names.
