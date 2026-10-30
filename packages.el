@@ -68,8 +68,6 @@
   :recipe (:host github
            :repo "awth13/org-appear"))
 
-(package! org-download)
-
 (when IS-MAC
   (package! org-mac-link))
 

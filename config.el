@@ -299,58 +299,34 @@
 
 (setq org-attach-id-dir "attachments/")
 
-(after! org-download
-  (setq org-download-method 'directory)
-  (setq org-download-image-dir "images")
-  (setq org-download-heading-lvl nil)
-  (setq org-download-timestamp "%Y%m%d-%H%M%S_")
-  (setq org-image-actual-width 300))
-(require 'org-download)
+(after! org
+  (setq org-attach-use-inheritance t            ;; Inherit ID from higher headings, that way I can have a single ID per blog post
+        org-attach-preferred-new-method 'id     ;; Create a new ID when needed
+        org-attach-auto-tag nil                 ;; Do not add the ATTACH tag to headings
+        org-yank-dnd-method 'attach             ;; Attach by default without asking for drag-and-drop
+        org-yank-image-file-name-function 'org-yank-image-read-filename   ;; Ask for filename when attaching something
+        org-image-actual-width nil              ;; Flexible image width, with a...
+        org-image-max-width 300                 ;; ...maximum for inlined images in org buffers
+  ))
 
-(defun zz/org-paste-clipboard (&optional use-default-filename)
+(defun zz/org-smart-yank (&optional arg)
+  "Yank normally, or use `yank-media' for clipboard images."
   (interactive "P")
-  (require 'org-download)
-  (let ((file
-         (if (not use-default-filename)
-             (read-string (format "Filename [%s]: "
-                                  org-download-screenshot-basename)
-                          nil nil org-download-screenshot-basename)
-           nil)))
-    (org-download-clipboard file)))
+  (let ((targets (and (display-graphic-p)
+                      (gui-get-selection 'CLIPBOARD 'TARGETS))))
+    (if (and (not arg)
+             (seq-some
+              (lambda (type)
+                (string-match-p
+                 "^image/\\(png\\|jpeg\\|webp\\|gif\\)$"
+                 (format "%s" type)))
+              (append targets nil)))
+        (yank-media)
+      (org-yank arg))))
 
-(defun zz/org-attach-file (&optional file)
-  (interactive (list (read-file-name "File to insert: "
-                                (or (progn
-                                      (require 'dired-aux)
-                                      (dired-dwim-target-directory))
-                                    default-directory))))
-  (require 'org-download)
-  (if (file-in-directory-p file org-download-image-dir)
-      (org-download-insert-link (concat "file:" (file-relative-name file (org-attach-dir))) file)
-      (let ((file-url (concat "file://" file)))
-        (org-download-image file-url))))
-
-(map! :map org-mode-map
-        "C-c l a y" #'zz/org-paste-clipboard
-        "C-M-y" #'zz/org-paste-clipboard
-        "C-c l a z" #'zz/org-attach-file
-        "C-M-z" #'zz/org-attach-file)
-
-(defun zz/org-download-link-format-function-link-to-file (filename)
-  "Insert the file as a link to itself."
-  (if (and (>= (string-to-number org-version) 9.3)
-           (eq org-download-method 'attach))
-      ;; Respect the default behavior if org-download-method is 'attach
-      (format "[[attachment:%s]]\n"
-              (org-link-escape
-               (file-relative-name filename (org-attach-dir))))
-    (let ((formatted-filename (org-link-escape
-                               (funcall org-download-abbreviate-filename-function filename))))
-      ;; Here we use the correct link format so that the image is a link to itself
-      (format "[[file:%s][file:%s]]\n"
-             formatted-filename formatted-filename))))
-
-(setq! org-download-link-format-function #'zz/org-download-link-format-function-link-to-file)
+(after! org
+  (map! :map org-mode-map
+        "C-y" #'zz/org-smart-yank))
 
 (map! :after counsel :map org-mode-map
       "C-c l l h" #'counsel-org-link)
@@ -540,6 +516,7 @@ title."
                  `(
                    ,(concat "* TODO " title)
                    ":PROPERTIES:"
+                   ,(concat ":ID: " (org-id-new))
                    ,(concat ":export_hugo_bundle: " (format-time-string "%Y-%m-%d-") fname)
                    ":export_file_name: index"
                    ,(concat ":custom_id: " fname)

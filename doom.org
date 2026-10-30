@@ -921,12 +921,66 @@ Configure attachments to be stored together with their Org document.
 #+end_src
 ** Capturing images
 
-Using =org-download= to make it easier to insert images into my org notes and blog posts. I don't like the configuration provided by Doom as part of the =(org +dragndrop)= module, so I install the package by hand and configure it to my liking. 
+I've moved to native Emacs/Org functionality, using =org-attach= and =org-yank= instead of =org-download= and custom functions (see the next section). This considerably reduces the amount of custom code and configuration needed.
 
-#+begin_src emacs-lisp :tangle packages.el
+#+begin_src emacs-lisp
+(after! org
+  (setq org-attach-use-inheritance t            ;; Inherit ID from higher headings, that way I can have a single ID per blog post
+        org-attach-preferred-new-method 'id     ;; Create a new ID when needed
+        org-attach-auto-tag nil                 ;; Do not add the ATTACH tag to headings
+        org-yank-dnd-method 'attach             ;; Attach by default without asking for drag-and-drop
+        org-yank-image-file-name-function 'org-yank-image-read-filename   ;; Ask for filename when attaching something
+        org-image-actual-width nil              ;; Flexible image width, with a...
+        org-image-max-width 300                 ;; ...maximum for inlined images in org buffers
+  ))
+#+end_src
+
+Create and map a "smart yank" function which does the right thing, calling =org-yank= or =yank-media= depending on the contents of the clipboard.
+
+#+begin_src emacs-lisp
+(defun zz/org-smart-yank (&optional arg)
+  "Yank normally, or use `yank-media' for clipboard images."
+  (interactive "P")
+  (let ((targets (and (display-graphic-p)
+                      (gui-get-selection 'CLIPBOARD 'TARGETS))))
+    (if (and (not arg)
+             (seq-some
+              (lambda (type)
+                (string-match-p
+                 "^image/\\(png\\|jpeg\\|webp\\|gif\\)$"
+                 (format "%s" type)))
+              (append targets nil)))
+        (yank-media)
+      (org-yank arg))))
+
+(after! org
+  (map! :map org-mode-map
+        "C-y" #'zz/org-smart-yank))
+#+end_src
+
+Wrap the function that prompts the filename when yanking an image to prepend a timestamp. Disabled for now since plain filenames work well when the attachments are partitioned by heading.
+
+#+begin_src emacs-lisp :tangle no
+(defun zz/org-yank-image-timestamped-filename ()
+  "Prompt for an image filename and prepend a timestamp."
+  (concat (format-time-string "%Y%m%d-%H%M%S_")
+          (org-yank-image-read-filename)))
+
+(after! org
+  (setq org-yank-image-file-name-function
+        #'zz/org-yank-image-timestamped-filename))
+#+end_src
+
+**** Capturing images using =org-download= (unused)
+
+I was using =org-download= for a long time to insert images into my org notes and blog posts. I have now replaced it with the native functionality, so I'm keeping the config below disabled for now, only as referene.
+
+I don't like the configuration provided by Doom as part of the =(org +dragndrop)= module, so I install the package by hand and configure it to my liking. 
+
+#+begin_src emacs-lisp :tangle no :oldtangle packages.el
 (package! org-download)
 #+end_src
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (after! org-download
   (setq org-download-method 'directory)
   (setq org-download-image-dir "images")
@@ -943,7 +997,7 @@ Using =org-download= to make it easier to insert images into my org notes and bl
 
 The first function =zz/org-paste-clipboard= inserts an image from the clipboard using =org-download-clipboard=, but asking for the filename to use for storing it.
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp :tangle no
 (defun zz/org-paste-clipboard (&optional use-default-filename)
   (interactive "P")
   (require 'org-download)
@@ -958,7 +1012,7 @@ The first function =zz/org-paste-clipboard= inserts an image from the clipboard 
 
 The second function =zz/org-attach-file= allows me to choose a file to attach. The file is copied with the same name to the =org-download-image-dir= directory. If the chosen image is already from that directory, it only inserts the link without copying the file again.
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp :tangle no
 (defun zz/org-attach-file (&optional file)
   (interactive (list (read-file-name "File to insert: "
                                 (or (progn
@@ -974,7 +1028,7 @@ The second function =zz/org-attach-file= allows me to choose a file to attach. T
 
 I create keybindings for the two functions above.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (map! :map org-mode-map
         "C-c l a y" #'zz/org-paste-clipboard
         "C-M-y" #'zz/org-paste-clipboard
@@ -984,7 +1038,7 @@ I create keybindings for the two functions above.
 
 Finally, I like the images to be links to the image itself, so that in blog posts, for example, a thumbnail is shown, and clicking on it takes you to the full image. To this effect I define a variant of =org-download-link-format-function= which does this, and assign it to =org-download-link-format-function=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defun zz/org-download-link-format-function-link-to-file (filename)
   "Insert the file as a link to itself."
   (if (and (>= (string-to-number org-version) 9.3)
@@ -1319,7 +1373,7 @@ I set =org-hugo-use-code-for-kbd= so that I can apply a custom style to keyboard
   (setq org-hugo-use-code-for-kbd t))
 #+end_src
 
-Define an =org-capture= template to create a new blog post skeleton automatically. Based on https://ox-hugo.scripter.co/doc/org-capture-setup/, with some customizations for my blog's setup (like a default value for =:featured_image=). I also add =:jump-to-captured t= in the =org-capture-templates= definition so that when I create a new blog post snippet, I get automatically taken to that location so I can continue writing.
+Define an =org-capture= template to create a new blog post skeleton automatically. Based on https://ox-hugo.scripter.co/doc/org-capture-setup/, with some customizations for my blog's setup (like a default value for =:featured_image= and a section-level =ID=, so that all attachments within a blog post are stored together). I also add =:jump-to-captured t= in the =org-capture-templates= definition so that when I create a new blog post snippet, I get automatically taken to that location so I can continue writing.
 
 #+begin_src emacs-lisp
 (after! org-capture
@@ -1332,6 +1386,7 @@ Define an =org-capture= template to create a new blog post skeleton automaticall
                  `(
                    ,(concat "* TODO " title)
                    ":PROPERTIES:"
+                   ,(concat ":ID: " (org-id-new))
                    ,(concat ":export_hugo_bundle: " (format-time-string "%Y-%m-%d-") fname)
                    ":export_file_name: index"
                    ,(concat ":custom_id: " fname)
