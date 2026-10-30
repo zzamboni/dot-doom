@@ -1423,6 +1423,7 @@ Define an =org-capture= template to create a new blog post skeleton automaticall
                  (function org-hugo-new-subtree-post-capture-template)
                  :jump-to-captured t)))
 #+end_src
+
 ** Code for org-mode macros
 
 Here I define functions which get used in some of my org-mode macros
@@ -1628,6 +1629,13 @@ end repeat\"")))
   :after org
   :hook (org-mode . org-special-block-extras-mode))
 #+end_src
+
+[[https://github.com/jmpunkt/ox-typst][ox-typst]] to export to Typst.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! ox-typst)
+#+end_src
+
 ** Other Org stuff
 
 ** Programming Org

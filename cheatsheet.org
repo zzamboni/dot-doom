@@ -1,42 +1,36 @@
-#+title: Doom Emacs Cheat Sheet
-#+subtitle: Blogging, images & everyday operations
-#+options: toc:nil num:nil author:nil date:nil
-#+latex_class: article
-#+latex_class_options: [10pt,a4paper]
-#+latex_compiler: xelatex
-#+latex_header: \usepackage[margin=14mm]{geometry}
-#+latex_header: \usepackage{fontspec,xcolor,booktabs,array}
-#+latex_header: \setmainfont{Source Sans 3}
-#+latex_header: \setsansfont{Source Sans 3}
-#+latex_header: \setmonofont{Cascadia Code}[Scale=0.82]
-#+latex_header: \definecolor{accent}{HTML}{176B73}
-#+latex_header: \definecolor{ink}{HTML}{24343D}
-#+latex_header: \AtBeginDocument{\color{ink}}
-#+latex_header: \usepackage{parskip}
-#+latex_header: \setlength{\parskip}{4pt}
-#+latex_header: \setlength{\tabcolsep}{5pt}
-#+latex_header: \renewcommand{\arraystretch}{1.15}
-#+latex_header: \setlength{\emergencystretch}{2em}
-#+latex_header: \pagestyle{empty}
-#+latex_header: \makeatletter
-#+latex_header: \renewcommand{\maketitle}{\noindent{\fontsize{24}{28}\selectfont\bfseries\color{accent} Doom Emacs}\par\vspace{2pt}\noindent{\large Cheat sheet\enspace/\enspace Blogging, images \& everyday operations}\par\vspace{5pt}\hrule\vspace{5pt}}
-#+latex_header: \renewcommand{\section}{\@startsection{section}{1}{0pt}{10pt}{4pt}{\large\bfseries\color{accent}}}
-#+latex_header: \makeatother
+#+title: Diego's Doom Emacs Cheat Sheet
 
-*Non-Evil bindings.* =C-= Ctrl · =M-= Alt/Meta. Run commands with =M-x=.
+#+options: toc:nil num:nil author:nil date:nil
+# The installed ox-typst exports the title as metadata only and omits the subtitle.
+# cram-snap renders both; keep its subtitle below in sync with #+subtitle above.
+# Package: https://typst.app/universe/package/cram-snap/ (pinned for reproducibility).
+#+typst_header: #import "@preview/cram-snap:0.2.2": cram-snap
+#+typst_header: #set page(paper: "a4", margin: 14mm)
+#+typst_header: #set text(font: "Source Sans 3", size: 10pt, fill: rgb("24343D"))
+#+typst_header: #set par(leading: 0.45em, spacing: 7pt)
+#+typst_header: #show: doc => context cram-snap(title: text(fill: rgb("176B73"), weight: "bold", document.title), column-number: 1, fill-color: "F0F6F6", stroke-color: "176B73", doc)
+#+typst_header: #show heading: set text(size: 12pt, fill: rgb("176B73"))
+#+typst_header: #show heading: it => block(above: 12pt, below: 5pt, text(weight: "bold", it.body))
+#+typst_header: #show raw: set text(font: "Cascadia Code", size: 8.2pt)
+#+typst_header: #show figure: it => block(above: 5pt, below: 5pt, it.body)
+# ox-typst emits three equal columns and ordinary cells for the header row.
+# Rebuild tables with useful widths and a repeating semantic header.
+#+typst_header: #show table: it => if it.children.first().func() == table.header { it } else { table(columns: (23%, 20%, 57%), inset: (x: 5pt, y: 3pt), table.header(repeat: true, ..it.children.slice(0, 3)), ..it.children.slice(3)) }
+#+typst_header: #show table.cell.where(y: 0): set text(size: 10pt)
+
+*Non-Evil bindings.* =C-= Ctrl · =M-= Alt/Meta. Run commands with =M-x=. Documents tasks according to [[https://github.com/zzamboni/dot-doom][my personal configuration]], may not match defaults.
 
 * Create a Hugo blog post
 
-#+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
-| Action              | Shortcut    | Command / next step                                  |
-|---------------------+-------------+------------------------------------------------------|
-| New post            | =C-c n n h=   | =org-capture= → =h=; enter a title.                      |
-| Finish capture      | =C-c C-c=     | =org-capture-finalize=; jump to the new post.          |
-| Cancel capture      | =C-c C-k=     | =org-capture-kill=                                     |
-| Export current post | =C-x C-s=     | =save-buffer= (=org-hugo-auto-export= is enabled).       |
-|                     | =C-c C-e H H= | =org-hugo-export-wim-to-md=                            |
-| Export all posts    | =C-c C-e H A= | Review changes before committing!                    |
-| Change status       | =C-c C-t=     | =org-todo=; choose =DONE= when ready, then export again. |
+| Action              | Shortcut      | Command / next step                                       |
+|---------------------+---------------+-----------------------------------------------------------|
+| New post            | =C-c n n h=   | =org-capture= → =h= — enter a title.                      |
+| Finish capture      | =C-c C-c=     | =org-capture-finalize= — jump to the new post.            |
+| Cancel capture      | =C-c C-k=     | =org-capture-kill=                                        |
+| Export current post | =C-x C-s=     | =save-buffer= (=org-hugo-auto-export= is enabled).        |
+|                     | =C-c C-e H H= | =org-hugo-export-wim-to-md=                               |
+| Export all posts    | =C-c C-e H A= | Review changes before committing!                         |
+| Change status       | =C-c C-t=     | =org-todo= — choose =DONE= when ready, then export again. |
 
 Fill in the description before finishing capture; replace =<write here>= with
 the body afterward. Export with point inside the post. =TODO= / =DRAFT= mean
@@ -48,21 +42,22 @@ The template supplies an ID and a =YYYY-MM-DD-title-slug= bundle, exporting to
 =content/post/<bundle>/index.md=.
 
 *Check the property drawer:* =EXPORT_HUGO_CUSTOM_FRONT_MATTER= defaults to
-=:featured_image /images/tram-zurich.jpg :toc false=; adjust for the post.
+=:featured_image /images/tram-zurich.jpg :toc false= — adjust for the post.
 
 * Insert images into posts or Org documents
 
 Place point beneath the appropriate heading, inside the post for Hugo.
 
-#+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
-| Action          | Shortcut  | Command / next step                            |
-|-----------------+-----------+------------------------------------------------|
-| Paste image     | =C-y=       | =zz/org-smart-yank=; enter a filename.           |
-| Force text yank | =C-u C-y=   | =org-yank= via the smart-yank helper.            |
-| Copy image file | =C-c C-a c= | =org-attach= → copy; select the file.            |
-| Download image  | =C-c C-a u= | =org-attach-url=; enter the direct image URL.    |
-| Insert link     | =C-c C-l=   | =org-insert-link=; select the stored attachment. |
-| Toggle previews | =C-c C-i=   | =org-toggle-inline-images=                       |
+| Action          | Shortcut    | Command / next step                             |
+|-----------------+-------------+-------------------------------------------------|
+| Paste image     | =C-y=         | =zz/org-smart-yank= — enter a filename.           |
+| Force text yank | =C-u C-y=     | =org-yank= via the smart-yank helper.             |
+| Copy image file | =C-c C-a c=   | =org-attach= → copy; select the file.             |
+| Download image  | =C-c C-a u=   | =org-attach-url= — enter the direct image URL.    |
+| Insert link     | =C-c C-l=     | =org-insert-link= — select the stored attachment. |
+| Toggle previews | =C-c C-i=     | =org-toggle-inline-images=                        |
+|                 | =C-c TAB=     |                                                 |
+|                 | =C-c C-x C-v= |                                                 |
 
 *Clipboard:* copy the image itself. In graphical Emacs, smart yank uses
 =yank-media= for PNG/JPEG/WebP/GIF; otherwise it uses =org-yank=.
@@ -76,17 +71,17 @@ into the buffer also attaches it automatically.
 headings inherit the post's ID. Keep attachments with the source. Links
 look like =[[attachment:photo.png]]=. Export the post again after changes.
 
-*Previews:* also =C-c TAB= or =C-c C-x C-v=. The 300-pixel buffer preview
-limit does not set the exported image size.
+*Image Previews:* The 300-pixel buffer preview limit does not set the exported image size.
 
 * Others
 
-#+attr_latex: :booktabs t :align @{}p{0.23\linewidth}p{0.25\linewidth}p{0.46\linewidth}@{}
-| Action          | Shortcut    | Command / next step                              |
-|-----------------+-------------+--------------------------------------------------|
-| Reveal / hide   | =C-c t v=   | =visible-mode=; toggle hidden text in this buffer. |
-| Export PDF      | =C-c C-e l p= | =org-latex-export-to-pdf=                          |
-| Export and open | =C-c C-e l o= | Export PDF, then open it.                        |
+| Action          | Shortcut      | Command / next step                                 |
+|-----------------+---------------+-----------------------------------------------------|
+| Reveal / hide   | =C-c t v=     | =visible-mode= — toggle hidden text in this buffer. |
+| Export PDF      | =C-c C-e y p= | =org-typst-export-to-pdf=                           |
+| Export and open | =C-c C-e y o= | Export PDF, then open it.                           |
 
-PDF export uses Tectonic. This layout needs Source Sans 3 and Cascadia Code.
+PDF export uses Typst via =ox-typst= (=M-x org-typst-export-to-pdf=).
+This layout uses =cram-snap= 0.2.2, Source Sans 3, and Cascadia Code.
+Typst downloads the package on first use; subsequent exports use its cache.
 Add new use cases as top-level headings with shortcuts and command names.

@@ -93,6 +93,8 @@
 
 (package! org-jira)
 
+(package! ox-typst)
+
 (package! org-ml)
 
 (package! org-ql)

@@ -1,6 +1,9 @@
 # LaTeX sources generated from Org documents (keep PDFs).
 *.tex
 
+# Typst generated files
+*.typ
+
 # LaTeX compilation, bibliography, index, and presentation byproducts.
 *.aux
 *.log
