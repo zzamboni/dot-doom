@@ -154,7 +154,7 @@
  ;;nix                 ; I hereby declare "nix geht mehr!"
  ;;ocaml               ; an objective camel
  (org +pretty +journal ;-dragndrop
-      +hugo +roam ;; +pandoc
+      +roam
       +present)        ; organize your plain life in plain text
  ;;php                 ; perl's insecure younger brother
  plantuml              ; diagrams for confusing people more

@@ -572,13 +572,16 @@ title."
   ;;(org-leanpub-book-setup-menu-markdown)
 )
 
-(after! ox-hugo
+(use-package! ox-hugo
+  :after ox
+  :config
   (setq org-hugo-use-code-for-kbd t))
 
 (after! org-capture
   (defun org-hugo-new-subtree-post-capture-template ()
     "Returns `org-capture' template string for new Hugo post.
   See `org-capture-templates' for more information."
+    (require 'ox-hugo)
     (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
            (fname (org-hugo-slug title)))
       (mapconcat #'identity

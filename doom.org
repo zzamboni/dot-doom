@@ -380,7 +380,7 @@ This code is written to the =init.el= to select which modules to load. Written h
  ;;nix                 ; I hereby declare "nix geht mehr!"
  ;;ocaml               ; an objective camel
  (org +pretty +journal ;-dragndrop
-      +hugo +roam ;; +pandoc
+      +roam
       +present)        ; organize your plain life in plain text
  ;;php                 ; perl's insecure younger brother
  plantuml              ; diagrams for confusing people more
@@ -1470,12 +1470,19 @@ If you are interested in learning more about publishing to Leanpub with Org-mode
 - Parsing is done by org-mode natively, not by an external library. Although goorgeous (used by Hugo) is very good, it still lacks in many areas, which leads to text being interpreted differently as by org-mode.
 - Hugo is left to parse a native Markdown file, which means that many of its features such as shortcodes, TOC generation, etc., can still be used on the generated file.
 
-Doom Emacs includes and configures =ox-hugo= as part of its =(:lang org +hugo)= module, so all that's left is to configure some parameters to my liking.
+The current Doom Org module no longer installs =ox-hugo= through the old
+=+hugo= flag, so install it explicitly and load it with the export framework.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! ox-hugo)
+#+end_src
 
 I set =org-hugo-use-code-for-kbd= so that I can apply a custom style to keyboard bindings in my blog.
 
 #+begin_src emacs-lisp
-(after! ox-hugo
+(use-package! ox-hugo
+  :after ox
+  :config
   (setq org-hugo-use-code-for-kbd t))
 #+end_src
 
@@ -1486,6 +1493,7 @@ Define an =org-capture= template to create a new blog post skeleton automaticall
   (defun org-hugo-new-subtree-post-capture-template ()
     "Returns `org-capture' template string for new Hugo post.
   See `org-capture-templates' for more information."
+    (require 'ox-hugo)
     (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
            (fname (org-hugo-slug title)))
       (mapconcat #'identity
