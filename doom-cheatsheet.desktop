@@ -2,8 +2,8 @@
 Type=Application
 Name=Doom Emacs Cheat Sheet
 Comment=Open my Doom Emacs quick reference
-Exec=xdg-open $HOME/.doom.d/cheatsheet.pdf
-Icon=$HOME/doom.d/splash/doom-cheatsheet-icon.png
+Exec=sh -c "exec ~/.doom.d/scripts/open-cheatsheet.sh"
+Icon=doom-cheatsheet
 Terminal=false
 Categories=Office;
 StartupNotify=false
