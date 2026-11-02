@@ -5,18 +5,32 @@
 # cram-snap renders both; keep its subtitle below in sync with #+subtitle above.
 # Package: https://typst.app/universe/package/cram-snap/ (pinned for reproducibility).
 #+typst_header: #import "@preview/cram-snap:0.2.2": cram-snap
-#+typst_header: #set page(paper: "a4", margin: (top: 14mm, bottom: 20mm, x: 14mm), footer: align(center, text(size: 8pt, fill: rgb("61747C"))[This layout uses cram-snap 0.2.2, Source Sans 3, and Cascadia Code.]))
-#+typst_header: #set text(font: "Source Sans 3", size: 10pt, fill: rgb("24343D"))
-#+typst_header: #set par(leading: 0.45em, spacing: 5pt)
-#+typst_header: #show: doc => context cram-snap(title: text(fill: rgb("176B73"), weight: "bold", document.title), column-number: 1, fill-color: "F0F6F6", stroke-color: "176B73", doc)
-#+typst_header: #show heading: set text(size: 12pt, fill: rgb("176B73"))
-#+typst_header: #show heading: it => block(above: 10pt, below: 4pt, text(weight: "bold", it.body))
-#+typst_header: #show raw: set text(font: "Cascadia Code", size: 8.2pt)
-#+typst_header: #show figure: it => block(above: 5pt, below: 5pt, it.body)
+#+typst_header: #set page(paper: "a4", flipped: true, margin: (top: 10mm, bottom: 15mm, x: 10mm), footer: align(center, text(size: 8pt, fill: rgb("61747C"))[This layout uses cram-snap 0.2.2, Source Sans 3, and Cascadia Code.]))
+#+typst_header: #set text(font: "Source Sans 3", size: 9pt, fill: rgb("24343D"))
+# Group top-level sections automatically; new headings become new grid cells.
+#+typst_header: #let sheet-grid(doc) = {
+#+typst_header:   while doc.has("child") { doc = doc.child }
+#+typst_header:   set text(font: "Source Sans 3", size: 9pt, fill: rgb("24343D"))
+#+typst_header:   set par(leading: 0.35em, spacing: 4pt)
+#+typst_header:   show heading: set text(size: 11pt, fill: rgb("176B73"))
+#+typst_header:   show heading: it => block(above: 10pt, below: 4pt, text(weight: "bold", it.body))
+#+typst_header:   show raw: set text(font: "Cascadia Code", size: 7.2pt)
+#+typst_header:   show figure: it => block(above: 5pt, below: 5pt, it.body)
+#+typst_header:   show table: it => if it.children.first().func() == table.header { it } else { table(columns: (23%, 20%, 57%), inset: (x: 5pt, y: 3pt), table.header(repeat: true, ..it.children.slice(0, 3)), ..it.children.slice(3)) }
+#+typst_header:   show table.cell.where(y: 0): set text(size: 9pt)
+#+typst_header:   let intro = (); let sections = (); let current = ();
+#+typst_header:   for item in doc.children {
+#+typst_header:     if item.func() == heading and item.level == 1 {
+#+typst_header:       if current.len() > 0 { sections.push(current.sum(default: [])) }; current = (item,)
+#+typst_header:     } else if current.len() > 0 { current.push(item) } else { intro.push(item) }
+#+typst_header:   }
+#+typst_header:   if current.len() > 0 { sections.push(current.sum(default: [])) }
+#+typst_header:   intro.sum(default: [])
+#+typst_header:   grid(columns: (1fr, 1fr), column-gutter: 9mm, row-gutter: 4mm, ..sections)
+#+typst_header: }
+#+typst_header: #show: doc => context cram-snap(title: text(fill: rgb("176B73"), weight: "bold", document.title), column-number: 1, fill-color: "F0F6F6", stroke-color: "176B73", sheet-grid(doc))
 # ox-typst emits three equal columns and ordinary cells for the header row.
 # Rebuild tables with useful widths and a repeating semantic header.
-#+typst_header: #show table: it => if it.children.first().func() == table.header { it } else { table(columns: (23%, 20%, 57%), inset: (x: 5pt, y: 3pt), table.header(repeat: true, ..it.children.slice(0, 3)), ..it.children.slice(3)) }
-#+typst_header: #show table.cell.where(y: 0): set text(size: 10pt)
 
 *Non-Evil bindings.* =C-= Ctrl · =M-= Alt/Meta. Run commands with =M-x=. Documents tasks according to [[https://github.com/zzamboni/dot-doom][my personal configuration]], may not match defaults.
 
