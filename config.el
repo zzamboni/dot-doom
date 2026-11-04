@@ -309,6 +309,17 @@
         org-image-max-width 300                 ;; ...maximum for inlined images in org buffers
   ))
 
+(after! org
+  (defun zz/org-yank-image-without-description (handler &rest args)
+    "Run image HANDLER with bare links suitable for inline image export."
+    (let ((formatter (symbol-function 'org-link-make-string-for-buffer)))
+      (cl-letf (((symbol-function 'org-link-make-string-for-buffer)
+                 (lambda (link &optional _description interactive-p)
+                   (funcall formatter link nil interactive-p))))
+        (apply handler args))))
+  (advice-add 'org--image-yank-media-handler :around
+              #'zz/org-yank-image-without-description))
+
 (defun zz/org-smart-yank (&optional arg)
   "Yank normally, or use `yank-media' for clipboard images."
   (interactive "P")

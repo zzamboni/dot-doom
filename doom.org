@@ -939,6 +939,23 @@ I've moved to native Emacs/Org functionality, using =org-attach= and =org-yank= 
   ))
 #+end_src
 
+Org now uses the filename description returned by =org-attach-attach= when
+pasting images. Omit that description during image paste so exporters recognize
+an inline image/figure. Ordinary attachment insertion keeps its descriptions.
+
+#+begin_src emacs-lisp
+(after! org
+  (defun zz/org-yank-image-without-description (handler &rest args)
+    "Run image HANDLER with bare links suitable for inline image export."
+    (let ((formatter (symbol-function 'org-link-make-string-for-buffer)))
+      (cl-letf (((symbol-function 'org-link-make-string-for-buffer)
+                 (lambda (link &optional _description interactive-p)
+                   (funcall formatter link nil interactive-p))))
+        (apply handler args))))
+  (advice-add 'org--image-yank-media-handler :around
+              #'zz/org-yank-image-without-description))
+#+end_src
+
 Create and map a "smart yank" function which does the right thing, calling =org-yank= or =yank-media= depending on the contents of the clipboard.
 
 #+begin_src emacs-lisp
