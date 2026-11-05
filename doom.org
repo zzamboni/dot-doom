@@ -7,7 +7,7 @@
 #+attr_html: :style max-width:30%;
 [[file:splash/doom-emacs-color.png]]
 
-This is my [[https://leanpub.com/lit-config][literate]] Doom Emacs configuration. I use Emacs keybindings, Ivy/Company completion, and Org for notes, tasks, writing, and publishing. The code below is the source of my generated configuration; [[file:cheatsheet.org][the cheat sheet]] documents everyday commands.
+This is my [[https://leanpub.com/lit-config][literate]] Doom Emacs configuration. I use Emacs keybindings, Ivy/Company completion, and Org for notes, tasks, writing, and publishing. The code below is the source of my generated configuration; [[https://github.com/zzamboni/dot-doom/blob/main/cheatsheet.pdf][the cheat sheet]] documents everyday commands.
 
 * Table of Contents :TOC_3:noexport:
 - [[#maintaining-this-configuration][Maintaining this configuration]]
@@ -811,7 +811,7 @@ Hide Org, iCalendar, and ODT from =C-c C-e= while leaving their backends and com
 
 ** Typst PDF
 
-=ox-typst= provides Typst export; =C-c e y= uses it from the custom menu. The landscape, two-column template, fonts, title, and footer for the printable reference are kept in [[file:cheatsheet.org][cheatsheet.org]], not applied globally to other documents. The =typst= executable must be on Emacs' =exec-path=. Tree-sitter editing support is configured with the other language modes below.
+=ox-typst= provides Typst export; =C-c e y= uses it from the custom menu. The landscape, two-column template, fonts, title, and footer for the printable reference are kept in [[https://github.com/zzamboni/dot-doom/blob/main/cheatsheet.org][cheatsheet.org]], not applied globally to other documents. The =typst= executable must be on Emacs' =exec-path=. Tree-sitter editing support is configured with the other language modes below.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! ox-typst)
