@@ -12,7 +12,7 @@
              mac-right-option-modifier  'alt
              mac-pass-control-to-system nil))
       (IS-LINUX
-       (setq x-meta-keysym 'super
+       (setq x-meta-keysym 'alt
              x-super-keysym 'meta)))
 
 (setq kill-whole-line t)
@@ -68,26 +68,68 @@
 
 (setq doom-modeline-enable-word-count t)
 
-(map! "C-x b"   #'counsel-buffer-or-recentf
-  "C-x C-b" #'counsel-switch-buffer)
+(use-package! vertico-prescient
+  :after vertico
+  :init
+  (setq vertico-prescient-enable-filtering nil
+        prescient-save-file (doom-profile-cache-dir t "prescient-save.el"))
+  :config
+  (vertico-prescient-mode 1)
+  (prescient-persist-mode 1))
 
-(defun zz/counsel-buffer-or-recentf-candidates ()
-  "Return candidates for `counsel-buffer-or-recentf'."
-  (require 'recentf)
-  (recentf-mode)
-  (let ((buffers
-         (delq nil
-               (mapcar (lambda (b)
-                         (when (buffer-file-name b)
-                           (abbreviate-file-name (buffer-file-name b))))
-                       (delq (current-buffer) (buffer-list))))))
-    (append
-     buffers
-     (cl-remove-if (lambda (f) (member f buffers))
-                   (counsel-recentf-candidates)))))
+(after! cape
+  ;; Preserve Company's current-buffer-only fallback word search.
+  (setq cape-dabbrev-check-other-buffers nil))
 
-(advice-add #'counsel-buffer-or-recentf-candidates
-            :override #'zz/counsel-buffer-or-recentf-candidates)
+(after! corfu
+  ;; Preview candidates without committing them merely by continuing to type.
+  (setq corfu-preview-current t))
+
+(defun zz/add-company-capfs (&rest backends)
+  "Add BACKENDS to this buffer through Cape without enabling Company mode."
+  (require 'cape)
+  (dolist (backend backends)
+    (let ((capf (intern (format "zz/capf-%s" backend))))
+      (unless (fboundp capf)
+        (defalias capf (cape-company-to-capf backend)))
+      (add-hook 'completion-at-point-functions capf 10 t))))
+
+(defun zz/lua-completion-setup ()
+  "Retain Lua's built-in API completion without a language server."
+  (require 'company-lua)
+  (zz/add-company-capfs #'company-lua))
+(add-hook 'lua-mode-hook #'zz/lua-completion-setup)
+
+(defun zz/latex-completion-setup ()
+  "Retain AUCTeX and math completion alongside native CAPFs."
+  (require 'company-auctex)
+  (require 'company-math)
+  (zz/add-company-capfs #'company-auctex-environments
+                       #'company-auctex-macros
+                       #'+latex-symbols-company-backend))
+(add-hook 'LaTeX-mode-hook #'zz/latex-completion-setup)
+
+(defun zz/reftex-completion-setup ()
+  "Retain RefTeX label and citation completion."
+  (when reftex-mode
+    (require 'company-reftex)
+    (zz/add-company-capfs #'company-reftex-labels #'company-reftex-citations)))
+(add-hook 'reftex-mode-hook #'zz/reftex-completion-setup)
+
+(defun zz/buffer-or-recentf ()
+  "Select a buffer or recent file with Consult."
+  (interactive)
+  (require 'consult)
+  (consult-buffer '(consult-source-buffer consult-source-recent-file)))
+
+(defun zz/switch-buffer ()
+  "Select an open buffer with Consult."
+  (interactive)
+  (require 'consult)
+  (consult-buffer '(consult-source-buffer)))
+
+(map! "C-x b" #'zz/buffer-or-recentf
+      "C-x C-b" #'zz/switch-buffer)
 
 (use-package! switch-buffer-functions
   :after recentf
@@ -116,7 +158,14 @@
 (map! "M-g g" #'avy-goto-line)
 (map! "M-g M-g" #'avy-goto-line)
 
-(map! "M-g o" #'counsel-outline)
+(defun zz/outline ()
+  "Select a heading using the appropriate Consult command."
+  (interactive)
+  (if (derived-mode-p 'org-mode)
+      (progn (require 'consult-org) (consult-org-heading))
+    (consult-outline)))
+
+(map! "M-g o" #'zz/outline)
 
 (after! smartparens
   (defun zz/goto-match-paren (arg)
@@ -186,13 +235,23 @@
 
 (add-hook! org-mode (electric-indent-local-mode -1))
 
-;; Disable automatic Company completion in prose modes.
-(after! company
-  (setq company-global-modes '(not org-mode markdown-mode)))
+(defun zz/prose-completion-setup ()
+  "Keep automatic completion quiet in Org and Markdown."
+  (when (derived-mode-p 'org-mode 'markdown-mode)
+    (setq-local corfu-auto nil)))
 
-(add-hook! org-mode :append
-  #'visual-line-mode
-  #'variable-pitch-mode)
+(add-hook 'corfu-mode-hook #'zz/prose-completion-setup)
+(add-hook 'org-mode-hook #'zz/prose-completion-setup)
+(add-hook 'markdown-mode-hook #'zz/prose-completion-setup)
+
+(defun zz/prose-wrapping-setup ()
+  "Wrap at the window edge without inserting newlines."
+  (auto-fill-mode -1)
+  (+word-wrap-mode 1))
+
+(add-hook 'org-mode-hook #'zz/prose-wrapping-setup t)
+(add-hook 'markdown-mode-hook #'zz/prose-wrapping-setup t)
+(add-hook 'org-mode-hook #'variable-pitch-mode t)
 
 (after! org
   (setq org-agenda-files
@@ -252,11 +311,8 @@
   (map! :map org-mode-map
     "C-y" #'zz/org-smart-yank))
 
-(map! :after counsel :map org-mode-map
-  "C-c l l h" #'counsel-org-link)
-
-(after! counsel
-  (setq counsel-outline-display-style 'title))
+(map! :after org :map org-mode-map
+  "C-c l l h" #'zz/org-insert-heading-link)
 
 (after! org-id
   ;; Do not create ID if a CUSTOM_ID exists
@@ -286,18 +342,32 @@ If FORCE is t, always recreate the property."
         ;; otherwise, create it
         (zz/org-custom-id-create)))))
 
-;; Now override counsel-org-link-action
-(after! counsel
-  (defun counsel-org-link-action (x)
-    "Insert a link to X.
-
-X is expected to be a cons of the form (title . point), as passed
-by `counsel-org-link'.
-
-If X does not have a CUSTOM_ID, create it based on the headline
-title."
-    (let* ((id (zz/org-custom-id-get-create (cdr x))))
-      (org-insert-link nil (concat "#" id) (car x)))))
+(defun zz/org-insert-heading-link ()
+  "Select a heading and insert its readable CUSTOM_ID link at point."
+  (interactive)
+  (require 'org-id)
+  (let ((origin (copy-marker (point) t)) candidates)
+    (unwind-protect
+        (save-restriction
+          (widen)
+          (setq candidates
+                (org-map-entries
+                 (lambda ()
+                   (cons (format "%s [line %d]"
+                                 (string-join (org-get-outline-path t t) "/")
+                                 (line-number-at-pos))
+                         (point-marker)))))
+          (unless candidates (user-error "No headings in this buffer"))
+          (let* ((choice (completing-read "Link to heading: " candidates nil t))
+                 (target (cdr (assoc choice candidates)))
+                 (title (org-with-point-at target
+                          (nth 4 (org-heading-components))))
+                 (id (save-excursion (zz/org-custom-id-get-create target))))
+            (goto-char origin)
+            (org-insert-link nil (concat "#" id) title)))
+      (set-marker origin nil)
+      (dolist (candidate candidates)
+        (set-marker (cdr candidate) nil)))))
 
 (when IS-MAC
   (use-package! org-mac-link
@@ -751,8 +821,8 @@ end repeat\"")))
 (use-package! unfill
   :defer t
   :bind
-  ("M-q" . unfill-toggle)
-  ("A-q" . unfill-paragraph))
+  ("A-q" . unfill-toggle)
+  ("M-q" . unfill-paragraph))
 
 (use-package! chezmoi
   :defer t)

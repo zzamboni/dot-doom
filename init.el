@@ -6,9 +6,8 @@
 (doom!
 
   :completion
-  (company +childframe)
-  (ivy +prescient -childframe
-       -fuzzy +icons)
+  (corfu +orderless +icons +dabbrev)
+  (vertico +icons)
 
   :ui
   doom
@@ -27,6 +26,7 @@
   :editor
   file-templates
   snippets
+  word-wrap
 
   :emacs
   dired
@@ -53,6 +53,7 @@
 
   :os
   (:if IS-MAC macos)
+  tty
 
   :lang
   common-lisp

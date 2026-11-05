@@ -1,0 +1,97 @@
+#+title: Doom modernization experiment
+#+author: Diego Zamboni
+#+auto_tangle: nil
+
+* Scope and recommendation
+
+This branch, =doom-modern-completion=, tries Doom's current completion defaults while preserving the personal workflows in =doom.org=. The reference is the installed =~/.emacs.d/static/init.example.el=, Doom core =59cdaa32=, and modules =897f81544= (reviewed 2026-11-05). These are recommendations for this installation, not a claim that every default is universally better.
+
+Start with Corfu/Vertico and prose wrapping. Keep the language servers, diagnostics, Org capture/export, theme, and Emacs-style editing stable while deciding whether the new completion interface suits you. All new Org prose uses one physical line per paragraph.
+
+* Changes implemented
+
+| Area | Experiment | Reason and compatibility |
+|------+------------+--------------------------|
+| Completion at point | =(corfu +orderless +icons +dabbrev)= replaces Company UI | Uses Emacs completion-at-point functions, with Cape fallbacks, snippet candidates, icons and popup documentation. Candidate quality still depends on the underlying language backend. |
+| Minibuffer | =(vertico +icons)= replaces Ivy | Standard completing-read integration, Consult navigation/search, Marginalia annotations and Embark actions. The minibuffer stays at the bottom rather than in a floating frame. |
+| Ranking | =vertico-prescient=, sorting only | Retains frequency/recency ranking and the existing Prescient cache location. Orderless handles matching. Corfu supplies its own completion history. Rankings will not be identical because candidate labels and command names differ. |
+| Prose | No automatic Corfu popup in Org/Markdown | Preserves the quiet writing experience; manual completion and snippets remain available. |
+| Preview | =corfu-preview-current t= | Avoids Corfu's default insert-on-type preview behavior; selecting a suggestion should not silently change subsequent typing. |
+| Language compatibility | Cape adapters for Lua, AUCTeX, math and RefTeX | These specialized sources were gated on the Company module. Keep their existing pins and use their candidates through Corfu. Company remains a library dependency, not the active UI. |
+| Single-line paragraphs | =:editor word-wrap= | Visual wrapping with indentation support, including window-edge wrapping in Org/Markdown. Disable automatic hard filling there; manual fill/unfill commands remain. |
+| Terminal Emacs | =:os tty= | Enables Corfu's terminal support on Emacs 30, plus Doom's terminal clipboard, mouse and keyboard support. Clipboard access still needs an available helper such as wl-copy. Doom documents a Kitty-protocol limitation with C-g interrupting blocking subprocesses in supported terminals; review that if you regularly work in terminal Emacs. |
+
+Corfu is a reasonable experiment because it follows Emacs's native completion interface and Doom now supplies the surrounding integrations. That does not make it a guaranteed speed or feature upgrade over Company. Lua/LaTeX adapters are intentionally retained until their native alternatives have been shown to cover your actual use cases. ESS and Sly already expose native completion functions; Go, ESS, shell and YAML retain their configured LSP integrations.
+
+Vertico improves composability: commands using standard completion receive the same interface, while Consult supplies previews and Embark supplies actions. Your custom Counsel candidate override and Counsel link-action override are gone. The new heading-link command uses public Org APIs and standard completion, retaining the existing CUSTOM_ID generation rule and local =#id= links.
+
+* Workflow map
+
+| Existing workflow/key | New behavior |
+|-----------------------+--------------|
+| =C-x b= | Buffers plus recent files, deduplicated by Consult. Also includes non-file buffers; bookmarks are excluded from this custom picker. |
+| =C-x C-b= | Open buffers only. |
+| =C-s= | Same Doom region-aware command, now using Consult. |
+| =M-g o= | Consult Org headings in Org, Consult outline elsewhere. |
+| =C-c l l h= | Select a local heading and insert its readable CUSTOM_ID link. Outline paths and line numbers distinguish duplicate titles; existing IDs remain unchanged. |
+| =C-M-i= | Request completion explicitly (complete-symbol/completion-at-point). |
+| =C-n= / =C-p= in completion | Move between candidates. |
+| =TAB= / =S-TAB= in Corfu | Cycle candidates; =RET= accepts the selected candidate. |
+| =C-;= in an editing buffer | Iedit, as before. |
+| =C-;= in the minibuffer | Embark actions for the selected candidate. |
+| =C-c C-e= in a search minibuffer | Export results to an editable buffer; useful for project-wide replacements. |
+| =C-S-r= | Resume a Vertico session. |
+| =C-c e= / =C-c C-e= in Org | Existing custom export menu / standard Org export dispatcher. |
+| =M-q= / =A-q= | Existing fill toggle / unfill commands. |
+
+Try matching =alpha beta= against a name containing both terms in either order. Fuzzy matching is opt-in with =~term=; it is not globally enabled. Consult grep searches use =#search terms#filter terms= to separate the external search from further candidate filtering. Native completion commands such as =M-x consult-yank-pop= and =M-x consult-imenu= are also worth exploring.
+
+The UI changes are intentional: different grouping, labels, previews and selection behavior, and no general promise that old =ivy-*= or =counsel-*= command names remain available. The custom keys found in this configuration have been migrated. Additional memorized package commands may need equivalents; use this experiment before committing to the switch.
+
+* Other defaults reviewed
+
+| Candidate | Recommendation |
+|-----------+----------------|
+| =:editor fold= | Good independent follow-up if you want code folding beyond Org. It is in the example configuration, but not required for this completion trial. |
+| =(:ui vc-gutter +pretty)= | Useful optional visual indication of changed lines. Keep it a separate UI decision, especially with your existing fringe indicators. |
+| =:emacs tramp= | Enable if remote editing is frequent. It adds Doom's tuning; built-in TRAMP remains available without the module. |
+| =(whitespace +guess +trim)= | Do not adopt automatically: indentation guessing and trimming can change files on save. |
+| =(lsp +eglot)= | Consider separately. Keeping lsp-mode preserves current server integration and related commands while completion changes. |
+| Language =+tree-sitter= flags | Trial one language at a time after installing its grammar. Major-mode names, hooks and indentation can change; existing Typst TS support does not prove all grammars are installed. |
+| Doom literate module | Keep Org Auto Tangle for now: your tangling policy applies to other Org documents too. |
+| Desktop versus workspaces | Both remain enabled. Resolve their overlapping restoration policies separately; the Hugo layout fix remains in place. |
+| Auth-source ordering | Existing nreverse behavior is still reload-sensitive. Choose an explicit desired order before replacing it. |
+
+The example also enables Evil. That is a different editing model, not an upgrade requirement; your Emacs bindings remain. No formatter-on-save, blanket grammar installation, package unpinning, or exporter changes were introduced.
+
+* Validation and limitations
+
+Ran =doom sync -U= successfully: it installed the needed modules without requesting upgrades to existing packages (recipe catalogs were refreshed). Tangled =doom.org= and checked the generated Lisp and =git diff --check=. Fresh Doom startup activates Corfu, Vertico, Marginalia and Prescient. An independent normal daemon startup with =--no-desktop= reported no initialization error and confirmed the Iedit/Embark key distinction. A normal terminal Emacs session also activated corfu-terminal and produced real Lisp completion candidates; its result is in =/tmp/doom-modern-tty-result.log=.
+
+All ten tests in [[file:tests/modern-completion.el][tests/modern-completion.el]] pass: completion activation and matching, quiet prose/soft wrapping, snippet integration, effective custom keys, buffer sources, recent-file deduplication, readable heading links and cancellation, actual Lua/math candidates, and native language completion hooks. The existing five Hugo tests also pass, including real website sample exports to temporary directories. No website source/output was modified.
+
+Logs are in =/tmp/doom-modern-sync.log=, =/tmp/doom-modern-startup.log=, =/tmp/doom-modern-tests-4.log=, =/tmp/doom-modern-daemon.log= and =/tmp/doom-modern-hugo.log=. Failed test artifacts remain in =/tmp/doom-modern-tests-*= for inspection. Earlier failures included test-fixture initialization and syntax issues; the final run passes. Sly Stepper emits an upstream deprecation warning, not a startup failure.
+
+Hands-on validation is still needed for GUI popup appearance, long editing sessions, live language-server/REPL candidates, RefTeX bibliography projects, and your actual remote-terminal clipboard. R is not available on this machine's shell PATH, so ESS completion hooks were verified without a live R session. Existing external servers and tools were not installed or reconfigured.
+
+* Trying and rolling back
+
+Restart Emacs; do not use =doom/reload= to switch completion modules. Open an Org document and a Lua/LaTeX or LSP-backed source file, try the workflow table, and check that prose stays quiet while manual completion still works. Try =M-x consult-ripgrep= followed by =C-c C-e=, and =C-;= on a selected minibuffer candidate.
+
+The changes are uncommitted. Simply switching to =main= can carry those changes with you. Before rollback, preserve the experiment by committing it yourself or saving its diff and new files. Then restore only the configuration files from the original main branch and resync:
+
+#+begin_src sh :tangle no
+# Run only after preserving any experiment edits you want to keep.
+git restore --source=main -- doom.org init.el config.el packages.el
+~/.emacs.d/bin/doom sync -U
+# Restart Emacs afterward.
+#+end_src
+
+Branch switching alone does not change Doom's installed package profile; run =doom sync -U= whenever switching between these module selections. The already-preserved ox-hugo bug report and reproduction file are unrelated and were left untouched.
+
+* Sources
+
+- [[file:~/.emacs.d/static/init.example.el][Installed Doom example init]] and [[file:~/.emacs.d/sources/doom+/modules/completion/corfu/README.org][Corfu module guide]].
+- [[file:~/.emacs.d/sources/doom+/modules/completion/vertico/README.org][Installed Vertico module guide]], with its =config.el= checked for the actual non-Evil bindings.
+- [[https://github.com/minad/corfu][Corfu]], [[https://github.com/minad/cape][Cape]], [[https://github.com/minad/consult][Consult]], and [[https://github.com/radian-software/prescient.el][Prescient]].
+- [[file:~/.emacs.d/sources/doom+/modules/editor/word-wrap/config.el][Installed word-wrap configuration]] and [[file:~/.emacs.d/sources/doom+/modules/os/tty/README.org][TTY module guide]].

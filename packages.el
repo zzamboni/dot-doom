@@ -5,6 +5,13 @@
 
 (package! spacemacs-theme)
 
+(package! vertico-prescient)
+
+(package! company-lua :pin "29f6819de4d691e5fd0b62893a9f4fbc1c6fcb52")
+(package! company-auctex :pin "9400a2ec7459dde8cbf1a5d50dfee4e300ed7e18")
+(package! company-reftex :pin "42eb98c6504e65989635d95ab81b65b9d5798e76")
+(package! company-math :pin "3eb006874e309ff4076d947fcbd61bb6806aa508")
+
 (package! switch-buffer-functions)
 
 (package! pcre2el)

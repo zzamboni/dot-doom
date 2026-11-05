@@ -7,7 +7,7 @@
 #+attr_html: :style max-width:30%;
 [[file:splash/doom-emacs-color.png]]
 
-This is my [[https://leanpub.com/lit-config][literate]] Doom Emacs configuration. I use Emacs keybindings, Ivy/Company completion, and Org for notes, tasks, writing, and publishing. The code below is the source of my generated configuration; [[https://github.com/zzamboni/dot-doom/blob/main/cheatsheet.pdf][the cheat sheet]] documents everyday commands.
+This is my [[https://leanpub.com/lit-config][literate]] Doom Emacs configuration. I use Emacs keybindings, Vertico/Corfu completion, and Org for notes, tasks, writing, and publishing. The code below is the source of my generated configuration; [[https://github.com/zzamboni/dot-doom/blob/main/cheatsheet.pdf][the cheat sheet]] documents everyday commands.
 
 * Table of Contents :TOC_3:noexport:
 - [[#maintaining-this-configuration][Maintaining this configuration]]
@@ -19,6 +19,7 @@ This is my [[https://leanpub.com/lit-config][literate]] Doom Emacs configuration
 - [[#appearance][Appearance]]
   - [[#dashboard-fonts-and-theme][Dashboard, fonts, and theme]]
 - [[#navigation-and-editing][Navigation and editing]]
+  - [[#completion][Completion]]
   - [[#buffers-search-and-undo][Buffers, search, and undo]]
   - [[#matching-parentheses-with-][Matching parentheses with =%=]]
 - [[#org-editing-and-attachments][Org editing and attachments]]
@@ -111,15 +112,14 @@ After edits, tangle, run =git diff --check=, inspect the generated diff, and tes
 
 * Enabled Doom modules
 
-Only enabled modules are listed here. Use Doom's module documentation to browse other options. Evil is deliberately absent; =C-c= is my leader prefix. =+pretty= supplies Org Modern and Org Appear; =+present= supplies Reveal export. The LaTeX module's =+latexmk= is for editing TeX files; Org PDF export separately uses Tectonic. The negative Ivy flags are retained as explicit preferences.
+Only enabled modules are listed here. Use Doom's module documentation to browse other options. Evil is deliberately absent; =C-c= is my leader prefix. =+pretty= supplies Org Modern and Org Appear; =+present= supplies Reveal export. The LaTeX module's =+latexmk= is for editing TeX files; Org PDF export separately uses Tectonic. Corfu and Vertico follow the current example configuration, with icons and fallback word completion enabled. The TTY module supplies terminal completion support on Emacs 30; word-wrap improves visual wrapping without inserting newlines. See [[file:modernization-review.org][the experiment review]] for compatibility notes and rollback steps.
 
 #+begin_src emacs-lisp :tangle init.el
 (doom!
 
   :completion
-  (company +childframe)
-  (ivy +prescient -childframe
-       -fuzzy +icons)
+  (corfu +orderless +icons +dabbrev)
+  (vertico +icons)
 
   :ui
   doom
@@ -138,6 +138,7 @@ Only enabled modules are listed here. Use Doom's module documentation to browse 
   :editor
   file-templates
   snippets
+  word-wrap
 
   :emacs
   dired
@@ -164,6 +165,7 @@ Only enabled modules are listed here. Use Doom's module documentation to browse 
 
   :os
   (:if IS-MAC macos)
+  tty
 
   :lang
   common-lisp
@@ -207,7 +209,7 @@ Retain the existing credential-source reversal and desktop restoration policy, i
              mac-right-option-modifier  'alt
              mac-pass-control-to-system nil))
       (IS-LINUX
-       (setq x-meta-keysym 'super
+       (setq x-meta-keysym 'alt
              x-super-keysym 'meta)))
 
 (setq kill-whole-line t)
@@ -282,33 +284,96 @@ The dashboard face overrides prevent the theme's comment background from tinting
 
 * Navigation and editing
 
-** Buffers, search, and undo
+** Completion
 
-=C-x b= combines file buffers and recent files; =C-x C-b= lists buffers. The [[https://github.com/abo-abo/swiper/pull/2687][Counsel override]] still matters: the installed implementation does not abbreviate buffer paths before deduplication. Track visits so recent files follow navigation order.
+Corfu displays completion at point; Vertico handles minibuffer selection. Doom supplies Cape, Consult, Orderless, Marginalia, Embark, icons, popup documentation, and snippet completion. Type space-separated search terms in any order; fuzzy matching is optional through =~term=. =C-M-i= requests completion explicitly. Prescient retains learned minibuffer ranking while Orderless handles matching, and Corfu's history extension remembers in-buffer selections.
 
-=C-s= uses Doom's buffer search; =C-c s r/q= perform visual regexp replacement. =C-c C-g= opens Magit. =C-?= redoes changes, =M-g g= and =M-g M-g= jump to lines, and =M-g o= selects an outline heading.
+#+begin_src emacs-lisp :tangle packages.el
+(package! vertico-prescient)
+#+end_src
 
 #+begin_src emacs-lisp
-(map! "C-x b"   #'counsel-buffer-or-recentf
-  "C-x C-b" #'counsel-switch-buffer)
+(use-package! vertico-prescient
+  :after vertico
+  :init
+  (setq vertico-prescient-enable-filtering nil
+        prescient-save-file (doom-profile-cache-dir t "prescient-save.el"))
+  :config
+  (vertico-prescient-mode 1)
+  (prescient-persist-mode 1))
 
-(defun zz/counsel-buffer-or-recentf-candidates ()
-  "Return candidates for `counsel-buffer-or-recentf'."
-  (require 'recentf)
-  (recentf-mode)
-  (let ((buffers
-         (delq nil
-               (mapcar (lambda (b)
-                         (when (buffer-file-name b)
-                           (abbreviate-file-name (buffer-file-name b))))
-                       (delq (current-buffer) (buffer-list))))))
-    (append
-     buffers
-     (cl-remove-if (lambda (f) (member f buffers))
-                   (counsel-recentf-candidates)))))
+(after! cape
+  ;; Preserve Company's current-buffer-only fallback word search.
+  (setq cape-dabbrev-check-other-buffers nil))
 
-(advice-add #'counsel-buffer-or-recentf-candidates
-            :override #'zz/counsel-buffer-or-recentf-candidates)
+(after! corfu
+  ;; Preview candidates without committing them merely by continuing to type.
+  (setq corfu-preview-current t))
+#+end_src
+
+Keep Lua and LaTeX's specialized completion sources via Cape's supported Company-to-CAPF adapter. Company is retained as a backend library, without enabling its popup interface. Native completion continues to serve Emacs Lisp, Sly, ESS, Python, Racket, and LSP; shell buffers retain LSP completion, and Doom supplies Yasnippet candidates for snippets.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! company-lua :pin "29f6819de4d691e5fd0b62893a9f4fbc1c6fcb52")
+(package! company-auctex :pin "9400a2ec7459dde8cbf1a5d50dfee4e300ed7e18")
+(package! company-reftex :pin "42eb98c6504e65989635d95ab81b65b9d5798e76")
+(package! company-math :pin "3eb006874e309ff4076d947fcbd61bb6806aa508")
+#+end_src
+
+#+begin_src emacs-lisp
+(defun zz/add-company-capfs (&rest backends)
+  "Add BACKENDS to this buffer through Cape without enabling Company mode."
+  (require 'cape)
+  (dolist (backend backends)
+    (let ((capf (intern (format "zz/capf-%s" backend))))
+      (unless (fboundp capf)
+        (defalias capf (cape-company-to-capf backend)))
+      (add-hook 'completion-at-point-functions capf 10 t))))
+
+(defun zz/lua-completion-setup ()
+  "Retain Lua's built-in API completion without a language server."
+  (require 'company-lua)
+  (zz/add-company-capfs #'company-lua))
+(add-hook 'lua-mode-hook #'zz/lua-completion-setup)
+
+(defun zz/latex-completion-setup ()
+  "Retain AUCTeX and math completion alongside native CAPFs."
+  (require 'company-auctex)
+  (require 'company-math)
+  (zz/add-company-capfs #'company-auctex-environments
+                       #'company-auctex-macros
+                       #'+latex-symbols-company-backend))
+(add-hook 'LaTeX-mode-hook #'zz/latex-completion-setup)
+
+(defun zz/reftex-completion-setup ()
+  "Retain RefTeX label and citation completion."
+  (when reftex-mode
+    (require 'company-reftex)
+    (zz/add-company-capfs #'company-reftex-labels #'company-reftex-citations)))
+(add-hook 'reftex-mode-hook #'zz/reftex-completion-setup)
+#+end_src
+
+** Buffers, search, and undo
+
+=C-x b= combines buffers and recent files through Consult; it also makes non-file buffers available. =C-x C-b= lists only buffers. Consult handles recent-file deduplication, replacing the Counsel override. Track visits so recent files follow navigation order.
+
+=C-s= keeps Doom's region-aware buffer search, now backed by Consult. =C-c s r/q= retain visual regexp replacement. =C-c C-g= opens Magit. =C-?= redoes changes, =M-g g= and =M-g M-g= jump to lines, and =M-g o= selects an outline heading with live preview.
+
+#+begin_src emacs-lisp
+(defun zz/buffer-or-recentf ()
+  "Select a buffer or recent file with Consult."
+  (interactive)
+  (require 'consult)
+  (consult-buffer '(consult-source-buffer consult-source-recent-file)))
+
+(defun zz/switch-buffer ()
+  "Select an open buffer with Consult."
+  (interactive)
+  (require 'consult)
+  (consult-buffer '(consult-source-buffer)))
+
+(map! "C-x b" #'zz/buffer-or-recentf
+      "C-x C-b" #'zz/switch-buffer)
 #+end_src
 
 #+begin_src emacs-lisp :tangle packages.el
@@ -350,7 +415,14 @@ The dashboard face overrides prevent the theme's comment background from tinting
 (map! "M-g g" #'avy-goto-line)
 (map! "M-g M-g" #'avy-goto-line)
 
-(map! "M-g o" #'counsel-outline)
+(defun zz/outline ()
+  "Select a heading using the appropriate Consult command."
+  (interactive)
+  (if (derived-mode-p 'org-mode)
+      (progn (require 'consult-org) (consult-org-heading))
+    (consult-outline)))
+
+(map! "M-g o" #'zz/outline)
 #+end_src
 
 ** Matching parentheses with =%=
@@ -413,7 +485,7 @@ Inspired by [[https://www.emacswiki.org/emacs/NavigatingParentheses][NavigatingP
 
 ** Editing defaults
 
-Org files live in =~/org/=. Insert headings at point, log completed tasks in =LOGBOOK=, and use Org-aware =C-a=, =C-e=, and =C-k=. Speed commands work on any leading heading star. Disable electric indentation and automatic Company completion in prose buffers.
+Org files live in =~/org/=. Insert headings at point, log completed tasks in =LOGBOOK=, and use Org-aware =C-a=, =C-e=, and =C-k=. Speed commands work on any leading heading star. Disable electric indentation and automatic completion popups in prose buffers; manual completion remains available.
 
 #+begin_src emacs-lisp
 (setq org-directory "~/org/")
@@ -434,19 +506,29 @@ Org files live in =~/org/=. Insert headings at point, log completed tasks in =LO
 
 (add-hook! org-mode (electric-indent-local-mode -1))
 
-;; Disable automatic Company completion in prose modes.
-(after! company
-  (setq company-global-modes '(not org-mode markdown-mode)))
+(defun zz/prose-completion-setup ()
+  "Keep automatic completion quiet in Org and Markdown."
+  (when (derived-mode-p 'org-mode 'markdown-mode)
+    (setq-local corfu-auto nil)))
+
+(add-hook 'corfu-mode-hook #'zz/prose-completion-setup)
+(add-hook 'org-mode-hook #'zz/prose-completion-setup)
+(add-hook 'markdown-mode-hook #'zz/prose-completion-setup)
 #+end_src
 
 ** Display
 
-Wrap prose visually and use variable-pitch text. Mixed Pitch is configured with the fonts above. Doom's =+pretty= flag already enables Org Appear, which reveals markup under the cursor, so no additional package or hook is necessary.
+Wrap prose visually with Doom's word-wrap module and use variable-pitch text. Org and Markdown paragraphs stay on single physical lines; automatic hard wrapping is disabled, while manual =M-q= and =A-q= remain available. Mixed Pitch is configured with the fonts above. Doom's =+pretty= flag already enables Org Appear, which reveals markup under the cursor, so no additional package or hook is necessary.
 
 #+begin_src emacs-lisp
-(add-hook! org-mode :append
-  #'visual-line-mode
-  #'variable-pitch-mode)
+(defun zz/prose-wrapping-setup ()
+  "Wrap at the window edge without inserting newlines."
+  (auto-fill-mode -1)
+  (+word-wrap-mode 1))
+
+(add-hook 'org-mode-hook #'zz/prose-wrapping-setup t)
+(add-hook 'markdown-mode-hook #'zz/prose-wrapping-setup t)
+(add-hook 'org-mode-hook #'variable-pitch-mode t)
 #+end_src
 
 ** Files, notes, and Roam
@@ -525,14 +607,11 @@ Org 9.8's image handler now passes a filename description to the link formatter.
 
 ** Links between headings
 
-=C-c l l h= selects a heading with Counsel. Store readable =CUSTOM_ID= values and insert local =#id= links rather than UUID links. Existing IDs are retained; the title-derived format is intentionally unchanged for published anchors.
+=C-c l l h= selects a heading with standard completion (displayed by Vertico). Outline paths and line numbers distinguish duplicate titles. Store readable =CUSTOM_ID= values and insert local =#id= links rather than UUID links. Existing IDs are retained; the title-derived format is intentionally unchanged for published anchors.
 
 #+begin_src emacs-lisp
-(map! :after counsel :map org-mode-map
-  "C-c l l h" #'counsel-org-link)
-
-(after! counsel
-  (setq counsel-outline-display-style 'title))
+(map! :after org :map org-mode-map
+  "C-c l l h" #'zz/org-insert-heading-link)
 
 (after! org-id
   ;; Do not create ID if a CUSTOM_ID exists
@@ -562,18 +641,32 @@ If FORCE is t, always recreate the property."
         ;; otherwise, create it
         (zz/org-custom-id-create)))))
 
-;; Now override counsel-org-link-action
-(after! counsel
-  (defun counsel-org-link-action (x)
-    "Insert a link to X.
-
-X is expected to be a cons of the form (title . point), as passed
-by `counsel-org-link'.
-
-If X does not have a CUSTOM_ID, create it based on the headline
-title."
-    (let* ((id (zz/org-custom-id-get-create (cdr x))))
-      (org-insert-link nil (concat "#" id) (car x)))))
+(defun zz/org-insert-heading-link ()
+  "Select a heading and insert its readable CUSTOM_ID link at point."
+  (interactive)
+  (require 'org-id)
+  (let ((origin (copy-marker (point) t)) candidates)
+    (unwind-protect
+        (save-restriction
+          (widen)
+          (setq candidates
+                (org-map-entries
+                 (lambda ()
+                   (cons (format "%s [line %d]"
+                                 (string-join (org-get-outline-path t t) "/")
+                                 (line-number-at-pos))
+                         (point-marker)))))
+          (unless candidates (user-error "No headings in this buffer"))
+          (let* ((choice (completing-read "Link to heading: " candidates nil t))
+                 (target (cdr (assoc choice candidates)))
+                 (title (org-with-point-at target
+                          (nth 4 (org-heading-components))))
+                 (id (save-excursion (zz/org-custom-id-get-create target))))
+            (goto-char origin)
+            (org-insert-link nil (concat "#" id) title)))
+      (set-marker origin nil)
+      (dolist (candidate candidates)
+        (set-marker (cdr candidate) nil)))))
 #+end_src
 
 ** Links from macOS applications
@@ -1301,7 +1394,7 @@ Run Elvish in Vterm. Resolve it through Emacs' =exec-path=, retaining the previo
 
 ** Filling, annotations, and file formats
 
-=M-q= toggles paragraph filling; =A-q= unfills. Keep Annotate for external annotations, GIFT mode for quizzes, and Just mode for task files.
+=A-q= toggles paragraph filling; =M-q= unfills. Keep Annotate for external annotations, GIFT mode for quizzes, and Just mode for task files.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! unfill)
@@ -1311,8 +1404,8 @@ Run Elvish in Vterm. Resolve it through Emacs' =exec-path=, retaining the previo
 (use-package! unfill
   :defer t
   :bind
-  ("M-q" . unfill-toggle)
-  ("A-q" . unfill-paragraph))
+  ("A-q" . unfill-toggle)
+  ("M-q" . unfill-paragraph))
 #+end_src
 
 #+begin_src emacs-lisp :tangle packages.el
