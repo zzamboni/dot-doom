@@ -132,7 +132,6 @@ Only enabled modules are listed here. Use Doom's module documentation to browse 
   (popup +defaults)
   vi-tilde-fringe
   window-select
-  workspaces
   zen
 
   :editor
@@ -197,7 +196,7 @@ Only enabled modules are listed here. Use Doom's module documentation to browse 
 
 Use Command as Meta on macOS and swap the X Meta/Super modifiers on Linux. =C-k= removes the whole line when invoked at its beginning. Enable auto-save and backups, hide line numbers, and exit without a confirmation prompt.
 
-Retain the existing credential-source reversal and desktop restoration policy, including loading locked desktops. The reversal changes credential precedence and runs again on reload; replacing it with an explicit order is a separate policy decision.
+Use Desktop to restore files and window layouts automatically; Doom's workspaces module is disabled because separate workspace contexts are not needed. Retain loading locked desktops and the existing credential-source reversal. The reversal changes credential precedence and runs again on reload; replacing it with an explicit order is a separate policy decision.
 
 #+begin_src emacs-lisp
 (setq user-full-name "Diego Zamboni"
@@ -1394,7 +1393,7 @@ Run Elvish in Vterm. Resolve it through Emacs' =exec-path=, retaining the previo
 
 ** Filling, annotations, and file formats
 
-=A-q= toggles paragraph filling; =M-q= unfills. Keep Annotate for external annotations, GIFT mode for quizzes, and Just mode for task files.
+=M-q= toggles paragraph filling; =A-q= unfills. Keep Annotate for external annotations, GIFT mode for quizzes, and Just mode for task files.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! unfill)
@@ -1404,8 +1403,8 @@ Run Elvish in Vterm. Resolve it through Emacs' =exec-path=, retaining the previo
 (use-package! unfill
   :defer t
   :bind
-  ("A-q" . unfill-toggle)
-  ("M-q" . unfill-paragraph))
+  ("M-q" . unfill-toggle)
+  ("A-q" . unfill-paragraph))
 #+end_src
 
 #+begin_src emacs-lisp :tangle packages.el

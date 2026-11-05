@@ -821,8 +821,8 @@ end repeat\"")))
 (use-package! unfill
   :defer t
   :bind
-  ("A-q" . unfill-toggle)
-  ("M-q" . unfill-paragraph))
+  ("M-q" . unfill-toggle)
+  ("A-q" . unfill-paragraph))
 
 (use-package! chezmoi
   :defer t)

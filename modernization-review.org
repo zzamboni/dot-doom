@@ -59,7 +59,7 @@ The UI changes are intentional: different grouping, labels, previews and selecti
 | =(lsp +eglot)= | Consider separately. Keeping lsp-mode preserves current server integration and related commands while completion changes. |
 | Language =+tree-sitter= flags | Trial one language at a time after installing its grammar. Major-mode names, hooks and indentation can change; existing Typst TS support does not prove all grammars are installed. |
 | Doom literate module | Keep Org Auto Tangle for now: your tangling policy applies to other Org documents too. |
-| Desktop versus workspaces | Both remain enabled. Resolve their overlapping restoration policies separately; the Hugo layout fix remains in place. |
+| Desktop versus workspaces | Keep Desktop's automatic restoration; disable workspaces by preference. The custom C-x b picker lists buffers globally, so it did not demonstrate workspace isolation. Existing workspace snapshots are retained on disk. |
 | Auth-source ordering | Existing nreverse behavior is still reload-sensitive. Choose an explicit desired order before replacing it. |
 
 The example also enables Evil. That is a different editing model, not an upgrade requirement; your Emacs bindings remain. No formatter-on-save, blanket grammar installation, package unpinning, or exporter changes were introduced.

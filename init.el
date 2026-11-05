@@ -20,7 +20,6 @@
   (popup +defaults)
   vi-tilde-fringe
   window-select
-  workspaces
   zen
 
   :editor
