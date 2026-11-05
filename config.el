@@ -470,27 +470,24 @@ title."
   :config
   (setq org-hugo-use-code-for-kbd t))
 
-(after! ox-hugo
-  (defun zz/org-hugo-copy-asset-to-bundle-root (original path info)
-    "Copy external bundle assets to its root; otherwise call ORIGINAL.
-PATH and INFO are the arguments to `org-hugo--attachment-rewrite-maybe'."
-    (let ((source (expand-file-name (url-unhex-string path))))
-      (if (and (plist-get info :hugo-bundle)
-               (member (file-name-extension source)
-                       org-hugo-external-file-extensions-allowed-for-copying)
-               (file-regular-p source)
-               (not (string-match-p "/static/" (file-truename source))))
-          (let* ((bundle (org-hugo--get-pub-dir info))
-                 (name (file-name-nondirectory source))
-                 (destination (expand-file-name name bundle)))
-            (if (file-in-directory-p source bundle)
-                (funcall original path info)
-              (when (file-newer-than-file-p source destination)
-                (copy-file source destination t))
-              name))
-        (funcall original path info))))
-  (advice-add 'org-hugo--attachment-rewrite-maybe :around
-              #'zz/org-hugo-copy-asset-to-bundle-root))
+(defcustom zz/org-hugo-directory-style 'abbreviated
+  "Directory representation for Hugo export: canonical or abbreviated.
+Abbreviated preserves flat assets under HOME with ox-hugo 0.12.1,
+but relies on its path-comparison bug, not a supported layout option."
+  :type '(choice (const canonical) (const abbreviated))
+  :group 'org-export-hugo)
+
+(defun zz/org-hugo-normalize-export-directory (backend)
+  "Normalize the temporary export buffer's directory for Hugo BACKEND."
+  (when (org-export-derived-backend-p backend 'hugo)
+    (setq default-directory
+          (if (eq zz/org-hugo-directory-style 'abbreviated)
+              (abbreviate-file-name (file-truename default-directory))
+            (file-truename default-directory)))))
+
+(after! ox
+  (add-hook 'org-export-before-processing-functions
+            #'zz/org-hugo-normalize-export-directory))
 
 (after! org-capture
   (defun org-hugo-new-subtree-post-capture-template ()

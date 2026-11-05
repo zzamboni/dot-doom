@@ -11,10 +11,12 @@
 (defmacro zz/hugo-test-site (&rest body)
   "Run BODY in a temporary Hugo site, preserving artifacts on failure."
   (declare (indent 0))
-  `(let* ((root (make-temp-file "hugo-bundle-test-" t))
+  `(let* ((root (make-temp-file
+                 (expand-file-name ".hugo-bundle-test-" doom-user-dir) t))
           (site (expand-file-name "site/" root))
           (source (expand-file-name "content-org/" site))
           (default-directory source)
+          (zz/org-hugo-directory-style 'abbreviated)
           (org-id-locations-file (expand-file-name "org-id-locations" root))
           (org-id-locations (make-hash-table :test #'equal))
           (org-id-files nil)
@@ -35,7 +37,7 @@
   (with-temp-file path (insert contents)))
 
 (ert-deftest zz/hugo-flat-assets-through-real-and-symlink-paths ()
-  ;; This exercises the exporter, not only the advised copy helper.
+  ;; Exercise the export hook with resolved and symlink directory names.
   (zz/hugo-test-site
     (let ((alias (expand-file-name "alias" root)))
       (make-symbolic-link source alias)
@@ -66,6 +68,7 @@
   (zz/hugo-test-site
     (with-temp-buffer
       (org-mode)
+      (zz/org-hugo-normalize-export-directory 'hugo)
       (let* ((info (list :hugo-base-dir site :hugo-section "post" :hugo-bundle "bundle"))
              (shared (expand-file-name "static/shared/logo.png" site))
              (existing (expand-file-name "content/post/bundle/nested/existing.png" site)))
@@ -80,6 +83,7 @@
   (zz/hugo-test-site
     (with-temp-buffer
       (org-mode)
+      (zz/org-hugo-normalize-export-directory 'hugo)
       (let* ((plain (list :hugo-base-dir site :hugo-section "post"))
              (bundle (append plain '(:hugo-bundle "bundle")))
              (image (expand-file-name "images/photo.png" source))
@@ -94,6 +98,7 @@
   (zz/hugo-test-site
     (with-temp-buffer
       (org-mode)
+      (zz/org-hugo-normalize-export-directory 'hugo)
       (let* ((info (list :hugo-base-dir site :hugo-section "post" :hugo-bundle "bundle"))
              (asset (expand-file-name "images/photo.png" source))
              (destination (expand-file-name "content/post/bundle/photo.png" site)))

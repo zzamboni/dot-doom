@@ -924,42 +924,37 @@ image. Keep the existing capture target and front matter conventions.
   (setq org-hugo-use-code-for-kbd t))
 #+end_src
 
-Keep copied images and attachments beside the bundle's =index.md=. By default,
-ox-hugo preserves source subdirectories when their resolved paths match the
-buffer's =default-directory= literally. Emacs can abbreviate this directory to
-=~/...= at the end of startup, causing ox-hugo to fall back to bare filenames;
-opening the file afterward can instead preserve subdirectories. This occurs
-with both the original and reorganized configuration. Make the flat layout
-explicit instead of relying on the buffer's directory representation.
+Make Hugo's asset layout independent of whether Emacs restored the source at
+startup. Org's documented =org-export-before-processing-functions= hook runs
+in the temporary export buffer, leaving the source buffer's directory unchanged.
 
-This advice only handles copyable local files imported into a bundle. Shared
-=static/= assets, files already inside the destination bundle, and non-bundle
-exports retain ox-hugo's handling. Use distinct filenames within each bundle.
-Recheck this private helper when upgrading ox-hugo.
+Set =zz/org-hugo-directory-style= to =canonical= for ox-hugo's nested asset
+layout, or =abbreviated= (the current experiment) to preserve flat copying for
+this site under the home directory. Abbreviation deliberately exploits ox-hugo
+0.12.1's literal path comparison; an upstream fix could change its behavior.
+It does not guarantee flattening outside the home directory or override the
+exporter's separate rules for static files and bundle-named directories.
 
-#+name: hugo-flat-bundle-assets
+#+name: hugo-export-directory
 #+begin_src emacs-lisp
-(after! ox-hugo
-  (defun zz/org-hugo-copy-asset-to-bundle-root (original path info)
-    "Copy external bundle assets to its root; otherwise call ORIGINAL.
-PATH and INFO are the arguments to `org-hugo--attachment-rewrite-maybe'."
-    (let ((source (expand-file-name (url-unhex-string path))))
-      (if (and (plist-get info :hugo-bundle)
-               (member (file-name-extension source)
-                       org-hugo-external-file-extensions-allowed-for-copying)
-               (file-regular-p source)
-               (not (string-match-p "/static/" (file-truename source))))
-          (let* ((bundle (org-hugo--get-pub-dir info))
-                 (name (file-name-nondirectory source))
-                 (destination (expand-file-name name bundle)))
-            (if (file-in-directory-p source bundle)
-                (funcall original path info)
-              (when (file-newer-than-file-p source destination)
-                (copy-file source destination t))
-              name))
-        (funcall original path info))))
-  (advice-add 'org-hugo--attachment-rewrite-maybe :around
-              #'zz/org-hugo-copy-asset-to-bundle-root))
+(defcustom zz/org-hugo-directory-style 'abbreviated
+  "Directory representation for Hugo export: canonical or abbreviated.
+Abbreviated preserves flat assets under HOME with ox-hugo 0.12.1,
+but relies on its path-comparison bug, not a supported layout option."
+  :type '(choice (const canonical) (const abbreviated))
+  :group 'org-export-hugo)
+
+(defun zz/org-hugo-normalize-export-directory (backend)
+  "Normalize the temporary export buffer's directory for Hugo BACKEND."
+  (when (org-export-derived-backend-p backend 'hugo)
+    (setq default-directory
+          (if (eq zz/org-hugo-directory-style 'abbreviated)
+              (abbreviate-file-name (file-truename default-directory))
+            (file-truename default-directory)))))
+
+(after! ox
+  (add-hook 'org-export-before-processing-functions
+            #'zz/org-hugo-normalize-export-directory))
 #+end_src
 
 #+begin_src emacs-lisp
