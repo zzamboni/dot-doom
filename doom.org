@@ -926,9 +926,11 @@ image. Keep the existing capture target and front matter conventions.
 
 Keep copied images and attachments beside the bundle's =index.md=. By default,
 ox-hugo preserves source subdirectories when their resolved paths match the
-buffer's =default-directory=. Opening the same source through =~/Personal/=
-(a symlink) or =~/Dropbox/Personal/= can therefore change the exported layout.
-Make the flat layout explicit instead of relying on that path mismatch.
+buffer's =default-directory= literally. Emacs can abbreviate this directory to
+=~/...= at the end of startup, causing ox-hugo to fall back to bare filenames;
+opening the file afterward can instead preserve subdirectories. This occurs
+with both the original and reorganized configuration. Make the flat layout
+explicit instead of relying on the buffer's directory representation.
 
 This advice only handles copyable local files imported into a bundle. Shared
 =static/= assets, files already inside the destination bundle, and non-bundle
