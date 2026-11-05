@@ -91,3 +91,21 @@ are retained in `/tmp/doom-review/`; the successful suite log is
 `regression-4.log`. macOS application automation, live service calls, and every
 language-server/compiler integration were not exercised on this Linux machine.
 No commits were created.
+
+## Follow-up: Hugo bundle assets (2026-11-05)
+
+The initial Hugo smoke test lacked copied assets and missed a path-dependent
+layout difference. In the installed ox-hugo, opening the website through
+`~/Dropbox/Personal/` preserves `images/` and `attachments/` subdirectories;
+opening it through the `~/Personal/` symlink can flatten them because ox-hugo
+compares resolved asset paths against the unresolved buffer directory. Both
+behaviors were reproduced without changing exporter versions. No explicit flat
+layout setting existed before the cleanup.
+
+The Hugo section now explicitly copies external bundle assets beside `index.md`,
+preserving upstream handling of static files, existing bundle resources, and
+non-bundle exports. `tests/hugo-bundle-layout.el` covers real and symlink paths,
+images, PDF attachments, copy updates, and those exceptions. A fresh Doom session
+also exported two real website posts through both paths to temporary sites: all
+five checks passed. Logs and exported samples are in `/tmp/doom-hugo-layout/`.
+The website's working tree was not modified; re-export after loading the fix.

@@ -922,7 +922,45 @@ image. Keep the existing capture target and front matter conventions.
   :after ox
   :config
   (setq org-hugo-use-code-for-kbd t))
+#+end_src
 
+Keep copied images and attachments beside the bundle's =index.md=. By default,
+ox-hugo preserves source subdirectories when their resolved paths match the
+buffer's =default-directory=. Opening the same source through =~/Personal/=
+(a symlink) or =~/Dropbox/Personal/= can therefore change the exported layout.
+Make the flat layout explicit instead of relying on that path mismatch.
+
+This advice only handles copyable local files imported into a bundle. Shared
+=static/= assets, files already inside the destination bundle, and non-bundle
+exports retain ox-hugo's handling. Use distinct filenames within each bundle.
+Recheck this private helper when upgrading ox-hugo.
+
+#+name: hugo-flat-bundle-assets
+#+begin_src emacs-lisp
+(after! ox-hugo
+  (defun zz/org-hugo-copy-asset-to-bundle-root (original path info)
+    "Copy external bundle assets to its root; otherwise call ORIGINAL.
+PATH and INFO are the arguments to `org-hugo--attachment-rewrite-maybe'."
+    (let ((source (expand-file-name (url-unhex-string path))))
+      (if (and (plist-get info :hugo-bundle)
+               (member (file-name-extension source)
+                       org-hugo-external-file-extensions-allowed-for-copying)
+               (file-regular-p source)
+               (not (string-match-p "/static/" (file-truename source))))
+          (let* ((bundle (org-hugo--get-pub-dir info))
+                 (name (file-name-nondirectory source))
+                 (destination (expand-file-name name bundle)))
+            (if (file-in-directory-p source bundle)
+                (funcall original path info)
+              (when (file-newer-than-file-p source destination)
+                (copy-file source destination t))
+              name))
+        (funcall original path info))))
+  (advice-add 'org-hugo--attachment-rewrite-maybe :around
+              #'zz/org-hugo-copy-asset-to-bundle-root))
+#+end_src
+
+#+begin_src emacs-lisp
 (after! org-capture
   (defun org-hugo-new-subtree-post-capture-template ()
     "Returns `org-capture' template string for new Hugo post.
