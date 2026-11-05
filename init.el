@@ -72,9 +72,5 @@
   (sh +lsp)
   (yaml +lsp)
 
-  :app
-  everywhere
-  irc
-
   :config
   (default +bindings +smartparens))

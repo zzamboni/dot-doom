@@ -52,7 +52,6 @@ This is my [[https://leanpub.com/lit-config][literate]] Doom Emacs configuration
   - [[#additional-languages-and-babel][Additional languages and Babel]]
   - [[#typst-and-dockerfiles][Typst and Dockerfiles]]
 - [[#desktop-and-development-tools][Desktop and development tools]]
-  - [[#emacs-everywhere][Emacs Everywhere]]
   - [[#magit-repository-overview][Magit repository overview]]
   - [[#encryption][Encryption]]
   - [[#text-editing-and-timing][Text editing and timing]]
@@ -183,10 +182,6 @@ Only enabled modules are listed here. Use Doom's module documentation to browse 
   rust
   (sh +lsp)
   (yaml +lsp)
-
-  :app
-  everywhere
-  irc
 
   :config
   (default +bindings +smartparens))
@@ -1311,20 +1306,6 @@ Typst TS mode requires a compatible Typst tree-sitter grammar. Dockerfile mode r
 #+end_src
 
 * Desktop and development tools
-
-** Emacs Everywhere
-
-Use Org mode in Emacs Everywhere buffers. Doom's =:app everywhere= supplies the integration; the explicit =:pin nil= override intentionally keeps this package unpinned and is retained.
-
-#+begin_src emacs-lisp :tangle packages.el
-(package! emacs-everywhere :pin nil)
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package! emacs-everywhere
-  :config
-  (setq emacs-everywhere-major-mode-function #'org-mode))
-#+end_src
 
 ** Magit repository overview
 

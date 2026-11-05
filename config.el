@@ -777,10 +777,6 @@ end repeat\"")))
 (defun plain-pipe-for-process () (setq-local process-connection-type nil))
 (add-hook 'compilation-mode-hook 'plain-pipe-for-process)
 
-(use-package! emacs-everywhere
-  :config
-  (setq emacs-everywhere-major-mode-function #'org-mode))
-
 (after! magit
   (setq zz/repolist
         "~/.elvish/package-data/elvish-themes/chain-summary-repos.json")

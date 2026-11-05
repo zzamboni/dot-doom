@@ -65,8 +65,6 @@
 
 (package! dockerfile-mode)
 
-(package! emacs-everywhere :pin nil)
-
 (package! iedit)
 
 (package! unfill)
