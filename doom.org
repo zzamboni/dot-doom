@@ -73,9 +73,8 @@ Edit this file, then run =C-c C-v t= (=org-babel-tangle=). Do not edit the gener
 | =init.el= | Enabled Doom modules and flags | =doom sync=, restart |
 | =packages.el= | Additional packages and recipe overrides | =doom sync=, restart |
 | =config.el= | Personal settings, commands, and bindings | Restart or =M-x doom/reload= |
-| =~/.slynkrc= | Sly server setting for Common Lisp | Restart the Sly connection |
 
-The Common Lisp section also tangles =~/.slynkrc= outside this repository. =custom.el= holds Emacs-managed settings, including trusted themes and file-local variables; keep those separate from this source.
+=custom.el= holds Emacs-managed settings, including trusted themes and file-local variables; keep those separate from this source.
 
 Set variables needed during package initialization before loading the package. Use =after!= or =use-package!= for settings that depend on its definitions. Keep structure setters and Transient macros inside the existing deferred forms: expanding them too early can break startup after an upgrade.
 
@@ -1169,8 +1168,6 @@ Use Smartparens strict mode for Lisp buffers and Paredit-style bindings. =M-(= e
 
 Install modes for Elvish, Fish, CFEngine, D2, Zig, and package linting, with Babel support for Elvish and CFEngine. Doom's enabled modules supply the other languages. D2 uses the current directory for temporary files.
 
-The Sly setting tangles to =~/.slynkrc= and disables its dedicated output stream for Common Lisp REPL compatibility.
-
 #+begin_src emacs-lisp :tangle packages.el
 (package! elvish-mode)
 (package! ob-elvish)
@@ -1195,10 +1192,6 @@ The Sly setting tangles to =~/.slynkrc= and disables its dedicated output stream
 (use-package! d2-mode)
 (after! d2-mode
   (setq d2-tmp-dir "."))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/.slynkrc
-(setf slynk:*use-dedicated-output-stream* nil)
 #+end_src
 
 #+begin_src emacs-lisp :tangle packages.el
