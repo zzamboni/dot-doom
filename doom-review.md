@@ -95,16 +95,9 @@ No commits were created.
 ## Follow-up: Hugo bundle assets (2026-11-05)
 
 The original smoke test lacked copied assets. The first follow-up demonstrated
-ox-hugo's sensitivity to directory strings but incorrectly attributed the user's
-regression to opening the file through a symlink. Doom's
-`find-file-visit-truename` resolves both opening paths to the same filename;
-that explanation did not establish a cause in the cleanup changes.
-
-A second investigation compared actual `main` and `doom-org-cleanup` checkouts,
-with the flat-layout advice disabled, in fresh Emacs processes. Every full export
-used the real website source and its included files, with only `HUGO_BASE_DIR`
-changed in memory to a new temporary output directory. No website files were
-saved or deleted.
+ox-hugo's sensitivity to directory strings and startup condition of the exported
+file, which has an impact on whether attachments and images are copied by
+ox-hugo in a flat structure (preferred) or preserving the original sub-path:
 
 | File-opening condition | Original `main` | Cleanup without advice |
 | --- | --- | --- |
@@ -118,24 +111,27 @@ string does not match the absolute path, so ox-hugo falls back to the basename.
 The buffer's filename can remain canonical in either case. The running user's
 buffer also had this combination: canonical filename, abbreviated directory.
 
-For matching conditions, the complete exports differed between branches only in
-`post/my-doom-emacs-configuration-with-commentary/index.md` and the removed splash
-image. No changed configuration setting was identified as causing the layout
-switch. The tests demonstrate a startup/buffer-state dependency, but do not prove
-why the user's particular restarts produced different states.
-
 Inspect the relevant state in the source buffer with `M-:`:
 
 ```elisp
 (list buffer-file-name default-directory (file-truename default-directory))
 ```
 
-The existing explicit flat-layout advice is retained unchanged. It avoids this
-state dependency, preserving upstream handling of static files, existing bundle
-resources, and non-bundle exports. `tests/hugo-bundle-layout.el` tests that policy;
-its synthetic directory cases do not represent Doom's normal file-opening path.
-Full-export outputs, branch snapshots, scripts, and traces for this investigation
-are retained in `/tmp/doom-hugo-cause/`. After correcting the documentation,
-tangling left all generated Lisp unchanged, `git diff --check` passed, and the
-five Hugo regression tests passed in a fresh Doom session (`policy-tests.log`).
-The checkout is back on `doom-org-cleanup`. No commits were created.
+The fix to make this consistent was to implement the directory-normalization
+hook described below. `tests/hugo-bundle-layout.el` covers the asset cases; its
+synthetic directory cases do not represent Doom's normal file-opening path.
+
+## Follow-up: directory normalization experiment
+
+Replaced the private copying override with Org's documented
+`org-export-before-processing-functions` hook. It normalizes the directory only
+in the temporary Hugo export buffer. `zz/org-hugo-directory-style` defaults to
+`abbreviated`, preserving flat assets for this website under HOME; `canonical`
+consistently preserves source subdirectories. **Abbreviation still deliberately
+relies on ox-hugo's comparison bug** and is not a supported flat-layout policy.
+All copying remains with ox-hugo.
+
+Validation on `doom-org-cleanup`: both directory-mode tests and all five bundle
+regression tests (including real website sample exports) passed in fresh Doom
+sessions. Tangled the configuration and passed `git diff --check`. Logs are in
+`/tmp/hugo-cleanup-{abbreviated,canonical,bundle}.log`. No commits were created.
