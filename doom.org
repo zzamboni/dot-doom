@@ -111,7 +111,7 @@ After edits, tangle, run =git diff --check=, inspect the generated diff, and tes
 
 * Enabled Doom modules
 
-Only enabled modules are listed here. See Doom's =init-example.el= and the module documentation to see all the options. I don't use Evil mode so it's absent. I recently did an AI-assisted "modernization" of my configuration, replacing Consul + Ivy with Corfu + Vertico, which seem to work quite well so far.
+Only enabled modules are listed here. See Doom's [[https://github.com/doomemacs/core/blob/master/static/init.example.el][init-example.el]] and the [[https://github.com/doomemacs/modules][module documentation]] to see all the options. I don't use Evil mode so it's absent. I recently did an AI-assisted "modernization" of my configuration, replacing Consul + Ivy with Corfu + Vertico while keeping all my custom keybindings. Seems to work quite well so far.
 
 #+begin_src emacs-lisp :tangle init.el
 (doom!
