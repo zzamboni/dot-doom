@@ -63,8 +63,11 @@
     (org-mode)
     (should (eq (key-binding (kbd "C-c l l h")) #'zz/org-insert-heading-link))
     (should (eq (key-binding (kbd "C-y")) #'zz/org-smart-yank))
-    (should (eq (key-binding (kbd "C-c e")) #'zz/org-export-or-eval))
-    (should (eq (key-binding (kbd "C-c C-e")) #'org-export-dispatch))))
+    (should (eq (key-binding (kbd "C-c e")) #'+eval/line-or-region))
+    (should (eq (key-binding (kbd "C-c C-e")) #'zz/org-export-menu))
+    (require 'transient)
+    (should (eq (plist-get (cdr (transient-get-suffix 'zz/org-export-menu "e")) :command)
+                #'org-export-dispatch))))
 
 (ert-deftest zz/modern-buffer-sources ()
   (let (seen)

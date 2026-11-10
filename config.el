@@ -487,17 +487,21 @@ If FORCE is t, always recreate the property."
            (visible (and (member "--visible" args) t))
            (body (and (member "--body" args) t))
            (backend (pcase format
-                      ('typst 'ox-typst) ('latex 'ox-latex) ('html 'ox-html)))
+                      ('typst 'ox-typst) ('latex 'ox-latex) ('html 'ox-html)
+                      ('markua-book 'ox-leanpub)))
            (command (pcase format
                       ('typst #'org-typst-export-to-pdf)
                       ('latex #'org-latex-export-to-pdf)
-                      ('html #'org-html-export-to-html))))
+                      ('html #'org-html-export-to-html)
+                      ('markua-book #'org-leanpub-book-export-markua))))
       (require backend)
-      (let ((file (funcall command nil subtree visible body)))
+      (let ((file (if (eq format 'markua-book)
+                      (funcall command subtree visible)
+                    (funcall command nil subtree visible body))))
         (when (and open file) (org-open-file file)))))
 
   (transient-define-prefix zz/org-export-menu ()
-    "Export this Org document or Hugo post."
+    "Export this Org document, Hugo post, or Leanpub book."
     ["Document options"
      ("-s" "Subtree only" "--subtree")
      ("-v" "Visible only" "--visible")
@@ -512,20 +516,16 @@ If FORCE is t, always recreate the property."
                             (require 'ox-hugo) (org-hugo-export-wim-to-md)))
       ("A" "All posts" (lambda () (interactive)
                          (require 'ox-hugo) (org-hugo-export-wim-to-md t)))]
+     ["Leanpub"
+      ("m" "Markua book" (lambda () (interactive) (zz/org-export-run 'markua-book)))]
      ["Other"
       ("e" "Standard dispatcher" org-export-dispatch)
       ("q" "Quit" transient-quit-one)]]))
 
-;; Doom's leader map takes precedence over major-mode bindings for C-c e.
-;; Dispatch by mode so evaluation remains available outside Org buffers.
-(defun zz/org-export-or-eval ()
-  "Open the export menu in Org, otherwise evaluate the line or region."
-  (interactive)
-  (if (derived-mode-p 'org-mode)
-      (progn (require 'transient) (zz/org-export-menu))
-    (call-interactively #'+eval/line-or-region)))
-
-(map! :leader :desc "Export (Org) / evaluate" "e" #'zz/org-export-or-eval)
+(after! org
+  ;; Load the prefix definition before binding it directly.
+  (require 'transient)
+  (map! :map org-mode-map "C-c C-e" #'zz/org-export-menu))
 
 (after! ox-latex
   (setq org-latex-compiler "xelatex"

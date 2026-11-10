@@ -812,7 +812,7 @@ The =i= and =l= templates capture an inbox item, optionally with its source link
 
 ** Standard export menu
 
-Hide Org, iCalendar, and ODT from =C-c C-e= while leaving their backends and commands available. Delay both expansion and execution of each structure setter: =ox= may not be loaded when Doom expands the surrounding configuration.
+Hide Org, iCalendar, and ODT from the standard export dispatcher while leaving their backends and commands available. Delay both expansion and execution of each structure setter: =ox= may not be loaded when Doom expands the surrounding configuration.
 
 #+begin_src emacs-lisp
 (after! ox-org
@@ -833,7 +833,7 @@ Hide Org, iCalendar, and ODT from =C-c C-e= while leaving their backends and com
 
 ** Transient export menu
 
-=C-c e= opens =zz/org-export-menu= in Org and retains Doom's evaluation command elsewhere. The leader binding is deliberate: it takes precedence over a plain Org mode binding. Toggle subtree, visible-only, and body-only output for document exporters. Hugo uses its own post/all-posts scope. =e= opens the standard dispatcher.
+The standard Org export menu becomes a bit unwieldy when many exporter modules are available. I'd like to have those available, but I don't use them very often, so I defined a new custom export menu using Transient, which includes only my most commonly-used exporters: Leanpub Markua book export, Hugo posts, and Typst/LaTeX export to PDF. It also offers a key to open the standard export menu in case it's ever needed.
 
 #+begin_src emacs-lisp
 (after! transient
@@ -844,17 +844,21 @@ Hide Org, iCalendar, and ODT from =C-c C-e= while leaving their backends and com
            (visible (and (member "--visible" args) t))
            (body (and (member "--body" args) t))
            (backend (pcase format
-                      ('typst 'ox-typst) ('latex 'ox-latex) ('html 'ox-html)))
+                      ('typst 'ox-typst) ('latex 'ox-latex) ('html 'ox-html)
+                      ('markua-book 'ox-leanpub)))
            (command (pcase format
                       ('typst #'org-typst-export-to-pdf)
                       ('latex #'org-latex-export-to-pdf)
-                      ('html #'org-html-export-to-html))))
+                      ('html #'org-html-export-to-html)
+                      ('markua-book #'org-leanpub-book-export-markua))))
       (require backend)
-      (let ((file (funcall command nil subtree visible body)))
+      (let ((file (if (eq format 'markua-book)
+                      (funcall command subtree visible)
+                    (funcall command nil subtree visible body))))
         (when (and open file) (org-open-file file)))))
 
   (transient-define-prefix zz/org-export-menu ()
-    "Export this Org document or Hugo post."
+    "Export this Org document, Hugo post, or Leanpub book."
     ["Document options"
      ("-s" "Subtree only" "--subtree")
      ("-v" "Visible only" "--visible")
@@ -869,25 +873,26 @@ Hide Org, iCalendar, and ODT from =C-c C-e= while leaving their backends and com
                             (require 'ox-hugo) (org-hugo-export-wim-to-md)))
       ("A" "All posts" (lambda () (interactive)
                          (require 'ox-hugo) (org-hugo-export-wim-to-md t)))]
+     ["Leanpub"
+      ("m" "Markua book" (lambda () (interactive) (zz/org-export-run 'markua-book)))]
      ["Other"
       ("e" "Standard dispatcher" org-export-dispatch)
       ("q" "Quit" transient-quit-one)]]))
 
-;; Doom's leader map takes precedence over major-mode bindings for C-c e.
-;; Dispatch by mode so evaluation remains available outside Org buffers.
-(defun zz/org-export-or-eval ()
-  "Open the export menu in Org, otherwise evaluate the line or region."
-  (interactive)
-  (if (derived-mode-p 'org-mode)
-      (progn (require 'transient) (zz/org-export-menu))
-    (call-interactively #'+eval/line-or-region)))
+#+end_src
 
-(map! :leader :desc "Export (Org) / evaluate" "e" #'zz/org-export-or-eval)
+I bind the new menu to =C-c C-e= (the same key originally used by the standard menu).
+
+#+begin_src emacs-lisp
+(after! org
+  ;; Load the prefix definition before binding it directly.
+  (require 'transient)
+  (map! :map org-mode-map "C-c C-e" #'zz/org-export-menu))
 #+end_src
 
 ** LaTeX PDF with Tectonic
 
-=C-c C-e l p= exports a PDF; =l o= also opens it. Tectonic must be on Emacs' =exec-path=. It downloads missing TeX resources and handles reruns automatically. Select =xelatex= for Org's engine-specific output because Tectonic uses XeTeX.
+=C-c C-e l= exports a PDF. In the standard dispatcher (=C-c C-e e=), =l p= exports a PDF and =l o= also opens it. Tectonic must be on Emacs' =exec-path=. It downloads missing TeX resources and handles reruns automatically. Select =xelatex= for Org's engine-specific output because Tectonic uses XeTeX.
 
 #+begin_src emacs-lisp
 (after! ox-latex
@@ -898,7 +903,7 @@ Hide Org, iCalendar, and ODT from =C-c C-e= while leaving their backends and com
 
 ** Typst PDF
 
-=ox-typst= provides Typst export; =C-c e y= uses it from the custom menu. The landscape, two-column template, fonts, title, and footer for the printable reference are kept in [[https://github.com/zzamboni/dot-doom/blob/main/cheatsheet.org][cheatsheet.org]], not applied globally to other documents. The =typst= executable must be on Emacs' =exec-path=. Tree-sitter editing support is configured with the other language modes below.
+=ox-typst= provides Typst export; =C-c C-e y= uses it from the custom menu. The landscape, two-column template, fonts, title, and footer for the printable reference are kept in [[https://github.com/zzamboni/dot-doom/blob/main/cheatsheet.org][cheatsheet.org]], not applied globally to other documents. The =typst= executable must be on Emacs' =exec-path=. Tree-sitter editing support is configured with the other language modes below.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! ox-typst)
@@ -1027,7 +1032,7 @@ Use my local =ox-leanpub= checkout for Markua book export. Its book commands cre
 
 Doom's =+present= flag supplies =org-re-reveal=. The headline-number helper ignores =noexport= headings and supplies the slide anchor. The refresh command exports the document and refreshes a matching Brave tab using =osascript=; this browser integration is macOS-only, even though Reveal export works on Linux.
 
-Open the exported presentation in Brave first (=C-c C-e v b=). To refresh on save, add this trusted file-local hook to that presentation:
+Open the exported presentation in the web browser first (=C-c C-e e v b=). To refresh on save, add this trusted file-local hook to that presentation:
 
 #+begin_example
 ,* COMMENT Local variables :ARCHIVE:noexport:

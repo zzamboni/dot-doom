@@ -41,7 +41,7 @@ Vertico improves composability: commands using standard completion receive the s
 | =C-;= in the minibuffer | Embark actions for the selected candidate. |
 | =C-c C-e= in a search minibuffer | Export results to an editable buffer; useful for project-wide replacements. |
 | =C-S-r= | Resume a Vertico session. |
-| =C-c e= / =C-c C-e= in Org | Existing custom export menu / standard Org export dispatcher. |
+| =C-c C-e= in Org | Custom Transient export menu; =e= opens the standard dispatcher. =C-c e= keeps Doom’s evaluation command. |
 | =M-q= / =A-q= | Existing fill toggle / unfill commands. |
 
 Try matching =alpha beta= against a name containing both terms in either order. Fuzzy matching is opt-in with =~term=; it is not globally enabled. Consult grep searches use =#search terms#filter terms= to separate the external search from further candidate filtering. Native completion commands such as =M-x consult-yank-pop= and =M-x consult-imenu= are also worth exploring.

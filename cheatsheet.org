@@ -42,8 +42,8 @@
 | Finish capture      | =C-c C-c=     | =org-capture-finalize= — jump to the new post.            |
 | Cancel capture      | =C-c C-k=     | =org-capture-kill=                                        |
 | Export current post | =C-x C-s=     | =save-buffer= (=org-hugo-auto-export= is enabled).        |
-|                     | =C-c C-e H H= | =org-hugo-export-wim-to-md=                               |
-| Export all posts    | =C-c C-e H A= | Review changes before committing!                         |
+|                     | =C-c C-e H= | =org-hugo-export-wim-to-md=                               |
+| Export all posts    | =C-c C-e A= | Review changes before committing!                         |
 | Change status       | =C-c C-t=     | =org-todo= — choose =DONE= when ready, then export again. |
 
 Fill in the description before finishing capture; replace =<write here>= with the body afterward. Export with point inside the post. =TODO= / =DRAFT= mean draft; =DONE= means non-draft. Export writes Markdown; it does not deploy.
@@ -96,7 +96,7 @@ to one post for distraction-free editing.
 | Action          | Shortcut  | Command / next step                                 |
 |-----------------+-----------+-----------------------------------------------------|
 | Reveal / hide   | =C-c t v= | =visible-mode= — toggle hidden text in this buffer. |
-| Export PDF      | =C-c e y= | =org-typst-export-to-pdf=                           |
-| Export and open | =C-c e Y= | Export PDF, then open it.                           |
+| Export PDF      | =C-c C-e y= | =org-typst-export-to-pdf=                           |
+| Export and open | =C-c C-e Y= | Export PDF, then open it.                           |
 
 PDF export uses Typst via =ox-typst= (=M-x org-typst-export-to-pdf=). Typst downloads the package on first use; subsequent exports use its cache. Add new use cases as top-level headings with shortcuts and command names.
