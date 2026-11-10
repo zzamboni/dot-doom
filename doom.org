@@ -111,7 +111,7 @@ After edits, tangle, run =git diff --check=, inspect the generated diff, and tes
 
 * Enabled Doom modules
 
-Only enabled modules are listed here. Use Doom's module documentation to browse other options. Evil is deliberately absent; =C-c= is my leader prefix. =+pretty= supplies Org Modern and Org Appear; =+present= supplies Reveal export. The LaTeX module's =+latexmk= is for editing TeX files; Org PDF export separately uses Tectonic. Corfu and Vertico follow the current example configuration, with icons and fallback word completion enabled. The TTY module supplies terminal completion support on Emacs 30; word-wrap improves visual wrapping without inserting newlines. See [[file:modernization-review.org][the experiment review]] for compatibility notes and rollback steps.
+Only enabled modules are listed here. See Doom's =init-example.el= and the module documentation to see all the options. I don't use Evil mode so it's absent. I recently did an AI-assisted "modernization" of my configuration, replacing Consul + Ivy with Corfu + Vertico, which seem to work quite well so far.
 
 #+begin_src emacs-lisp :tangle init.el
 (doom!
@@ -189,9 +189,7 @@ Only enabled modules are listed here. Use Doom's module documentation to browse 
 
 * Editor defaults
 
-Use Command as Meta on macOS and swap the X Meta/Super modifiers on Linux. =C-k= removes the whole line when invoked at its beginning. Enable auto-save and backups, hide line numbers, and exit without a confirmation prompt.
-
-Use Desktop to restore files and window layouts automatically; Doom's workspaces module is disabled because separate workspace contexts are not needed. Retain loading locked desktops and the existing credential-source reversal. The reversal changes credential precedence and runs again on reload; replacing it with an explicit order is a separate policy decision.
+I swap Command as Meta on macOS and the X Meta/Super modifiers on Linux - I'm used to have the Emacs Meta key be the one immediately to the left of the spacebar.
 
 #+begin_src emacs-lisp
 (setq user-full-name "Diego Zamboni"
@@ -205,7 +203,11 @@ Use Desktop to restore files and window layouts automatically; Doom's workspaces
       (IS-LINUX
        (setq x-meta-keysym 'alt
              x-super-keysym 'meta)))
+#+end_src
 
+=C-k= removes the whole line when invoked at its beginning. Enable auto-save and backups, hide line numbers, and exit without a confirmation prompt.
+
+#+begin_src emacs-lisp
 (setq kill-whole-line t)
 
 (setq display-line-numbers-type nil)
@@ -214,9 +216,13 @@ Use Desktop to restore files and window layouts automatically; Doom's workspaces
       make-backup-files t)
 
 (setq confirm-kill-emacs nil)
+#+end_src
 
-(after! auth-source
-  (setq auth-sources (nreverse auth-sources)))
+I use Desktop to restore files and window layouts automatically; I don't need separate workspace contexts, so I disabled Doom's workspaces module. Retain loading locked desktops.
+
+#+begin_src emacs-lisp
+;(after! auth-source
+;  (setq auth-sources (nreverse auth-sources)))
 
 (desktop-save-mode 1)
 (setq! desktop-load-locked-desktop t)

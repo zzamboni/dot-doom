@@ -24,8 +24,8 @@
 
 (setq confirm-kill-emacs nil)
 
-(after! auth-source
-  (setq auth-sources (nreverse auth-sources)))
+;(after! auth-source
+;  (setq auth-sources (nreverse auth-sources)))
 
 (desktop-save-mode 1)
 (setq! desktop-load-locked-desktop t)
