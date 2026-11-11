@@ -292,7 +292,13 @@ Remove from the dashboard some sections I don't use. Disabled for now to test ho
 
 ** Completion
 
-I use Corfu for completion at point and Vertico for minibuffer selection. Doom takes care of the surrounding pieces: Cape, Consult, Orderless, Marginalia, Embark, icons, popup documentation, and snippets. With Orderless, I can type space-separated terms in any order, or use =~term= when I want fuzzy matching. =C-M-i= asks for completion explicitly. Prescient learns which minibuffer candidates I choose and ranks them accordingly; I let Orderless do the matching. Corfu remembers my choices in editing buffers through its history extension.
+I use [[https://github.com/minad/corfu][Corfu]] for completion at point and [[https://github.com/minad/vertico][Vertico]] for minibuffer selection. Doom takes care of the surrounding pieces through its built-in =corfu= and =vertico= modules: [[https://github.com/minad/cape][Cape]], [[https://github.com/minad/consult][Consult]], [[https://github.com/oantolin/orderless][Orderless]], [[https://github.com/minad/marginalia][Marginalia]], [[https://github.com/oantolin/embark][Embark]], [[https://github.com/radian-software/prescient.el][Prescient]], icons, popup documentation, and snippets. Phew! The Emacs ecosystem has become extremely complex in this respect. I had to learn what these do, so here's a summary:
+
+- With Orderless, you can type space-separated terms in any order, or use =~term= when I want fuzzy matching;
+- Prescient learns and ranks choices based on my behavior;
+- 
+
+ =C-M-i= asks for completion explicitly. ; I let Orderless do the matching. Corfu remembers my choices in editing buffers through its history extension.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! vertico-prescient)
@@ -1006,6 +1012,13 @@ but relies on its path-comparison bug, not a supported layout option."
                  :jump-to-captured t)))
 #+end_src
 
+Configure =mermaid= blocks as "raw" ([[https://ox-hugo.scripter.co/doc/org-special-blocks/?utm_source=chatgpt.com#raw-org-contents][reference]]) so that they are exported as-is instead of using HTML entities.
+
+#+begin_src emacs-lisp
+(after! ox-hugo
+  (add-to-list 'org-hugo-special-block-type-properties
+               '("mermaid" . (:raw t))))
+#+end_src
 ** Curriculum vitae
 
 *Note:* I no longer use Org-CV, I keep my CV in JSON Resume, from which I produce all the necessary output formats. See my blog post [[https://zzamboni.org/post/porting-my-cv-from-org-latex-to-json-resume/][Porting my CV from Org+LaTeX to JSON Resume]] for more details! The code below is kept in the Org file for reference but is not being tangled to my config files anymore.

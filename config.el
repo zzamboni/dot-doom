@@ -593,6 +593,10 @@ but relies on its path-comparison bug, not a supported layout option."
                  (function org-hugo-new-subtree-post-capture-template)
                  :jump-to-captured t)))
 
+(after! ox-hugo
+  (add-to-list 'org-hugo-special-block-type-properties
+               '("mermaid" . (:raw t))))
+
 (use-package! ox-leanpub
   :after org)
 
