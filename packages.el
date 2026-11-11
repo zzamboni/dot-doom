@@ -31,9 +31,6 @@
 
 (package! ox-hugo)
 
-(package! org-cv
-  :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-cv"))
-
 (package! ox-leanpub
   :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/ox-leanpub"))
 

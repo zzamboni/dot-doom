@@ -591,18 +591,6 @@ but relies on its path-comparison bug, not a supported layout option."
                  (function org-hugo-new-subtree-post-capture-template)
                  :jump-to-captured t)))
 
-(use-package! ox-awesomecv
-  :after org
-  :config
-  (defun org-awesomecv--cventry-right-img-code (file)
-    (if file
-        (format "\\begin{wrapfigure}{r}{0.15\\textwidth}
-  \\raggedleft\\vspace{-10.0mm}
-  \\includegraphics[width=0.1\\textwidth]{%s}
-\\end{wrapfigure}" file) "")))
-(use-package! ox-moderncv
-  :after org)
-
 (use-package! ox-leanpub
   :after org)
 

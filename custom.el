@@ -9,16 +9,7 @@
  '(safe-local-variable-values
    '((flycheck-org-lint-disabled-checkers invalid-id-link link-to-local-file)
      (org-download-heading-lvl) (org-download-image-dir . "images")
-     (eval add-hook 'after-save-hook
-           (lambda nil (org-export-to-file 'awesomecv "src/zamboni-vita.tex"))
-           :append :local)
-     (eval add-hook 'after-save-hook
-           (lambda nil (org-export-to-file 'awesomecv "zamboni-resume.tex"))
-           :append :local)
      (org-re-reveal-root . "revealjs/")
-     (eval add-hook 'after-save-hook
-           (lambda nil (org-export-to-file 'awesomecv "zamboni-vita.tex"))
-           :append :local)
      (eval add-hook! after-save :append :local (zz/refresh-reveal-prez)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -66,15 +66,15 @@ This is my [[https://leanpub.com/lit-config][literate]] Doom Emacs configuration
 
 ** Files and load order
 
-I make all my changes in this file, then run =C-c C-v t= (=org-babel-tangle=) to generate the Lisp files. If you want to change something, this is the place to do it! I keep package declarations next to the code that uses them, with =:tangle packages.el= to send them to the right file. Other Lisp blocks go to =config.el= by default.
+I make all my changes in this file, then run =C-c C-v t= (=org-babel-tangle=) (or just save it - see [[#automatic-tangling][Automatic tangling]]) to generate the Lisp files. If you want to change something, this is the place to do it! I keep package declarations next to the code that uses them, with =:tangle packages.el= to send them to the right file. Other Lisp blocks go to =config.el= by default (this is configured at the top of =doom.org= with =#+property: header-args:emacs-lisp :tangle config.el=).
 
-| Output | Purpose | Apply changes |
-|--------+---------+---------------|
-| =init.el= | Enabled Doom modules and flags | =doom sync=, restart |
-| =packages.el= | Additional packages and recipe overrides | =doom sync=, restart |
-| =config.el= | Personal settings, commands, and bindings | Restart or =M-x doom/reload= |
+| Output      | Purpose                                   | Apply changes              |
+|-------------+-------------------------------------------+----------------------------|
+| =init.el=     | Enabled Doom modules and flags            | =doom sync=, restart         |
+| =packages.el= | Additional packages and recipe overrides  | =doom sync=, restart         |
+| =config.el=   | Personal settings, commands, and bindings | Restart or =M-x doom/reload= |
 
-I let Emacs manage =custom.el= separately. It holds settings such as trusted themes and file-local variables that I've approved.
+I let Emacs manage =custom.el= separately. It holds settings such as trusted themes and file-local variables that I've approved. I try to keep it minimal, so that =doom.org= is almost always the authoritative source of configuration
 
 Some variables need their values before a package loads; for settings that depend on the package's definitions, I use =after!= or =use-package!=. Structure setters and Transient macros need a little extra care: expanding them before their packages load can break startup, so I defer those too.
 
@@ -82,11 +82,11 @@ Some variables need their values before a package loads; for settings that depen
 
 At the time of this update, I'm using Emacs 30.2, Org 9.8.9, and org-gtd 4.0.7. On my machine, Doom's modules live in =~/.emacs.d/sources/doom+/modules/=. When something doesn't work as expected, I check their =.doommodule=, =packages.el=, and =config.el= files to see what my installed version actually does. Online examples sometimes refer to flags that no longer exist, such as Org's =+hugo=.
 
-I use local development checkouts of =org-cv= and =ox-leanpub=, so their recipe paths need to point to those repositories. Some features also need external tools: =tectonic=, =typst=, =elvish=, =pandoc=, and the compilers or interpreters for the languages I use. The Reveal browser helper and Outlook capture code need macOS.
-
-After changing the configuration, I tangle it, run =git diff --check=, and inspect the generated diff. For code changes, I also test a fresh Emacs startup and the commands I changed. If things break after a package upgrade, I check the installed sources and try =doom sync -b= to rebuild stale bytecode before adding workarounds.
+I use local development checkouts of some modules, like my own =ox-leanpub=, so their recipe paths need to point to those repositories (see [[#leanpub-books][Leanpub books]] for an example). Some features also need external tools: =tectonic=, =typst=, =elvish=, =pandoc=, and the compilers or interpreters for the languages I use. The Reveal browser helper (see [[#reveal-presentations][Reveal presentations]]) and Outlook capture code (see [[#capture-templates][Capture templates]]) need macOS.
 
 ** Generated file headers
+
+In each generated file, add a header indicating not to edit it by hand.
 
 #+begin_src emacs-lisp :tangle init.el
 ;;; init.el -*- lexical-binding: t; -*-
@@ -782,6 +782,9 @@ The =org-gtd-update-ack= setting acknowledges the version 4 upgrade and suppress
 #+end_src
 
 *** Capture templates
+:PROPERTIES:
+:CUSTOM_ID: capture-templates
+:END:
 
 I use the =i= template to capture an inbox item and =l= when I also want a link to where I am in Emacs. On macOS, =m= captures a link to the current Outlook message. I let =org-gtd-inbox-path= choose the inbox filename. The advice below loads GTD before opening the capture menu, so the templates are ready when I need them.
 
@@ -999,14 +1002,16 @@ but relies on its path-comparison bug, not a supported layout option."
 
 ** Curriculum vitae
 
+*Note:* I no longer use Org-CV, I keep my CV in JSON Resume, from which I produce all the necessary output formats. See my blog post [[https://zzamboni.org/post/porting-my-cv-from-org-latex-to-json-resume/][Porting my CV from Org+LaTeX to JSON Resume]] for more details! The code below is kept in the Org file for reference but is not being tangled to my config files anymore.
+
 I load the Awesome CV and Modern CV exporters from my local =org-cv= development checkout. I also override Awesome CV's image helper to place the image on the right using =wrapfigure=.
 
-#+begin_src emacs-lisp :tangle packages.el
+#+begin_src emacs-lisp :tangle no
 (package! org-cv
   :recipe (:local-repo "~/Dropbox/Personal/devel/emacs/org-cv"))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package! ox-awesomecv
   :after org
   :config
@@ -1021,6 +1026,9 @@ I load the Awesome CV and Modern CV exporters from my local =org-cv= development
 #+end_src
 
 ** Leanpub books
+:PROPERTIES:
+:CUSTOM_ID: leanpub-books
+:END:
 
 I use my local =ox-leanpub= checkout to export books in Markua format. Its book commands create the =manuscript/= directory, =Book.txt=, and the exported chapters. I wrote about this workflow in [[https://leanpub.com/emacs-org-leanpub][Publishing with Emacs, Org-mode and Leanpub]].
 
@@ -1035,6 +1043,9 @@ I use my local =ox-leanpub= checkout to export books in Markua format. Its book 
 #+end_src
 
 ** Reveal presentations
+:PROPERTIES:
+:CUSTOM_ID: reveal-presentations
+:END:
 
 I use =org-re-reveal=, which Doom provides through =+present=, to make presentations. The headline-number helper below skips =noexport= headings when building slide anchors. On macOS, I can also export the document and refresh its Brave tab with one command, using =osascript=. Reveal export itself works on Linux too.
 
@@ -1219,6 +1230,9 @@ I use Org ML to manipulate Org elements and Org QL to query them. The heading he
 * Programming
 
 ** Automatic tangling
+:PROPERTIES:
+:CUSTOM_ID: automatic-tangling
+:END:
 
 I use Org Auto Tangle to regenerate code when I save an Org file. I enable it in all Org buffers by default, so it works for other literate documents as well as this configuration. For a document I don't want to tangle automatically, I add =#+auto_tangle: nil=.
 
