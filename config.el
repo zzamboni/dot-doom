@@ -68,6 +68,8 @@
 
 (setq doom-modeline-enable-word-count t)
 
+;(setq +dashboard-menu-sections (cl-subseq +dashboard-menu-sections 0 2))
+
 (use-package! vertico-prescient
   :after vertico
   :init

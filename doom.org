@@ -282,6 +282,12 @@ The dashboard faces need a small tweak so the theme's comment background doesn't
 (setq doom-modeline-enable-word-count t)
 #+end_src
 
+Remove from the dashboard some sections I don't use. Disabled for now to test how I feel about the new dashboard.
+
+#+begin_src emacs-lisp
+;(setq +dashboard-menu-sections (cl-subseq +dashboard-menu-sections 0 2))
+#+end_src
+
 * Navigation and editing
 
 ** Completion
