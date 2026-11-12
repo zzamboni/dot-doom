@@ -344,32 +344,84 @@ If FORCE is t, always recreate the property."
         ;; otherwise, create it
         (zz/org-custom-id-create)))))
 
+(defun zz/org-heading-link-candidates ()
+  "Collect headings from this buffer and expanded Org includes.
+Return (LABEL TITLE MARKER ID) records.  MARKER points into the original
+buffer for local headings; included headings have only a resolved ID."
+  (require 'ox)
+  (let* ((source (current-buffer))
+         (file buffer-file-name)
+         (directory default-directory)
+         (text (save-restriction (widen) (buffer-string)))
+         markers candidates success export-info)
+    (unwind-protect
+        (with-temp-buffer
+          (insert text)
+          (setq default-directory directory)
+          (org-mode)
+          (org-map-entries
+           (lambda ()
+             (let ((marker (make-marker)))
+               (set-marker marker (point) source)
+               (push marker markers)
+               (put-text-property (point) (1+ (point))
+                                  'zz-heading-source marker))))
+          (let ((enable-local-variables nil)
+                (enable-local-eval nil))
+            (org-export-expand-include-keyword nil directory nil file))
+          (org-map-entries
+           (lambda ()
+             (let* ((marker (get-text-property (point) 'zz-heading-source))
+                    (title (org-get-heading t t t t))
+                    (id (unless marker
+                          (or (org-entry-get nil "CUSTOM_ID")
+                              (progn
+                                (require 'ox-hugo)
+                                (org-hugo-get-heading-slug
+                                 (org-element-at-point)
+                                 (or export-info
+                                     (setq export-info
+                                           (org-export-get-environment 'hugo)))))))))
+               (push (list (format "%s [%s %d]"
+                                   (string-join (org-get-outline-path t t) "/")
+                                   (if marker "line" "included; expanded line")
+                                   (if marker
+                                       (with-current-buffer source
+                                         (save-restriction
+                                           (widen)
+                                           (line-number-at-pos marker)))
+                                     (line-number-at-pos)))
+                           title marker id)
+                     candidates))))
+          (setq success t)
+          (nreverse candidates))
+      (unless success
+        (dolist (marker markers) (set-marker marker nil))))))
+
 (defun zz/org-insert-heading-link ()
-  "Select a heading and insert its readable CUSTOM_ID link at point."
+  "Select a local or included heading and insert its readable anchor link."
   (interactive)
   (require 'org-id)
   (let ((origin (copy-marker (point) t)) candidates)
     (unwind-protect
         (save-restriction
           (widen)
-          (setq candidates
-                (org-map-entries
-                 (lambda ()
-                   (cons (format "%s [line %d]"
-                                 (string-join (org-get-outline-path t t) "/")
-                                 (line-number-at-pos))
-                         (point-marker)))))
+          (setq candidates (zz/org-heading-link-candidates))
           (unless candidates (user-error "No headings in this buffer"))
           (let* ((choice (completing-read "Link to heading: " candidates nil t))
-                 (target (cdr (assoc choice candidates)))
-                 (title (org-with-point-at target
-                          (nth 4 (org-heading-components))))
-                 (id (save-excursion (zz/org-custom-id-get-create target))))
+                 (target (assoc choice candidates))
+                 (title (nth 1 target))
+                 (marker (nth 2 target))
+                 (id (if marker
+                         (save-excursion (zz/org-custom-id-get-create marker))
+                       (nth 3 target))))
+            (unless (org-string-nw-p id)
+              (user-error "Selected heading has no usable anchor"))
             (goto-char origin)
             (org-insert-link nil (concat "#" id) title)))
       (set-marker origin nil)
       (dolist (candidate candidates)
-        (set-marker (cdr candidate) nil)))))
+        (when (nth 2 candidate) (set-marker (nth 2 candidate) nil))))))
 
 (when IS-MAC
   (use-package! org-mac-link
