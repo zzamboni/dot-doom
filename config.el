@@ -346,10 +346,49 @@ If FORCE is t, always recreate the property."
         ;; otherwise, create it
         (zz/org-custom-id-create)))))
 
+(defun zz/org-hugo-ref-export (path description backend info)
+  "Export PATH as a Hugo content reference, retaining DESCRIPTION."
+  (require 'json)
+  (if (org-export-derived-backend-p (or (plist-get info :back-end) backend) 'hugo)
+      (format "[%s]({{< relref %s >}})"
+              (or description path) (json-encode-string path))
+    (or description path)))
+
+(after! org
+  (org-link-set-parameters "hugo-ref" :export #'zz/org-hugo-ref-export))
+
+(defun zz/org-included-heading-reference (anchor)
+  "Find the original exporting ancestor and reference its ANCHOR."
+  (save-excursion
+    (let (owner)
+      (while (and (not owner) (org-up-heading-safe))
+        (when (and (get-text-property (point) 'zz-heading-source)
+                   (org-entry-get nil "EXPORT_FILE_NAME"))
+          (setq owner (get-text-property (point) 'zz-heading-source))))
+      (unless owner
+        (user-error "Included heading has no containing exported article"))
+      (org-with-point-at owner
+        (let* ((org-use-property-inheritance
+                (org-hugo--selective-property-inheritance))
+               (info (org-export-get-environment 'hugo t))
+               (section (org-hugo--get-section-path info))
+               (bundle (org-entry-get nil "EXPORT_HUGO_BUNDLE" t))
+               (file (org-entry-get nil "EXPORT_FILE_NAME")))
+          (concat "hugo-ref:/"
+                  (mapconcat #'identity
+                             (seq-filter
+                              (lambda (x) (not (string-empty-p x)))
+                              (mapcar (lambda (x) (string-trim (or x "") "/" "/"))
+                                      (list section bundle
+                                            (if (string-suffix-p ".md" file)
+                                                file (concat file ".md")))))
+                             "/")
+                  "#" anchor))))))
+
 (defun zz/org-heading-link-candidates ()
   "Collect headings from this buffer and expanded Org includes.
 Return (LABEL TITLE MARKER ID) records.  MARKER points into the original
-buffer for local headings; included headings have only a resolved ID."
+buffer for local headings; included headings have a full Hugo reference instead of an ID."
   (require 'ox)
   (let* ((source (current-buffer))
          (file buffer-file-name)
@@ -370,6 +409,7 @@ buffer for local headings; included headings have only a resolved ID."
                                   'zz-heading-source marker))))
           (let ((enable-local-variables nil)
                 (enable-local-eval nil))
+            ;; The key trick: include the current file with includes expanded
             (org-export-expand-include-keyword nil directory nil file))
           (org-map-entries
            (lambda ()
@@ -393,35 +433,65 @@ buffer for local headings; included headings have only a resolved ID."
                                            (widen)
                                            (line-number-at-pos marker)))
                                      (line-number-at-pos)))
-                           title marker id)
+                           title marker
+                           (when id
+                             (condition-case nil
+                                 (zz/org-included-heading-reference id)
+                               (user-error nil))))
                      candidates))))
           (setq success t)
           (nreverse candidates))
       (unless success
         (dolist (marker markers) (set-marker marker nil))))))
 
-(defun zz/org-insert-heading-link ()
-  "Select a local or included heading and insert its readable anchor link."
-  (interactive)
+(defun zz/org-insert-heading-link (&optional replace)
+  "Insert a heading link.  With REPLACE, retain the link description at point."
+  (interactive "P")
   (require 'org-id)
-  (let ((origin (copy-marker (point) t)) candidates)
+  (require 'json)
+  (let* ((element (and replace (org-element-context)))
+         (link (and element (if (eq (org-element-type element) 'link)
+                                element
+                              (org-element-lineage element '(link) t))))
+         (origin (copy-marker (point) t))
+         (start (and link (copy-marker (org-element-property :begin link))))
+         (end (and link (copy-marker
+                        (- (org-element-property :end link)
+                           (org-element-property :post-blank link)) t)))
+         (description
+          (when link
+            (if (org-element-property :contents-begin link)
+                (buffer-substring-no-properties
+                 (org-element-property :contents-begin link)
+                 (org-element-property :contents-end link))
+              (org-element-property :raw-link link))))
+         candidates)
     (unwind-protect
         (save-restriction
           (widen)
+          (when (and replace (not link))
+            (user-error "Place point on the link to replace"))
           (setq candidates (zz/org-heading-link-candidates))
           (unless candidates (user-error "No headings in this buffer"))
           (let* ((choice (completing-read "Link to heading: " candidates nil t))
                  (target (assoc choice candidates))
                  (title (nth 1 target))
                  (marker (nth 2 target))
-                 (id (if marker
-                         (save-excursion (zz/org-custom-id-get-create marker))
-                       (nth 3 target))))
-            (unless (org-string-nw-p id)
+                 (path (if marker
+                           (concat "#" (save-excursion
+                                         (zz/org-custom-id-get-create marker)))
+                         (nth 3 target))))
+            (unless (org-string-nw-p path)
               (user-error "Selected heading has no usable anchor"))
-            (goto-char origin)
-            (org-insert-link nil (concat "#" id) title)))
-      (set-marker origin nil)
+            (if replace
+                (progn
+                  (goto-char start)
+                  (delete-region start end)
+                  (insert (org-link-make-string path description)))
+              (goto-char origin)
+              (org-insert-link nil path title))))
+      (dolist (marker (list origin start end))
+        (when marker (set-marker marker nil)))
       (dolist (candidate candidates)
         (when (nth 2 candidate) (set-marker (nth 2 candidate) nil))))))
 

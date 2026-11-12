@@ -53,6 +53,18 @@
         (should +word-wrap-mode)
         (should-not auto-fill-function)))))
 
+(ert-deftest zz/modern-prose-completion-after-corfu-activation ()
+  (dolist (mode '(org-mode markdown-mode))
+    (with-temp-buffer
+      (funcall mode)
+      ;; Exercise activation with automatic completion initially enabled.
+      (setq-local corfu-auto t)
+      (corfu-mode 1)
+      (should-not corfu-auto)
+      (should-not (memq #'corfu-auto--post-command post-command-hook))
+      (should corfu-mode)
+      (should (eq completion-in-region-function #'corfu--in-region)))))
+
 (ert-deftest zz/modern-keybindings ()
   (should (eq (key-binding (kbd "C-x b")) #'zz/buffer-or-recentf))
   (should (eq (key-binding (kbd "C-x C-b")) #'zz/switch-buffer))
