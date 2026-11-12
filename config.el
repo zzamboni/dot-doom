@@ -240,7 +240,9 @@
 (defun zz/prose-completion-setup ()
   "Keep automatic completion quiet in Org and Markdown."
   (when (derived-mode-p 'org-mode 'markdown-mode)
-    (setq-local corfu-auto nil)))
+    (setq-local corfu-auto nil)
+    ;; Corfu may have installed this before running `corfu-mode-hook'.
+    (remove-hook 'post-command-hook #'corfu-auto--post-command t)))
 
 (add-hook 'corfu-mode-hook #'zz/prose-completion-setup)
 (add-hook 'org-mode-hook #'zz/prose-completion-setup)
