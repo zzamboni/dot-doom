@@ -576,7 +576,7 @@ but relies on its path-comparison bug, not a supported layout option."
                    ,(concat ":export_hugo_bundle: " (format-time-string "%Y-%m-%d-") fname)
                    ":export_file_name: index"
                    ,(concat ":custom_id: " fname)
-                   ":export_hugo_custom_front_matter: :featured_image /images/tram-zurich.jpg :toc false"
+                   ":export_hugo_custom_front_matter: :featured_image /images/tram-zurich.jpg"
                    ":END:"
                    "#+BEGIN_DESCRIPTION\n%?\n#+END_DESCRIPTION"       ;Place the cursor here at the end
                    "\n<write here>")
