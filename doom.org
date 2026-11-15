@@ -1159,6 +1159,190 @@ Configure =mermaid= blocks as "raw" ([[https://ox-hugo.scripter.co/doc/org-speci
   (add-to-list 'org-hugo-special-block-type-properties
                '("mermaid" . (:raw t))))
 #+end_src
+In my website Org file, I run =M-x zz/org-hugo-add-to-series= from anywhere inside a post. I choose a series and the command gives the post the next part number, counting drafts. If the post is already in that series, it keeps its number. I export the post as usual.
+
+I use =M-x zz/org-hugo-create-series= to add a heading under /Series section/. I enter a title, a description, and an optional cover path under =assets/=. The command exports the series page to =content/series/<term>/_index.md=. I save the Org file after either command.
+
+#+name: hugo-article-series
+#+begin_src emacs-lisp
+(after! org
+  (require 'cl-lib)
+  (require 'ob-core)
+  (require 'ox)
+  (require 'subr-x)
+
+  (declare-function org-hugo-export-wim-to-md "ox-hugo")
+
+  (defconst zz/org-hugo--series-front-matter "EXPORT_HUGO_CUSTOM_FRONT_MATTER")
+
+  (defun zz/org-hugo--article-series ()
+    "Return the current heading's (SERIES-NAMES . ORDER)."
+    (let ((front-matter (org-entry-get nil zz/org-hugo--series-front-matter)))
+      (when (and front-matter (string-match-p ":series[ \t]" front-matter))
+        (let* ((args (org-babel-parse-header-arguments front-matter 'no-eval))
+               (series (alist-get :series args))
+               (names (cond
+                       ((and (stringp series) (string-prefix-p "'(" series))
+                        (cadr (read series)))
+                       ((stringp series) (list series)))))
+          (cons (cl-remove-if-not #'stringp names)
+                (alist-get :series_order args))))))
+
+  (defun zz/org-hugo--series-catalog ()
+    "Return an alist of series names and their highest Org part numbers."
+    (let (catalog)
+      (org-map-entries
+       (lambda ()
+         (let ((file (org-entry-get nil "EXPORT_FILE_NAME"))
+               (bundle (org-entry-get nil "EXPORT_HUGO_BUNDLE")))
+           (when file
+             (when (and (equal file "_index")
+                        (string-prefix-p "series/" (or bundle "")))
+               (let ((name (org-get-heading t t t t)))
+                 (unless (assoc name catalog)
+                   (push (cons name 0) catalog))))
+             (pcase-let ((`(,names . ,order) (zz/org-hugo--article-series)))
+               (dolist (name names)
+                 (let ((entry (assoc-string name catalog t))
+                       (number (if (integerp order) order 0)))
+                   (if entry
+                       (setcdr entry (max number (cdr entry)))
+                     (push (cons name (max 0 number)) catalog))))))))
+       nil)
+      catalog))
+
+  (defun zz/org-hugo--remove-series-front-matter ()
+    "Remove series keys in this drawer while preserving other arguments."
+    (save-excursion
+      (when-let* ((drawer (org-get-property-block)))
+        (let ((end (copy-marker (cdr drawer)))
+              (case-fold-search t)
+              (property-re (concat "^[ \t]*:" zz/org-hugo--series-front-matter
+                                   "\\+?:[ \t]*\\(.*\\)$")))
+          (goto-char (car drawer))
+          (while (re-search-forward property-re end t)
+            (let* ((start (match-beginning 1))
+                   (value-end (match-end 1))
+                   (value (match-string-no-properties 1))
+                   (args (org-babel-balanced-split value '((32 9) . 58)))
+                   (remaining
+                    (cl-remove-if
+                     (lambda (arg)
+                       (string-match-p "\\`:?series\\(?:_order\\)?\\(?:[ \t]\\|\\'\\)" arg))
+                     args)))
+              (unless (equal args remaining)
+                (if remaining
+                    (progn
+                      (delete-region start value-end)
+                      (goto-char start)
+                      (insert (mapconcat (lambda (arg)
+                                           (concat ":" (string-remove-prefix ":" arg)))
+                                         remaining " ")))
+                  (delete-region (line-beginning-position)
+                                 (line-beginning-position 2))))))
+          (set-marker end nil)))))
+
+  (defun zz/org-hugo-add-to-series ()
+    "Choose a series for the current article and assign its next part number.
+  Count both published articles and drafts in the whole Org buffer.
+  Keep the current number when the article is already in the chosen series."
+    (interactive)
+    (unless (derived-mode-p 'org-mode)
+      (user-error "Run this from your website Org buffer"))
+    (save-excursion
+      (org-with-wide-buffer
+       (when (org-before-first-heading-p)
+         (user-error "Put point inside an article"))
+       (org-back-to-heading t)
+       (while (and (not (org-entry-get nil "EXPORT_FILE_NAME"))
+                   (org-up-heading-safe)))
+       (unless (and (org-entry-get nil "EXPORT_FILE_NAME")
+                    (equal "post" (org-entry-get nil "EXPORT_HUGO_SECTION" t)))
+         (user-error "Put point inside an exportable post"))
+       (let* ((catalog (zz/org-hugo--series-catalog))
+              (current (zz/org-hugo--article-series))
+              (current-name (caar current)))
+         (unless catalog (user-error "This Org file has no series yet"))
+         (let* ((completion-ignore-case t)
+                (choice (completing-read "Series: " (mapcar #'car catalog)
+                                         nil t nil nil current-name))
+                (series (assoc-string choice catalog t)))
+           (unless series (user-error "Choose an existing series"))
+           (if (and (member-ignore-case (car series) (car current))
+                    (integerp (cdr current)) (> (cdr current) 0))
+               (message "%s, part %d" (car series) (cdr current))
+             (let ((order (1+ (cdr series))))
+               (atomic-change-group
+                 (zz/org-hugo--remove-series-front-matter)
+                 (save-excursion
+                   (goto-char (cdr (org-get-property-block nil t)))
+                   (insert (format ":%s+: :series '%S' :series_order %d\n"
+                                   (downcase zz/org-hugo--series-front-matter)
+                                   (list (car series)) order))))
+               (message "Added to %s as part %d" (car series) order))))))))
+
+  (defun zz/org-hugo-create-series (title description &optional cover)
+    "Create and export a series page from the website Org buffer.
+  TITLE names the series. DESCRIPTION introduces it on the page.
+  COVER, when supplied, is a Hugo asset path relative to assets/."
+    (interactive (list (read-string "New series title: ")
+                       (read-string "Series description: ")
+                       (read-string "Cover path under assets/ (optional): ")))
+    (unless (and (derived-mode-p 'org-mode) buffer-file-name)
+      (user-error "Run this from your website Org file"))
+    (require 'ox-hugo)
+    (setq title (string-trim (replace-regexp-in-string "[[:space:]]+" " " title)))
+    ;; Hugo looks up term content by the lowercased term with spaces replaced.
+    (let* ((term (replace-regexp-in-string " " "-" (downcase title)))
+           (bundle (concat "series/" term))
+           (output (expand-file-name (concat "../content/" bundle "/_index.md")
+                                     (file-name-directory buffer-file-name))))
+      (unless (and (string-match-p "[[:alnum:]]" term)
+                   (not (string-prefix-p "." term))
+                   (not (string-match-p "[/\\\\]" title)))
+        (user-error "Use a title with letters or numbers, no slashes, and no leading dot"))
+      (org-with-wide-buffer
+       (when (or (assoc-string title (zz/org-hugo--series-catalog) t)
+                 (file-exists-p output) (get-file-buffer output))
+         (user-error "A series page already exists for %s" title))
+       (let ((section
+              (org-find-exact-headline-in-buffer "Series section")))
+         (unless section (user-error "Could not find the Series section heading"))
+         (save-excursion
+           (goto-char section)
+           (let ((stars (make-string (1+ (org-outline-level)) ?*)))
+             (org-end-of-subtree t t)
+             (atomic-change-group
+               (unless (bolp) (insert "\n"))
+               (unless (save-excursion (forward-line -1) (looking-at-p "^[ \t]*$"))
+                 (insert "\n"))
+               (let ((heading (point)))
+                 (insert stars " " title "\n")
+                 (save-excursion
+                   (goto-char heading)
+                   (unless (equal title (org-get-heading t t t t))
+                     (user-error "Use a plain title without Org heading keywords or tags")))
+                 (insert ":PROPERTIES:\n"
+                         ":export_hugo_section: /\n"
+                         ":export_hugo_bundle: " bundle "\n"
+                         ":export_file_name: _index\n")
+                 (when (and cover (not (string-blank-p cover)))
+                   (insert ":export_hugo_custom_front_matter+: :featureImage "
+                           (prin1-to-string (string-trim cover)) "\n"))
+                 (insert ":END:\n\n")
+                 (unless (string-blank-p description)
+                   (insert "  " (string-trim (replace-regexp-in-string
+                                              "[\r\n]+" " " description)) "\n\n"))
+                 (goto-char heading)))
+             ;; ox-hugo scans the entire file's links, including the Org-only TOC.
+             (let ((org-export-with-broken-links
+                    (or org-export-with-broken-links 'mark)))
+               (org-hugo-export-wim-to-md))))))
+      (unless (file-exists-p output)
+        (user-error "Series source was added, but ox-hugo did not write %s" output))
+      (message "Created %s" (abbreviate-file-name output)))))
+#+end_src
+
 ** Curriculum vitae
 
 *Note:* I no longer use Org-CV, I keep my CV in JSON Resume, from which I produce all the necessary output formats. See my blog post [[https://zzamboni.org/post/porting-my-cv-from-org-latex-to-json-resume/][Porting my CV from Org+LaTeX to JSON Resume]] for more details! The code below is kept in the Org file for reference but is not being tangled to my config files anymore.
