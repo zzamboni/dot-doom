@@ -832,9 +832,10 @@ but relies on its path-comparison bug, not a supported layout option."
                  (zz/org-hugo--remove-series-front-matter)
                  (save-excursion
                    (goto-char (cdr (org-get-property-block nil t)))
-                   (insert (format ":%s+: :series '%S' :series_order %d\n"
+                   (insert (format ":%s+: :series '%S :series_order %d\n"
                                    (downcase zz/org-hugo--series-front-matter)
-                                   (list (car series)) order))))
+                                   (list (substring-no-properties (car series)))
+                                   order))))
                (message "Added to %s as part %d" (car series) order))))))))
 
   (defun zz/org-hugo-create-series (title description &optional cover)
