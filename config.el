@@ -767,6 +767,115 @@ but relies on its path-comparison bug, not a supported layout option."
        nil)
       catalog))
 
+  (defun zz/org-hugo--article-records ()
+    "Collect exportable post headings and their series/date metadata."
+    (let (records)
+      (org-map-entries
+       (lambda ()
+         (when (and (org-entry-get nil "EXPORT_FILE_NAME")
+                    (equal "post" (org-entry-get nil "EXPORT_HUGO_SECTION" t)))
+           (let* ((title (substring-no-properties (org-get-heading t t t t)))
+                  (bundle (org-entry-get nil "EXPORT_HUGO_BUNDLE"))
+                  (raw-date (or (org-entry-get nil "EXPORT_DATE")
+                                (org-entry-get nil "CLOSED")))
+                  (date (or (and raw-date
+                                 (condition-case nil
+                                     (org-time-string-to-time raw-date)
+                                   (error nil)))
+                            (and bundle
+                                 (string-match "\\`\\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\\)"
+                                               bundle)
+                                 (condition-case nil
+                                     (org-time-string-to-time (match-string 1 bundle))
+                                   (error nil)))))
+                  (series (zz/org-hugo--article-series))
+                  (todo (org-get-todo-state)))
+             (push (list :title title :date date
+                         :series (car series) :order (cdr series)
+                         :todo todo)
+                   records))))
+       nil)
+      records))
+
+  (defun zz/org-hugo--article-date-newer-p (a b)
+    "Sort article records A and B newest first, leaving undated items last."
+    (let ((date-a (plist-get a :date))
+          (date-b (plist-get b :date)))
+      (cond
+       ((and date-a date-b) (time-less-p date-b date-a))
+       (date-a t)
+       (date-b nil)
+       (t (string-lessp (plist-get a :title) (plist-get b :title))))))
+
+  (defun zz/org-hugo--article-series-order-less-p (a b)
+    "Sort article records A and B by series order, then date and title."
+    (let ((order-a (or (plist-get a :order) most-positive-fixnum))
+          (order-b (or (plist-get b :order) most-positive-fixnum)))
+      (if (= order-a order-b)
+          (zz/org-hugo--article-date-newer-p a b)
+        (< order-a order-b))))
+
+  (defun zz/org-hugo-show-articles ()
+    "Show posts grouped by series and then ungrouped posts by date."
+    (interactive)
+    (unless (derived-mode-p 'org-mode)
+      (user-error "Run this from your website Org buffer"))
+    (let* ((records (org-with-wide-buffer (zz/org-hugo--article-records)))
+           (series-names (mapcar #'car
+                                 (org-with-wide-buffer
+                                  (zz/org-hugo--series-catalog))))
+           (buffer (get-buffer-create "*Hugo Article Overview*")))
+      (dolist (record records)
+        (dolist (name (plist-get record :series))
+          (unless (member-ignore-case name series-names)
+            (push name series-names))))
+      (setq series-names (sort series-names #'string-lessp))
+      (with-current-buffer buffer
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (insert "Articles in this Org file\n"
+                  "Series are sorted by part number; other articles are newest first.\n"
+                  "Dates use EXPORT_DATE, then CLOSED, then the bundle name.\n\n")
+          (dolist (name series-names)
+            (let ((articles
+                   (cl-remove-if-not
+                    (lambda (record)
+                      (member-ignore-case name (plist-get record :series)))
+                    records)))
+              (insert name "\n" (make-string (string-width name) ?-) "\n")
+              (if articles
+                  (dolist (record (sort articles #'zz/org-hugo--article-series-order-less-p))
+                    (insert (format "%s  %4s  %s%s\n"
+                                    (if-let ((date (plist-get record :date)))
+                                        (format-time-string "%Y-%m-%d" date)
+                                      "----------")
+                                    (or (plist-get record :order) "-")
+                                    (plist-get record :title)
+                                    (if (and (plist-get record :todo)
+                                             (not (equal "DONE" (plist-get record :todo))))
+                                        (format " [%s]" (plist-get record :todo))
+                                      ""))))
+                (insert "  (no articles)\n"))
+              (insert "\n")))
+          (let ((other-articles
+                 (cl-remove-if (lambda (record) (plist-get record :series)) records)))
+            (insert "Other articles\n---------------\n")
+            (if other-articles
+                (dolist (record (sort other-articles #'zz/org-hugo--article-date-newer-p))
+                  (insert (format "%s  %s%s\n"
+                                  (if-let ((date (plist-get record :date)))
+                                      (format-time-string "%Y-%m-%d" date)
+                                    "----------")
+                                  (plist-get record :title)
+                                  (if (and (plist-get record :todo)
+                                           (not (equal "DONE" (plist-get record :todo))))
+                                      (format " [%s]" (plist-get record :todo))
+                                    ""))))
+              (insert "  (no articles)\n")))
+          (goto-char (point-min))
+          (special-mode)))
+      (display-buffer buffer)))
+
   (defun zz/org-hugo--remove-series-front-matter ()
     "Remove series keys in this drawer while preserving other arguments."
     (save-excursion
